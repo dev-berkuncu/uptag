@@ -1,23 +1,12 @@
-<?php
-require_once '../../config/config.php';
-require_once '../../config/database.php';
+require_once 'admin_auth.php';
 
-requireLogin();
+// Admin kontrolü
+requireAdminAuth();
 
 $db = Database::getInstance()->getConnection();
 
-// Admin kontrolü
-$adminCheck = $db->prepare("SELECT is_admin FROM users WHERE id = ?");
-$adminCheck->execute([$_SESSION['user_id']]);
-$user = $adminCheck->fetch();
-
-if (!$user || !$user['is_admin']) {
-    header('Location: ../dashboard');
-    exit;
-}
-
 $pageTitle = 'Mekan Yönetimi';
-$username = $_SESSION['username'];
+$username = $_SESSION['admin_username'];
 $message = '';
 $error = '';
 

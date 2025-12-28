@@ -1,20 +1,9 @@
-<?php
-require_once '../../config/config.php';
-require_once '../../config/database.php';
-
-requireLogin();
-
-$db = Database::getInstance()->getConnection();
+require_once 'admin_auth.php';
 
 // Admin kontrolü
-$adminCheck = $db->prepare("SELECT is_admin FROM users WHERE id = ?");
-$adminCheck->execute([$_SESSION['user_id']]);
-$user = $adminCheck->fetch();
+requireAdminAuth();
 
-if (!$user || !$user['is_admin']) {
-    header('Location: ../dashboard');
-    exit;
-}
+$db = Database::getInstance()->getConnection();
 
 // ads tablosu oluştur (yoksa) veya position sütununu güncelle
 try {
@@ -43,7 +32,7 @@ try {
 } catch (Exception $e) {}
 
 $pageTitle = 'Reklam Yönetimi';
-$username = $_SESSION['username'];
+$username = $_SESSION['admin_username'];
 $message = '';
 $error = '';
 

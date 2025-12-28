@@ -1,23 +1,12 @@
-<?php
-require_once '../../config/config.php';
-require_once '../../config/database.php';
+require_once 'admin_auth.php';
 
-requireLogin();
+// Admin kontrolü
+requireAdminAuth();
 
 $db = Database::getInstance()->getConnection();
 
-// Admin kontrolü
-$adminCheck = $db->prepare("SELECT is_admin FROM users WHERE id = ?");
-$adminCheck->execute([$_SESSION['user_id']]);
-$user = $adminCheck->fetch();
-
-if (!$user || !$user['is_admin']) {
-    header('Location: ../dashboard');
-    exit;
-}
-
 $pageTitle = 'Kullanıcı Yönetimi';
-$username = $_SESSION['username'];
+$username = $_SESSION['admin_username'];
 $message = '';
 $error = '';
 
@@ -29,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $action = $_POST['action'] ?? '';
         $targetUserId = (int)($_POST['user_id'] ?? 0);
         
-        if ($targetUserId > 0 && $targetUserId != $_SESSION['user_id']) {
+        if ($targetUserId > 0 && $targetUserId != $_SESSION['admin_id']) {
         if ($action === 'make_admin') {
             $stmt = $db->prepare("UPDATE users SET is_admin = 1 WHERE id = ?");
             $stmt->execute([$targetUserId]);
@@ -451,7 +440,7 @@ $pendingVenues = $db->query("SELECT COUNT(*) FROM venues WHERE is_active = 0")->
                                 <?php endif; ?>
                             </td>
                             <td>
-                                <?php if ($u['id'] != $_SESSION['user_id']): ?>
+                                <?php if ($u['id'] != $_SESSION['admin_id']): ?>
                                 <form method="POST" style="display: inline;" onsubmit="return confirm('Emin misiniz?');">
                                     <?php echo csrfField(); ?>
                                     <input type="hidden" name="user_id" value="<?php echo $u['id']; ?>">

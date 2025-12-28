@@ -1,43 +1,14 @@
-<?php
 require_once '../../config/config.php';
 require_once '../../config/database.php';
+require_once 'admin_auth.php';
 
 // Admin kontrolü
-requireLogin();
+requireAdminAuth();
 
 $db = Database::getInstance()->getConnection();
 
-// Kullanıcının admin olup olmadığını kontrol et
-$adminCheck = $db->prepare("SELECT is_admin FROM users WHERE id = ?");
-$adminCheck->execute([$_SESSION['user_id']]);
-$user = $adminCheck->fetch();
-
-// is_admin kolonu yoksa oluştur
-if ($user === false || !isset($user['is_admin'])) {
-    try {
-        $db->exec("ALTER TABLE users ADD COLUMN is_admin TINYINT(1) DEFAULT 0");
-        // İlk kullanıcıyı admin yap
-        $db->exec("UPDATE users SET is_admin = 1 WHERE id = 1");
-        $user = ['is_admin' => ($_SESSION['user_id'] == 1) ? 1 : 0];
-    } catch (PDOException $e) {
-        // Zaten varsa devam et
-    }
-}
-
-if (!$user || !$user['is_admin']) {
-    // Admin yetkisi yoksa ve ?fix_admin=1 parametresi gönderilmişse yetki ver
-    if (isset($_GET['fix_admin']) && $_GET['fix_admin'] == '1') {
-        $db->prepare("UPDATE users SET is_admin = 1 WHERE id = ?")->execute([$_SESSION['user_id']]);
-        $_SESSION['is_admin'] = 1;
-        header('Location: index');
-        exit;
-    }
-    header('Location: ../dashboard');
-    exit;
-}
-
 $pageTitle = 'Admin Panel';
-$username = $_SESSION['username'];
+$username = $_SESSION['admin_username'];
 
 // İstatistikler
 $stats = [];

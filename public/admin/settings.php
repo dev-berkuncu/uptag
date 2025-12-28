@@ -1,23 +1,12 @@
-<?php
-require_once '../../config/config.php';
-require_once '../../config/database.php';
+require_once 'admin_auth.php';
 
-requireLogin();
+// Admin kontrolü
+requireAdminAuth();
 
 $db = Database::getInstance()->getConnection();
 
-// Admin kontrolü
-$adminCheck = $db->prepare("SELECT is_admin FROM users WHERE id = ?");
-$adminCheck->execute([$_SESSION['user_id']]);
-$user = $adminCheck->fetch();
-
-if (!$user || !$user['is_admin']) {
-    header('Location: ../dashboard');
-    exit;
-}
-
 $pageTitle = 'Admin Ayarları';
-$username = $_SESSION['username'];
+$username = $_SESSION['admin_username'];
 $message = '';
 $error = '';
 
@@ -42,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'Şifre en az 6 karakter olmalı.';
         } else {
             $passCheck = $db->prepare("SELECT password_hash FROM users WHERE id = ?");
-            $passCheck->execute([$_SESSION['user_id']]);
+            $passCheck->execute([$_SESSION['admin_id']]);
             $passRow = $passCheck->fetch();
             
             if (!password_verify($currentPassword, $passRow['password_hash'])) {
@@ -50,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $newHash = password_hash($newPassword, PASSWORD_DEFAULT);
                 $updateStmt = $db->prepare("UPDATE users SET password_hash = ? WHERE id = ?");
-                $updateStmt->execute([$newHash, $_SESSION['user_id']]);
+                $updateStmt->execute([$newHash, $_SESSION['admin_id']]);
                 $message = 'Şifreniz başarıyla değiştirildi.';
             }
         }
@@ -385,7 +374,7 @@ $pendingVenues = $db->query("SELECT COUNT(*) FROM venues WHERE is_active = 0")->
                             <?php foreach ($adminUsers as $au): ?>
                             <option value="<?php echo $au['id']; ?>">
                                 <?php echo escape($au['username']); ?>
-                                <?php echo $au['id'] == $_SESSION['user_id'] ? '(Sen)' : ''; ?>
+                                <?php echo $au['id'] == $_SESSION['admin_id'] ? '(Sen)' : ''; ?>
                             </option>
                             <?php endforeach; ?>
                         </select>
