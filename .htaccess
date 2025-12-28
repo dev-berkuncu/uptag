@@ -6,17 +6,26 @@
 
 # URL Rewriting
 RewriteEngine On
+RewriteBase /
 
-# Zaten public içindeyse dokunma
-RewriteCond %{REQUEST_URI} ^/Uptag/public/ [NC]
+# 1. Assets ve Uploads (Statik dosyalar)
+RewriteRule ^assets/(.*)$ assets/$1 [L]
+RewriteRule ^uploads/(.*)$ public/uploads/$1 [L]
+
+# 2. Zaten public içindeyse dokunma
+RewriteCond %{REQUEST_URI} ^/public/ [NC]
 RewriteRule ^ - [L]
 
-# Assets klasörü zaten root'ta, dokunma
-RewriteCond %{REQUEST_URI} ^/Uptag/assets/ [NC]
-RewriteRule ^ - [L]
+# 3. Tüm .php isteklerini public klasörüne yönlendir (Ana dizindekileri pas geç)
+RewriteRule ^(.*\.php)$ public/$1 [L]
 
-# Diğer tüm istekleri public klasörüne yönlendir
+# 4. Diğer her şeyi (temiz URL'ler) public klasörüne yönlendir
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ public/$1 [L]
+
+# 5. Ana dizin isteğini public/index.php'ye yönlendir
+RewriteRule ^$ public/index.php [L]
 
 # Güvenlik: Dizin listesini kapat
 Options -Indexes
