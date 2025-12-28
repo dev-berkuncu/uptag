@@ -204,7 +204,7 @@ require_once '../includes/ads_logic.php';
     <div class="premium-page">
         <div class="premium-card">
             <div class="premium-icon">👑</div>
-            <h1 class="premium-title">Uptag Premium</h1>
+            <h1 class="premium-title">Sociaera - Premium</h1>
             <p class="premium-subtitle">Reklamsız ve kesintisiz bir deneyim için</p>
             
             <ul class="premium-features">
