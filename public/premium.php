@@ -240,7 +240,7 @@ require_once '../includes/ads_logic.php';
                     <div class="feature-icon">💪</div>
                     <div class="feature-text">
                         <strong>Platformu Destekle</strong>
-                        <span>Uptag'ın gelişimine katkıda bulunun</span>
+                        <span>Sociaera'nın gelişimine katkıda bulunun</span>
                     </div>
                 </li>
             </ul>
