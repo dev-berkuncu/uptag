@@ -14,14 +14,13 @@ $db = Database::getInstance()->getConnection();
 $searchQuery = isset($_GET['q']) ? trim($_GET['q']) : '';
 
 // Tüm üyeleri çek (kendisi hariç)
-if ($searchQuery) {
     $usersStmt = $db->prepare("
         SELECT u.id, u.username, u.avatar, u.created_at,
                (SELECT COUNT(*) FROM checkins WHERE user_id = u.id) as checkin_count,
                (SELECT COUNT(*) FROM user_follows WHERE following_id = u.id) as follower_count,
                (SELECT COUNT(*) FROM user_follows WHERE follower_id = u.id) as following_count
         FROM users u
-        WHERE u.id != ? AND u.username LIKE ?
+        WHERE u.id != ? AND u.username LIKE ? AND u.username != 'GTAW'
         ORDER BY follower_count DESC, checkin_count DESC
     ");
     $usersStmt->execute([$userId, "%$searchQuery%"]);
@@ -32,7 +31,7 @@ if ($searchQuery) {
                (SELECT COUNT(*) FROM user_follows WHERE following_id = u.id) as follower_count,
                (SELECT COUNT(*) FROM user_follows WHERE follower_id = u.id) as following_count
         FROM users u
-        WHERE u.id != ?
+        WHERE u.id != ? AND u.username != 'GTAW'
         ORDER BY follower_count DESC, checkin_count DESC
     ");
     $usersStmt->execute([$userId]);

@@ -33,6 +33,7 @@ class Leaderboard {
               AND c.created_at <= ?
               AND c.is_excluded_from_leaderboard = 0
               AND u.is_active = 1
+              AND u.username != 'GTAW'
               AND (u.banned_until IS NULL OR u.banned_until < NOW())
             GROUP BY u.id, u.username, u.email
             ORDER BY checkin_count DESC, first_checkin ASC
