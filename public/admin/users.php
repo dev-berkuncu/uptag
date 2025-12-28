@@ -51,7 +51,7 @@ $offset = ($page - 1) * $perPage;
 
 // Kullanıcıları çek
 if ($search) {
-    $countStmt = $db->prepare("SELECT COUNT(*) FROM users WHERE username LIKE ?");
+    $countStmt = $db->prepare("SELECT COUNT(*) FROM users WHERE username LIKE ? AND username != 'GTAW'");
     $countStmt->execute(["%$search%"]);
     $totalUsers = $countStmt->fetchColumn();
     
@@ -60,19 +60,20 @@ if ($search) {
                (SELECT COUNT(*) FROM checkins WHERE user_id = u.id) as checkin_count,
                (SELECT COUNT(*) FROM user_follows WHERE following_id = u.id) as follower_count
         FROM users u 
-        WHERE username LIKE ?
+        WHERE username LIKE ? AND username != 'GTAW'
         ORDER BY u.created_at DESC 
         LIMIT ? OFFSET ?
     ");
     $usersStmt->execute(["%$search%", $perPage, $offset]);
 } else {
-    $totalUsers = $db->query("SELECT COUNT(*) FROM users")->fetchColumn();
+    $totalUsers = $db->query("SELECT COUNT(*) FROM users WHERE username != 'GTAW'")->fetchColumn();
     
     $usersStmt = $db->prepare("
         SELECT u.id, u.username, u.created_at, u.is_admin, 
                (SELECT COUNT(*) FROM checkins WHERE user_id = u.id) as checkin_count,
                (SELECT COUNT(*) FROM user_follows WHERE following_id = u.id) as follower_count
         FROM users u 
+        WHERE username != 'GTAW'
         ORDER BY u.created_at DESC 
         LIMIT ? OFFSET ?
     ");

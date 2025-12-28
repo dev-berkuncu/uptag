@@ -15,7 +15,7 @@ $username = $_SESSION['admin_username'];
 $stats = [];
 
 // Toplam kullanıcı
-$userCount = $db->query("SELECT COUNT(*) FROM users")->fetchColumn();
+$userCount = $db->query("SELECT COUNT(*) FROM users WHERE username != 'GTAW'")->fetchColumn();
 $stats['users'] = $userCount;
 
 // Toplam mekan
@@ -39,7 +39,7 @@ $weeklyCheckins = $db->query("SELECT COUNT(*) FROM checkins WHERE created_at >= 
 $stats['weekly_checkins'] = $weeklyCheckins;
 
 // Son kayıt olan kullanıcılar (e-posta hariç - gizlilik)
-$recentUsers = $db->query("SELECT id, username, created_at, is_admin FROM users ORDER BY created_at DESC LIMIT 5")->fetchAll();
+$recentUsers = $db->query("SELECT id, username, created_at, is_admin FROM users WHERE username != 'GTAW' ORDER BY created_at DESC LIMIT 5")->fetchAll();
 
 // Son eklenen mekanlar (onay bekleyenler önce)
 $recentVenues = $db->query("SELECT id, name, address, is_active, created_at FROM venues ORDER BY is_active ASC, created_at DESC LIMIT 5")->fetchAll();
