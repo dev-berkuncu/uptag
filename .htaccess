@@ -1,0 +1,35 @@
+# Uptag - Apache Yapılandırması
+
+# PHP hata raporlamayı kapat (üretim için)
+# php_flag display_errors Off
+# php_flag log_errors On
+
+# URL Rewriting
+RewriteEngine On
+
+# Zaten public içindeyse dokunma
+RewriteCond %{REQUEST_URI} ^/Uptag/public/ [NC]
+RewriteRule ^ - [L]
+
+# Assets klasörü zaten root'ta, dokunma
+RewriteCond %{REQUEST_URI} ^/Uptag/assets/ [NC]
+RewriteRule ^ - [L]
+
+# Diğer tüm istekleri public klasörüne yönlendir
+RewriteRule ^(.*)$ public/$1 [L]
+
+# Güvenlik: Dizin listesini kapat
+Options -Indexes
+
+# PHP dosyalarını doğrudan erişilebilir yap
+<FilesMatch "\.php$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
+
+# Hassas dosyaları koru
+<FilesMatch "^(config|database|schema)\.(php|sql)$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+

@@ -1,0 +1,25 @@
+# Uploads (kullanıcı dosyaları - her ortamda farklı)
+public/uploads/avatars/*
+public/uploads/banners/*
+public/uploads/posts/*
+public/uploads/comments/*
+!public/uploads/avatars/.gitkeep
+!public/uploads/banners/.gitkeep
+!public/uploads/posts/.gitkeep
+!public/uploads/comments/.gitkeep
+
+# Config (her ortamda farklı DB bilgileri)
+config/config.php
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
