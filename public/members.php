@@ -14,6 +14,7 @@ $db = Database::getInstance()->getConnection();
 $searchQuery = isset($_GET['q']) ? trim($_GET['q']) : '';
 
 // Tüm üyeleri çek (kendisi hariç)
+if ($searchQuery) {
     $usersStmt = $db->prepare("
         SELECT u.id, u.username, u.avatar, u.created_at,
                (SELECT COUNT(*) FROM checkins WHERE user_id = u.id) as checkin_count,
