@@ -254,10 +254,8 @@ require_once '../includes/ads_logic.php';
                 ✨ Premium'a Geç
             </button>
             
-            <p class="premium-note">
-                İstediğin zaman iptal edebilirsin. Otomatik yenileme.
-            </p>
             
+        
             <a href="dashboard" class="back-link">← Dashboard'a Dön</a>
         </div>
     </div>
