@@ -161,7 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="form-row">
                     <div class="form-group">
                         <label for="phone">Telefon</label>
-                        <input type="tel" id="phone" name="phone" value="<?php echo escape($phone ?? ''); ?>" placeholder="+90 XXX XXX XX XX">
+                        <input type="tel" id="phone" name="phone" value="<?php echo escape($phone ?? ''); ?>" placeholder="XXX XXX XX XX">
                     </div>
                     <div class="form-group">
                         <label for="website">Facebrowser <span class="required">*</span></label>
