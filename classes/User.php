@@ -112,7 +112,7 @@ class User {
      */
     public function getUserById($userId) {
         $stmt = $this->db->prepare("
-            SELECT id, username, email, avatar, banner, created_at, last_login, is_active, is_admin, banned_until
+            SELECT id, username, tag, email, avatar, banner, created_at, last_login, is_active, is_admin, banned_until
             FROM users
             WHERE id = ?
         ");

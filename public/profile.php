@@ -231,7 +231,7 @@ try {
 
                 <div class="profile-card-body">
                     <h1 class="profile-name-twitter"><?php echo escape($profileUser['username']); ?></h1>
-                    <span class="profile-handle">@<?php echo strtolower(escape($profileUser['username'])); ?></span>
+                    <span class="profile-handle">@<?php echo escape(!empty($profileUser['tag']) ? $profileUser['tag'] : strtolower($profileUser['username'])); ?></span>
                     
                     <?php if ($favoriteVenue): ?>
                     <p class="profile-bio">
@@ -300,7 +300,7 @@ try {
                             <div class="tweet-content">
                                 <div class="tweet-header">
                                     <span class="tweet-name"><?php echo escape($profileUser['username']); ?></span>
-                                    <span class="tweet-handle">@<?php echo strtolower(escape($profileUser['username'])); ?></span>
+                                    <span class="tweet-handle">@<?php echo escape(!empty($profileUser['tag']) ? $profileUser['tag'] : strtolower($profileUser['username'])); ?></span>
                                     <span class="tweet-dot">·</span>
                                     <span class="tweet-time"><?php echo formatDate($ci['created_at'], true); ?></span>
                                     <?php if ($isOwnProfile): ?>
