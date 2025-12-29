@@ -11,8 +11,7 @@
         </a>
     <?php else: ?>
         <div class="sponsor-placeholder" style="background: rgba(0,0,0,0.3); border-radius: 12px; padding: 30px; text-align: center;">
-            <div style="font-size: 1.5rem; margin-bottom: 8px;">📢</div>
-            <div style="color: var(--text-muted); font-size: 0.85rem;">Sağ Sidebar</div>
+            <div style="font-size: 1.5rem;">📢</div>
         </div>
     <?php endif; ?>
 </aside>

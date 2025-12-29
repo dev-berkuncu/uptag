@@ -833,7 +833,7 @@ require_once '../includes/ads_logic.php';
                 </a>
             <?php else: ?>
                 <div class="footer-sponsor-placeholder" style="background: rgba(0,0,0,0.2); border-radius: 8px; padding: 20px; text-align: center;">
-                    <span style="color: var(--text-muted); font-size: 0.85rem;">📢 Footer Banner</span>
+                    <span style="font-size: 1.5rem;">📢</span>
                 </div>
             <?php endif; ?>
         </div>
