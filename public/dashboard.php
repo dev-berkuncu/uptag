@@ -565,8 +565,9 @@ require_once '../includes/ads_logic.php';
                     </div>
                     <div class="compose-content">
                         <div class="compose-input-wrapper">
-                            <textarea id="post-content" class="compose-input" placeholder="Ne düşünüyorsun? @mekan yazarak etiketle..." rows="2"></textarea>
+                            <textarea id="post-content" class="compose-input" placeholder="Ne düşünüyorsun? @mekan veya @kullanıcı yazarak etiketle..." rows="2"></textarea>
                             <div id="venue-autocomplete" class="venue-autocomplete"></div>
+                            <div id="user-autocomplete" class="user-autocomplete"></div>
                         </div>
                         <div id="selected-venue" class="selected-venue-tag" style="display: none;">
                             <span class="venue-tag-icon">📍</span>
@@ -643,7 +644,27 @@ require_once '../includes/ads_logic.php';
                                     <?php echo escape($post['venue_name']); ?>
                                 </a>
                                 <?php if (!empty($post['note'])): ?>
-                                    <p class="tweet-note"><?php echo escape($post['note']); ?></p>
+                                    <p class="tweet-note"><?php 
+                                        // Parse @mentions and make them clickable
+                                        $noteText = escape($post['note']);
+                                        $noteText = preg_replace_callback(
+                                            '/@([a-zA-Z0-9_]+)/',
+                                            function($matches) {
+                                                global $db;
+                                                $tag = $matches[1];
+                                                // Kullanıcıyı bul
+                                                $stmt = $db->prepare("SELECT id FROM users WHERE tag = ? OR LOWER(username) = LOWER(?)");
+                                                $stmt->execute([$tag, $tag]);
+                                                $user = $stmt->fetch();
+                                                if ($user) {
+                                                    return '<a href="profile?id=' . $user['id'] . '" class="mention-link">@' . escape($tag) . '</a>';
+                                                }
+                                                return '@' . escape($tag);
+                                            },
+                                            $noteText
+                                        );
+                                        echo $noteText;
+                                    ?></p>
                                 <?php endif; ?>
                                 <?php if (!empty($post['image'])): ?>
                                     <div class="post-image">
@@ -1056,18 +1077,106 @@ require_once '../includes/ads_logic.php';
         // Search venues API
         async function searchVenues(query) {
             try {
-                const response = await fetch(`<?php echo BASE_URL; ?>/api/venue-search.php?q=${encodeURIComponent(query)}`);
-                const data = await response.json();
+                // Paralel olarak hem mekan hem kullanıcı ara
+                const [venueResponse, userResponse] = await Promise.all([
+                    fetch(`<?php echo BASE_URL; ?>/api/venue-search.php?q=${encodeURIComponent(query)}`),
+                    fetch(`<?php echo BASE_URL; ?>/api/search-users.php?q=${encodeURIComponent(query)}`)
+                ]);
                 
-                if (data.venues && data.venues.length > 0) {
-                    showAutocomplete(data.venues);
+                const venueData = await venueResponse.json();
+                const userData = await userResponse.json();
+                
+                const venues = venueData.venues || [];
+                const users = userData.users || [];
+                
+                if (venues.length > 0 || users.length > 0) {
+                    showCombinedAutocomplete(venues, users);
                 } else {
                     showAutocompleteEmpty();
                 }
             } catch (error) {
-                console.error('Venue search error:', error);
+                console.error('Search error:', error);
                 hideAutocomplete();
             }
+        }
+        
+        // Show combined autocomplete (venues + users)
+        function showCombinedAutocomplete(venues, users) {
+            let html = '';
+            
+            // Önce mekanları göster
+            if (venues.length > 0) {
+                html += '<div class="autocomplete-section-title">📍 Mekanlar</div>';
+                venues.slice(0, 4).forEach(venue => {
+                    html += `
+                        <div class="venue-option" data-id="${venue.id}" data-name="${escapeHtml(venue.name)}" data-type="venue">
+                            <div class="venue-option-icon">📍</div>
+                            <div class="venue-option-info">
+                                <div class="venue-option-name">${escapeHtml(venue.name)}</div>
+                                ${venue.address ? `<div class="venue-option-address">${escapeHtml(venue.address)}</div>` : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            
+            // Sonra kullanıcıları göster
+            if (users.length > 0) {
+                html += '<div class="autocomplete-section-title">👤 Kullanıcılar</div>';
+                users.slice(0, 4).forEach(user => {
+                    html += `
+                        <div class="user-option" data-id="${user.id}" data-tag="${escapeHtml(user.tag)}" data-username="${escapeHtml(user.username)}" data-type="user">
+                            <div class="user-option-avatar">
+                                ${user.avatar_url 
+                                    ? `<img src="<?php echo BASE_URL; ?>/${user.avatar_url}" alt="">` 
+                                    : user.username.charAt(0).toUpperCase()}
+                            </div>
+                            <div class="user-option-info">
+                                <div class="user-option-name">${escapeHtml(user.username)}</div>
+                                <div class="user-option-tag">@${escapeHtml(user.tag)}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            
+            venueAutocomplete.innerHTML = html;
+            venueAutocomplete.classList.add('active');
+            
+            // Mekan click handlers
+            venueAutocomplete.querySelectorAll('.venue-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    selectVenue(this.dataset.id, this.dataset.name);
+                });
+            });
+            
+            // Kullanıcı click handlers
+            venueAutocomplete.querySelectorAll('.user-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    selectUser(this.dataset.tag, this.dataset.username);
+                });
+            });
+        }
+        
+        // Kullanıcı seç - metne @tag ekle
+        function selectUser(tag, username) {
+            const value = postContent.value;
+            const cursorPos = postContent.selectionStart;
+            const textBeforeCursor = value.substring(0, cursorPos);
+            const textAfterCursor = value.substring(cursorPos);
+            const atIndex = textBeforeCursor.lastIndexOf('@');
+            
+            if (atIndex !== -1) {
+                // @ ve sonrasını @tag ile değiştir
+                const newText = textBeforeCursor.substring(0, atIndex) + '@' + tag + ' ' + textAfterCursor;
+                postContent.value = newText;
+                // Cursor'u @tag'den sonraya koy
+                const newCursorPos = atIndex + tag.length + 2;
+                postContent.setSelectionRange(newCursorPos, newCursorPos);
+            }
+            
+            hideAutocomplete();
+            postContent.focus();
         }
 
         // Show autocomplete dropdown

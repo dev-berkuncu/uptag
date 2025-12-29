@@ -5212,3 +5212,82 @@ img {
     font-size: 0.8rem;
     color: var(--text-subtle);
 }
+
+/* ===================================================
+   USER MENTION AUTOCOMPLETE
+   =================================================== */
+.autocomplete-section-title {
+    padding: 8px 12px 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-subtle);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.autocomplete-section-title:first-child {
+    border-top: none;
+}
+
+.user-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.user-option:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.user-option-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--orange-primary), var(--orange-deeper));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: white;
+    overflow: hidden;
+}
+
+.user-option-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.user-option-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.user-option-name {
+    font-weight: 500;
+    color: var(--text-white);
+    font-size: 0.9rem;
+}
+
+.user-option-tag {
+    font-size: 0.8rem;
+    color: var(--text-subtle);
+}
+
+/* Mention links in posts */
+.mention-link {
+    color: var(--orange-accent);
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.mention-link:hover {
+    color: #ff9f1c;
+    text-decoration: underline;
+}
