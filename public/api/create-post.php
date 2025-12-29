@@ -105,6 +105,34 @@ try {
     $insertStmt->execute([$userId, $venueId, $content, $imageName]);
     $postId = $db->lastInsertId();
     
+    // Parse @mentions and create notifications
+    if (!empty($content)) {
+        preg_match_all('/@([a-zA-Z0-9_]+)/', $content, $matches);
+        if (!empty($matches[1])) {
+            $mentionedTags = array_unique($matches[1]);
+            foreach ($mentionedTags as $tag) {
+                // Find user by tag or username
+                $userStmt = $db->prepare("SELECT id FROM users WHERE (tag = ? OR LOWER(username) = LOWER(?)) AND id != ?");
+                $userStmt->execute([$tag, $tag, $userId]);
+                $mentionedUser = $userStmt->fetch();
+                
+                if ($mentionedUser) {
+                    // Create notification
+                    try {
+                        $notifStmt = $db->prepare("
+                            INSERT INTO notifications (user_id, type, from_user_id, checkin_id, content, created_at)
+                            VALUES (?, 'mention', ?, ?, ?, NOW())
+                        ");
+                        $notifContent = $_SESSION['username'] . ' sizi bir gönderide etiketledi';
+                        $notifStmt->execute([$mentionedUser['id'], $userId, $postId, $notifContent]);
+                    } catch (PDOException $e) {
+                        // Notification error should not break post creation
+                    }
+                }
+            }
+        }
+    }
+    
     echo json_encode([
         'success' => true,
         'message' => 'Post paylaşıldı!',

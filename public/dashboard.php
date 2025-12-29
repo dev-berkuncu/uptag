@@ -521,6 +521,11 @@ require_once '../includes/ads_logic.php';
                     <span class="sidebar-nav-icon">👥</span>
                     <span>Üyeler</span>
                 </a>
+                <a href="notifications" class="sidebar-nav-item" id="notifications-nav-item">
+                    <span class="sidebar-nav-icon">🔔</span>
+                    <span>Bildirimler</span>
+                    <span class="notification-badge" id="notification-badge" style="display: none;">0</span>
+                </a>
                 <a href="profile" class="sidebar-nav-item">
                     <span class="sidebar-nav-icon">👤</span>
                     <span>Profil</span>
@@ -1777,6 +1782,23 @@ require_once '../includes/ads_logic.php';
             if (diff < 86400) return Math.floor(diff / 3600) + 'sa';
             return Math.floor(diff / 86400) + 'g';
         }
+        
+        // Fetch notification count
+        async function updateNotificationBadge() {
+            try {
+                const response = await fetch('<?php echo BASE_URL; ?>/api/notifications.php?action=count');
+                const data = await response.json();
+                if (data.success && data.count > 0) {
+                    const badge = document.getElementById('notification-badge');
+                    if (badge) {
+                        badge.textContent = data.count > 99 ? '99+' : data.count;
+                        badge.style.display = 'inline-flex';
+                    }
+                }
+            } catch (e) {}
+        }
+        updateNotificationBadge();
+        setInterval(updateNotificationBadge, 60000); // Her dakika güncelle
     })();
     </script>
 
