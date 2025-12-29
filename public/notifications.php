@@ -74,7 +74,10 @@ try {
             
             <div class="notifications-container">
                 <div class="notifications-header">
-                    <h1>🔔 Bildirimler</h1>
+                    <div>
+                        <h1>Bildirimler</h1>
+                        <div class="notifications-filter">Seni etikettiğin</div>
+                    </div>
                 </div>
 
                 <?php if (empty($notifications)): ?>
