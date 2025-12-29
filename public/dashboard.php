@@ -583,7 +583,6 @@ require_once '../includes/ads_logic.php';
                                 <button type="button" class="compose-tool-btn" id="venue-picker-btn" title="Mekan Etiketle">📍</button>
                                 <input type="file" id="image-input" accept="image/jpeg,image/png,image/gif,image/webp" style="display: none;">
                                 <button type="button" class="compose-tool-btn" id="image-picker-btn" title="Fotoğraf Ekle">📷</button>
-                                <span class="compose-hint">@mekan yazarak etiketle</span>
                             </div>
                             <button type="submit" class="btn-compose-submit" id="submit-btn" disabled>Paylaş</button>
                         </div>
