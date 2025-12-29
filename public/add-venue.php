@@ -128,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <div class="form-group">
                     <label for="name">Mekan Adı <span class="required">*</span></label>
-                    <input type="text" id="name" name="name" value="<?php echo escape($name ?? ''); ?>" placeholder="Örn: Kahve Durağı" required maxlength="100">
+                    <input type="text" id="name" name="name" value="<?php echo escape($name ?? ''); ?>" placeholder="Örn: Pillbox Casino" required maxlength="100">
                 </div>
 
                 <div class="form-group">
