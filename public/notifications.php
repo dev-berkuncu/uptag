@@ -86,55 +86,45 @@ try {
                 <?php else: ?>
                     <div class="notifications-list">
                         <?php foreach ($notifications as $notif): ?>
-                            <div class="notification-card <?php echo $notif['is_read'] ? '' : 'unread'; ?>" data-id="<?php echo $notif['id']; ?>">
-                                <div class="notification-avatar">
-                                    <?php if (!empty($notif['from_avatar'])): ?>
-                                        <img src="<?php echo BASE_URL; ?>/uploads/avatars/<?php echo escape($notif['from_avatar']); ?>" alt="">
-                                    <?php else: ?>
-                                        <?php echo strtoupper(substr($notif['from_username'] ?? '?', 0, 1)); ?>
-                                    <?php endif; ?>
-                                </div>
-                                <div class="notification-content">
-                                    <div class="notification-text">
-                                        <?php if ($notif['type'] === 'mention'): ?>
-                                            <a href="profile?id=<?php echo $notif['from_user_id']; ?>" class="notification-username">
-                                                <?php echo escape($notif['from_username']); ?>
-                                            </a>
-                                            sizi bir gönderide etiketledi
-                                        <?php elseif ($notif['type'] === 'like'): ?>
-                                            <a href="profile?id=<?php echo $notif['from_user_id']; ?>" class="notification-username">
-                                                <?php echo escape($notif['from_username']); ?>
-                                            </a>
-                                            gönderinizi beğendi
-                                        <?php elseif ($notif['type'] === 'comment'): ?>
-                                            <a href="profile?id=<?php echo $notif['from_user_id']; ?>" class="notification-username">
-                                                <?php echo escape($notif['from_username']); ?>
-                                            </a>
-                                            gönderinize yorum yaptı
-                                        <?php elseif ($notif['type'] === 'follow'): ?>
-                                            <a href="profile?id=<?php echo $notif['from_user_id']; ?>" class="notification-username">
-                                                <?php echo escape($notif['from_username']); ?>
-                                            </a>
-                                            sizi takip etmeye başladı
-                                        <?php elseif ($notif['type'] === 'repost'): ?>
-                                            <a href="profile?id=<?php echo $notif['from_user_id']; ?>" class="notification-username">
-                                                <?php echo escape($notif['from_username']); ?>
-                                            </a>
-                                            gönderinizi repostladı
+                            <a href="<?php echo $notif['checkin_id'] ? 'feed?post=' . $notif['checkin_id'] : 'profile?id=' . $notif['from_user_id']; ?>" class="notification-card <?php echo $notif['is_read'] ? '' : 'unread'; ?>">
+                                <div class="notification-icon-wrapper">
+                                    <div class="notification-avatar">
+                                        <?php if (!empty($notif['from_avatar'])): ?>
+                                            <img src="<?php echo BASE_URL; ?>/uploads/avatars/<?php echo escape($notif['from_avatar']); ?>" alt="">
                                         <?php else: ?>
-                                            <?php echo escape($notif['content']); ?>
+                                            <?php echo strtoupper(substr($notif['from_username'] ?? '?', 0, 1)); ?>
                                         <?php endif; ?>
                                     </div>
-                                    <div class="notification-time">
-                                        <?php echo formatDate($notif['created_at'], true); ?>
+                                    <div class="notification-type-badge">
+                                        <?php 
+                                        $icons = ['mention' => '📣', 'like' => '❤️', 'comment' => '💬', 'follow' => '👤', 'repost' => '🔄'];
+                                        echo $icons[$notif['type']] ?? '🔔'; 
+                                        ?>
                                     </div>
                                 </div>
-                                <?php if ($notif['from_user_id']): ?>
-                                <a href="profile?id=<?php echo $notif['from_user_id']; ?>" class="notification-action">
-                                    Görüntüle →
-                                </a>
-                                <?php endif; ?>
-                            </div>
+                                <div class="notification-body">
+                                    <div class="notification-text">
+                                        <span class="notification-username"><?php echo escape($notif['from_username']); ?></span>
+                                        <?php if ($notif['type'] === 'mention'): ?>
+                                            sizi bir gönderide etiketledi
+                                        <?php elseif ($notif['type'] === 'like'): ?>
+                                            gönderinizi beğendi
+                                        <?php elseif ($notif['type'] === 'comment'): ?>
+                                            gönderinize yorum yaptı
+                                        <?php elseif ($notif['type'] === 'follow'): ?>
+                                            sizi takip etmeye başladı
+                                        <?php elseif ($notif['type'] === 'repost'): ?>
+                                            gönderinizi repostladı
+                                        <?php else: ?>
+                                            <?php echo escape($notif['content'] ?? 'bildirim gönderdi'); ?>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="notification-meta">
+                                        <span class="notification-time"><?php echo formatDate($notif['created_at'], true); ?></span>
+                                        <span class="notification-action-text">Görüntüle →</span>
+                                    </div>
+                                </div>
+                            </a>
                         <?php endforeach; ?>
                     </div>
                 <?php endif; ?>
