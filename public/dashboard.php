@@ -42,7 +42,7 @@ foreach ($topUsers as $index => $user) {
 $avatarUrl = null;
 $isAdmin = false;
 try {
-    $userStmt = $db->prepare("SELECT avatar, is_admin FROM users WHERE id = ?");
+    $userStmt = $db->prepare("SELECT avatar, tag, is_admin FROM users WHERE id = ?");
     $userStmt->execute([$userId]);
     $userInfo = $userStmt->fetch();
     // Avatar varsa tam URL oluştur
@@ -93,7 +93,7 @@ try {
             (
                 SELECT 
                     c.id, c.user_id, c.venue_id, c.note, c.created_at, c.is_flagged, c.image,
-                    u.username, u.avatar as user_avatar, v.name as venue_name,
+                    u.username, u.tag as user_tag, u.avatar as user_avatar, v.name as venue_name,
                     (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                     (SELECT COUNT(*) FROM post_reposts WHERE checkin_id = c.id) as repost_count,
                     (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id) as comment_count,
@@ -113,7 +113,7 @@ try {
             (
                 SELECT 
                     c.id, c.user_id, c.venue_id, c.note, c.created_at, c.is_flagged, c.image,
-                    u.username, u.avatar as user_avatar, v.name as venue_name,
+                    u.username, u.tag as user_tag, u.avatar as user_avatar, v.name as venue_name,
                     (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                     (SELECT COUNT(*) FROM post_reposts WHERE checkin_id = c.id) as repost_count,
                     (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id) as comment_count,
@@ -141,7 +141,7 @@ try {
             (
                 SELECT 
                     c.id, c.user_id, c.venue_id, c.note, c.created_at, c.is_flagged, c.image,
-                    u.username, u.avatar as user_avatar, v.name as venue_name,
+                    u.username, u.tag as user_tag, u.avatar as user_avatar, v.name as venue_name,
                     (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                     (SELECT COUNT(*) FROM post_reposts WHERE checkin_id = c.id) as repost_count,
                     (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id) as comment_count,
@@ -166,7 +166,7 @@ try {
             (
                 SELECT 
                     c.id, c.user_id, c.venue_id, c.note, c.created_at, c.is_flagged, c.image,
-                    u.username, u.avatar as user_avatar, v.name as venue_name,
+                    u.username, u.tag as user_tag, u.avatar as user_avatar, v.name as venue_name,
                     (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                     (SELECT COUNT(*) FROM post_reposts WHERE checkin_id = c.id) as repost_count,
                     (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id) as comment_count,
@@ -198,7 +198,7 @@ try {
             (
                 SELECT 
                     c.id, c.user_id, c.venue_id, c.note, c.created_at, c.is_flagged, c.image,
-                    u.username, u.avatar as user_avatar, v.name as venue_name,
+                    u.username, u.tag as user_tag, u.avatar as user_avatar, v.name as venue_name,
                     (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                     (SELECT COUNT(*) FROM post_reposts WHERE checkin_id = c.id) as repost_count,
                     (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id) as comment_count,
@@ -218,7 +218,7 @@ try {
             (
                 SELECT 
                     c.id, c.user_id, c.venue_id, c.note, c.created_at, c.is_flagged, c.image,
-                    u.username, u.avatar as user_avatar, v.name as venue_name,
+                    u.username, u.tag as user_tag, u.avatar as user_avatar, v.name as venue_name,
                     (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                     (SELECT COUNT(*) FROM post_reposts WHERE checkin_id = c.id) as repost_count,
                     (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id) as comment_count,
@@ -243,7 +243,7 @@ try {
     } else {
         // Basit sorgu (quote kolonu yoksa)
         $feedStmt = $db->prepare("
-            SELECT c.*, u.username, u.avatar as user_avatar, v.name as venue_name,
+            SELECT c.*, u.username, u.tag as user_tag, u.avatar as user_avatar, v.name as venue_name,
                    (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                    (SELECT COUNT(*) FROM post_reposts WHERE checkin_id = c.id) as repost_count,
                    (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id) as comment_count,
@@ -471,7 +471,7 @@ require_once '../includes/ads_logic.php';
                     </div>
                     <div class="profile-mini-info">
                         <div class="profile-mini-name"><?php echo escape($username); ?></div>
-                        <div class="profile-mini-username">@<?php echo escape(strtolower($username)); ?></div>
+                        <div class="profile-mini-username">@<?php echo escape(!empty($userInfo['tag']) ? $userInfo['tag'] : strtolower($username)); ?></div>
                     </div>
                 </div>
                 <div class="profile-mini-stats">
@@ -633,7 +633,7 @@ require_once '../includes/ads_logic.php';
                                     <a href="profile.php?id=<?php echo $post['user_id']; ?>" class="tweet-username">
                                         <?php echo escape($post['username']); ?>
                                     </a>
-                                    <span class="tweet-handle">@<?php echo escape(strtolower($post['username'])); ?></span>
+                                    <span class="tweet-handle">@<?php echo escape(!empty($post['user_tag']) ? $post['user_tag'] : strtolower($post['username'])); ?></span>
                                     <span class="tweet-time"><?php echo formatDate($post['created_at'], true); ?></span>
                                     <?php if ($post['user_id'] == $userId && !$post['is_repost']): ?>
                                     <button class="tweet-delete-btn" data-checkin-id="<?php echo $post['id']; ?>" title="Postu Sil">×</button>
