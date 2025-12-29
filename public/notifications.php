@@ -105,24 +105,23 @@ try {
                                 <div class="notification-body">
                                     <div class="notification-text">
                                         <span class="notification-username"><?php echo escape($notif['from_username']); ?></span>
-                                        <?php if ($notif['type'] === 'mention'): ?>
-                                            sizi bir gönderide etiketledi
-                                        <?php elseif ($notif['type'] === 'like'): ?>
-                                            gönderinizi beğendi
-                                        <?php elseif ($notif['type'] === 'comment'): ?>
-                                            gönderinize yorum yaptı
-                                        <?php elseif ($notif['type'] === 'follow'): ?>
-                                            sizi takip etmeye başladı
-                                        <?php elseif ($notif['type'] === 'repost'): ?>
-                                            gönderinizi repostladı
-                                        <?php else: ?>
-                                            <?php echo escape($notif['content'] ?? 'bildirim gönderdi'); ?>
-                                        <?php endif; ?>
+                                        <?php 
+                                        $actionText = 'bir işlem yaptı';
+                                        if ($notif['type'] === 'mention') $actionText = 'sizi etiketledi';
+                                        elseif ($notif['type'] === 'like') $actionText = 'gönderinizi beğendi';
+                                        elseif ($notif['type'] === 'comment') $actionText = 'yorum yaptı';
+                                        elseif ($notif['type'] === 'follow') $actionText = 'sizi takip etti';
+                                        elseif ($notif['type'] === 'repost') $actionText = 'repostladı';
+                                        echo $actionText;
+                                        ?>
                                     </div>
-                                    <div class="notification-meta">
-                                        <span class="notification-time"><?php echo formatDate($notif['created_at'], true); ?></span>
-                                        <span class="notification-action-text">Görüntüle →</span>
+                                    <div class="notification-preview-text">
+                                        <?php echo escape($notif['content'] ?? $actionText); ?>
                                     </div>
+                                </div>
+                                <div class="notification-meta">
+                                    <span class="notification-time"><?php echo formatDate($notif['created_at'], true); ?></span>
+                                    <span class="notification-dot"></span>
                                 </div>
                             </a>
                         <?php endforeach; ?>
