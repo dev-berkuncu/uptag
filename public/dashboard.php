@@ -1205,7 +1205,7 @@ require_once '../includes/ads_logic.php';
         }
 
         function showAutocompleteEmpty() {
-            venueAutocomplete.innerHTML = '<div class="venue-autocomplete-empty">Mekan bulunamadı</div>';
+            venueAutocomplete.innerHTML = '<div class="venue-autocomplete-empty">Mekan veya kullanıcı bulunamadı</div>';
             venueAutocomplete.classList.add('active');
         }
 
