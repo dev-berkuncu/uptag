@@ -12,7 +12,7 @@ $username = $_SESSION['username'];
 $db = Database::getInstance()->getConnection();
 
 // Kullanıcı bilgilerini getir
-$stmt = $db->prepare("SELECT id, username, email, avatar, banner, created_at FROM users WHERE id = ?");
+$stmt = $db->prepare("SELECT id, username, tag, email, avatar, banner, created_at FROM users WHERE id = ?");
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
 
@@ -60,27 +60,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         if ($action === 'update_profile') {
         $newUsername = trim($_POST['username'] ?? '');
+        $newTag = trim($_POST['tag'] ?? '');
         $newEmail = trim($_POST['email'] ?? '');
+        
+        // Tag'den @ işaretini kaldır
+        $newTag = ltrim($newTag, '@');
         
         if (empty($newUsername) || empty($newEmail)) {
             $error = 'Kullanıcı adı ve e-posta gereklidir.';
         } elseif (strlen($newUsername) < 3 || strlen($newUsername) > 50) {
             $error = 'Kullanıcı adı 3-50 karakter arasında olmalıdır.';
+        } elseif (!empty($newTag) && !preg_match('/^[a-zA-Z0-9_]{3,30}$/', $newTag)) {
+            $error = 'Etiket 3-30 karakter arasında olmalı ve sadece harf, rakam ve alt çizgi içermelidir.';
         } elseif (!filter_var($newEmail, FILTER_VALIDATE_EMAIL)) {
             $error = 'Geçerli bir e-posta adresi giriniz.';
         } else {
-            $checkStmt = $db->prepare("SELECT id FROM users WHERE (username = ? OR email = ?) AND id != ?");
-            $checkStmt->execute([$newUsername, $newEmail, $userId]);
+            // Kullanıcı adı, etiket ve e-posta benzersizliğini kontrol et
+            $checkStmt = $db->prepare("SELECT id FROM users WHERE (username = ? OR email = ? OR (tag = ? AND tag != '')) AND id != ?");
+            $checkStmt->execute([$newUsername, $newEmail, $newTag, $userId]);
             
             if ($checkStmt->fetch()) {
-                $error = 'Bu kullanıcı adı veya e-posta zaten kullanılıyor.';
+                $error = 'Bu kullanıcı adı, etiket veya e-posta zaten kullanılıyor.';
             } else {
-                $updateStmt = $db->prepare("UPDATE users SET username = ?, email = ? WHERE id = ?");
-                if ($updateStmt->execute([$newUsername, $newEmail, $userId])) {
+                $updateStmt = $db->prepare("UPDATE users SET username = ?, tag = ?, email = ? WHERE id = ?");
+                if ($updateStmt->execute([$newUsername, $newTag, $newEmail, $userId])) {
                     $_SESSION['username'] = $newUsername;
                     $_SESSION['email'] = $newEmail;
                     $username = $newUsername;
                     $user['username'] = $newUsername;
+                    $user['tag'] = $newTag;
                     $user['email'] = $newEmail;
                     $success = 'Profil bilgileri güncellendi!';
                 } else {
@@ -253,6 +261,22 @@ $bannerUrl = $user['banner'] ? BASE_URL . '/uploads/banners/' . $user['banner'] 
                                 value="<?php echo escape($user['username']); ?>"
                                 required
                             >
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="tag">@ Etiketi</label>
+                            <div class="input-with-prefix">
+                                <span class="input-prefix">@</span>
+                                <input 
+                                    type="text" 
+                                    id="tag" 
+                                    name="tag" 
+                                    value="<?php echo escape($user['tag'] ?? ''); ?>"
+                                    placeholder="kullanici_adi"
+                                    pattern="[a-zA-Z0-9_]{3,30}"
+                                >
+                            </div>
+                            <small class="form-hint">3-30 karakter, sadece harf, rakam ve alt çizgi</small>
                         </div>
                         
                         <div class="form-group">

@@ -12,6 +12,7 @@ USE `uptag`;
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(50) NOT NULL,
+  `tag` varchar(30) DEFAULT NULL,
   `email` varchar(100) NOT NULL,
   `password_hash` varchar(255) NOT NULL,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -21,6 +22,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `banned_until` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
+  UNIQUE KEY `tag` (`tag`),
   UNIQUE KEY `email` (`email`),
   KEY `is_active` (`is_active`),
   KEY `is_admin` (`is_admin`)
