@@ -1425,8 +1425,11 @@ require_once '../includes/ads_logic.php';
         });
         
         // Like butonları
-        document.querySelectorAll('.action-like').forEach(btn => {
+        const likeButtons = document.querySelectorAll('.action-like');
+        console.log('Like buttons found:', likeButtons.length);
+        likeButtons.forEach(btn => {
             btn.addEventListener('click', async function() {
+                console.log('Like button clicked!', this.dataset.checkinId);
                 const checkinId = this.dataset.checkinId;
                 const repostId = this.dataset.repostId || '';
                 const likeIcon = this.querySelector('.like-icon');
