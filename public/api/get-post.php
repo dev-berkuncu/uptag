@@ -56,7 +56,7 @@ try {
     
     // Fetch comments
     $commentsStmt = $db->prepare("
-        SELECT pc.id, pc.comment, pc.created_at, pc.user_id,
+        SELECT pc.id, pc.content as comment, pc.created_at, pc.user_id,
                u.username, u.avatar, u.tag
         FROM post_comments pc
         JOIN users u ON pc.user_id = u.id
