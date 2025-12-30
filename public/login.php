@@ -125,10 +125,7 @@ require_once '../includes/ads_logic.php';
                         </div>
                         
                         <a href="<?php echo BASE_URL; ?>/oauth-login" class="btn-oauth-gta">
-                            <svg class="gta-logo" viewBox="0 0 24 24" width="20" height="20">
-                                <circle cx="12" cy="12" r="10" fill="#4CAF50"/>
-                                <path d="M12 6C8.69 6 6 8.69 6 12s2.69 6 6 6c1.66 0 3.14-.69 4.22-1.78L12 12V6z" fill="#2E7D32"/>
-                            </svg>
+                            <img src="<?php echo BASE_URL; ?>/assets/common/site-mark.png" alt="" class="oauth-logo">
                             GTA World TR ile Giriş Yap
                         </a>
 
@@ -225,24 +222,27 @@ require_once '../includes/ads_logic.php';
     gap: 12px;
     width: 100%;
     padding: 14px 20px;
-    background: #1a1a1a;
-    border: 1px solid #333;
+    background: linear-gradient(135deg, var(--orange-accent, #c03901) 0%, #ff6b35 100%);
+    border: none;
     border-radius: 8px;
     color: #fff;
     font-size: 1rem;
-    font-weight: 500;
+    font-weight: 600;
     text-decoration: none;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(192, 57, 1, 0.3);
 }
 
 .btn-oauth-gta:hover {
-    background: #252525;
-    border-color: #4CAF50;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(192, 57, 1, 0.4);
 }
 
-.btn-oauth-gta .gta-logo {
-    flex-shrink: 0;
+.btn-oauth-gta .oauth-logo {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
 }
 </style>
 
