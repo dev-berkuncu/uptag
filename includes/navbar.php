@@ -11,22 +11,22 @@ $isUserLoggedIn = isset($_SESSION['user_id']);
 $navUsername = $_SESSION['username'] ?? '';
 $pendingCount = 0; // Initialize pending count
 
-// Fetch balance if logged in
+// Fetch balance if logged in (from wallets table)
 if ($isUserLoggedIn) {
     try {
         if (!isset($db)) {
             $db = Database::getInstance()->getConnection();
         }
         
-        // Balance
-        $stmtNav = $db->prepare("SELECT balance FROM users WHERE id = ?");
+        // Balance from wallets table
+        $stmtNav = $db->prepare("SELECT balance FROM wallets WHERE user_id = ?");
         $stmtNav->execute([$_SESSION['user_id']]);
-        $userNav = $stmtNav->fetch(PDO::FETCH_ASSOC);
-        if ($userNav) {
-            $navBalance = number_format($userNav['balance'], 0, '', '.');
+        $walletNav = $stmtNav->fetch(PDO::FETCH_ASSOC);
+        if ($walletNav) {
+            $navBalance = number_format($walletNav['balance'], 0, '', '.');
         }
     } catch (PDOException $e) {
-        // Silent fail
+        // wallets table may not exist yet - silent fail
     }
 }
 
@@ -56,6 +56,7 @@ if (!isset($activeNav)) $activeNav = '';
         <div class="nav-links right">
             <?php if ($isUserLoggedIn): ?>
                 
+                <a href="<?php echo BASE_URL; ?>/wallet" class="nav-link <?php echo ($activeNav === 'wallet') ? 'active' : ''; ?>" title="Cüzdan">💰 $<?php echo $navBalance; ?></a>
                 <a href="<?php echo BASE_URL; ?>/profile" class="nav-link <?php echo ($activeNav === 'profile') ? 'active' : ''; ?>"><?php echo escape($navUsername); ?></a>
                 <a href="<?php echo BASE_URL; ?>/logout" class="nav-link">Çıkış</a>
                 <a href="<?php echo BASE_URL; ?>/premium" class="nav-btn-premium">✨ Reklam Kaldır</a>
