@@ -89,7 +89,7 @@ try {
                 <?php else: ?>
                     <div class="notifications-list">
                         <?php foreach ($notifications as $notif): ?>
-                            <a href="<?php echo BASE_URL; ?>/<?php echo $notif['checkin_id'] ? 'posts/' . $notif['checkin_id'] : 'profile?id=' . $notif['from_user_id']; ?>" target="_blank" class="notification-card <?php echo $notif['is_read'] ? '' : 'unread'; ?>">
+                            <a href="<?php echo BASE_URL; ?>/<?php echo $notif['checkin_id'] ? 'posts/' . $notif['checkin_id'] : 'profile?id=' . $notif['from_user_id']; ?>" data-post-id="<?php echo $notif['checkin_id'] ?? 'null'; ?>" class="notification-card <?php echo $notif['is_read'] ? '' : 'unread'; ?>">
                                 <div class="notification-icon-wrapper">
                                     <div class="notification-avatar">
                                         <?php if (!empty($notif['from_avatar'])): ?>
@@ -185,21 +185,26 @@ try {
     });
 
     async function openPostModal(postId) {
+        console.log('Opening modal for post ID:', postId);
         modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
         modalContent.innerHTML = '<div class="post-modal-loading">Yükleniyor...</div>';
         
         try {
-            const res = await fetch('<?php echo BASE_URL; ?>/api/get-post.php?id=' + postId);
+            const url = '<?php echo BASE_URL; ?>/api/get-post.php?id=' + postId;
+            console.log('Fetching URL:', url);
+            const res = await fetch(url);
             const data = await res.json();
+            console.log('API Response:', data);
             
             if (data.success) {
                 renderPostModal(data.post, data.comments);
             } else {
-                modalContent.innerHTML = '<div class="post-modal-error">Post bulunamadı.</div>';
+                modalContent.innerHTML = '<div class="post-modal-error">' + (data.error || 'Post bulunamadı.') + '</div>';
             }
         } catch (e) {
-            modalContent.innerHTML = '<div class="post-modal-error">Bir hata oluştu.</div>';
+            console.error('Modal Error:', e);
+            modalContent.innerHTML = '<div class="post-modal-error">Bir hata oluştu: ' + e.message + '</div>';
         }
     }
 
