@@ -60,6 +60,15 @@ if ($action === 'like' && $_SERVER['REQUEST_METHOD'] === 'POST') {
             $insertStmt = $db->prepare("INSERT INTO post_likes (user_id, checkin_id, repost_id) VALUES (?, ?, ?)");
             $insertStmt->execute([$userId, $checkinId, $repostId]);
             $liked = true;
+            
+            // Bildirim gönder (kendi postunu beğendiyse göndermez)
+            $ownerStmt = $db->prepare("SELECT user_id FROM checkins WHERE id = ?");
+            $ownerStmt->execute([$checkinId]);
+            $owner = $ownerStmt->fetch();
+            if ($owner && $owner['user_id'] != $userId) {
+                $notifStmt = $db->prepare("INSERT INTO notifications (user_id, from_user_id, type, checkin_id) VALUES (?, ?, 'like', ?)");
+                $notifStmt->execute([$owner['user_id'], $userId, $checkinId]);
+            }
         }
         
         // Yeni sayıyı getir (repost için veya orijinal post için)
@@ -155,6 +164,12 @@ if ($action === 'repost' && $_SERVER['REQUEST_METHOD'] === 'POST') {
             $insertStmt->execute([$userId, $checkinId]);
         }
         $repostId = $db->lastInsertId();
+        
+        // Bildirim gönder (post sahibine)
+        if ($owner['user_id'] != $userId) {
+            $notifStmt = $db->prepare("INSERT INTO notifications (user_id, from_user_id, type, checkin_id) VALUES (?, ?, 'repost', ?)");
+            $notifStmt->execute([$owner['user_id'], $userId, $checkinId]);
+        }
         
         // Yeni sayıyı getir
         $countStmt = $db->prepare("SELECT COUNT(*) as count FROM post_reposts WHERE checkin_id = ?");
