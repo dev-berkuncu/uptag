@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Takip Sistemi Migration
  * Follows tablosunu oluşturur
@@ -34,4 +34,3 @@ try {
     echo "❌ Hata: " . $e->getMessage() . "\n";
 }
 ?>
-

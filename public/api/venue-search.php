@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Venue Search API - Autocomplete for @ mentions
  * Returns JSON list of venues matching search query
@@ -42,4 +42,3 @@ try {
     http_response_code(500);
     echo json_encode(['error' => 'Database error']);
 }
-

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once '../../config/config.php';
 require_once '../../config/database.php';
 require_once 'admin_auth.php';
@@ -103,7 +103,7 @@ $pendingVenues = $db->query("SELECT COUNT(*) FROM venues WHERE is_active = 0")->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo escape($pageTitle); ?> - Sociaera Admin</title>
+    <title><?php echo escape($pageTitle); ?> - Uptag Admin</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -570,4 +570,3 @@ $pendingVenues = $db->query("SELECT COUNT(*) FROM venues WHERE is_active = 0")->
 
 </body>
 </html>
-

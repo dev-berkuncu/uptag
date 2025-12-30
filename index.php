@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once 'config/config.php';
 require_once 'config/database.php';
 
@@ -8,7 +8,7 @@ include 'includes/header.php';
 ?>
 
 <div class="hero">
-    <h1>Sociaera'a Hoş Geldiniz!</h1>
+    <h1>Uptag'a Hoş Geldiniz!</h1>
     <p>Mekanları keşfedin, check-in yapın ve liderlik tablosunda yer alın.</p>
     
     <?php if (!isLoggedIn()): ?>
@@ -71,5 +71,4 @@ include 'includes/header.php';
 </style>
 
 <?php include 'includes/footer.php'; ?>
-
 

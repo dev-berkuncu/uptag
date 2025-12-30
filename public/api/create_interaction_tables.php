@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Post Etkileşimleri Tablolarını Oluştur
  */
@@ -57,4 +57,3 @@ try {
 } catch (PDOException $e) {
     echo "❌ Hata: " . $e->getMessage() . "\n";
 }
-

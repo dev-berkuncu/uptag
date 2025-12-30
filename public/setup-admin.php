@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Admin Hesap Kurulum Scripti
  * Bu scripti bir kez çalıştırın, sonra silin!
@@ -23,7 +23,7 @@ try {
     if (!$checkAdmin->fetch()) {
         $hash = password_hash($adminPassword, PASSWORD_DEFAULT);
         $stmt = $db->prepare("INSERT INTO users (username, email, password_hash, is_admin, created_at) VALUES (?, ?, ?, 1, NOW())");
-        $stmt->execute(['admin', 'admin@Sociaera.local', $hash]);
+        $stmt->execute(['admin', 'admin@uptag.local', $hash]);
         $results[] = "✅ 'admin' hesabı oluşturuldu - Şifre: <strong>$adminPassword</strong>";
     } else {
         $results[] = "⚠️ 'admin' hesabı zaten mevcut";
@@ -40,7 +40,7 @@ try {
     if (!$checkGTAW->fetch()) {
         $hash = password_hash($gtawPassword, PASSWORD_DEFAULT);
         $stmt = $db->prepare("INSERT INTO users (username, email, password_hash, is_admin, created_at) VALUES (?, ?, ?, 1, NOW())");
-        $stmt->execute(['GTAW', 'gtaw@Sociaera.local', $hash]);
+        $stmt->execute(['GTAW', 'gtaw@uptag.local', $hash]);
         $results[] = "✅ 'GTAW' hesabı oluşturuldu - Şifre: <strong>$gtawPassword</strong>";
     } else {
         $results[] = "⚠️ 'GTAW' hesabı zaten mevcut";
@@ -69,7 +69,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Hesap Kurulumu - Sociaera</title>
+    <title>Admin Hesap Kurulumu - Uptag</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -145,4 +145,3 @@ try {
     </div>
 </body>
 </html>
-

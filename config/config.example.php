@@ -1,6 +1,6 @@
-﻿<?php
+<?php
 /**
- * Sociaera - Ana Yapılandırma Dosyası
+ * Uptag - Ana Yapılandırma Dosyası
  * 
  * Bu dosyayı config.php olarak kopyalayın ve kendi ayarlarınızı girin.
  */
@@ -25,7 +25,7 @@ define('DB_PASS', 'sifre');
 define('DB_CHARSET', 'utf8mb4');
 
 // Site ayarları - KENDİ DOMAİNİNİZİ GİRİN
-define('SITE_NAME', 'Sociaera');
+define('SITE_NAME', 'Uptag');
 define('BASE_URL', 'https://siteniz.com');
 
 // Güvenlik ayarları
@@ -49,4 +49,3 @@ spl_autoload_register(function ($class) {
 
 // Yardımcı fonksiyonlar
 require_once INCLUDES_PATH . '/functions.php';
-

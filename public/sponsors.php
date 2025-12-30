@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once '../config/config.php';
 require_once '../config/database.php';
 
@@ -27,8 +27,8 @@ require_once '../includes/ads_logic.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Sociaera'ı destekleyen sponsorlarımız">
-    <title><?php echo escape($pageTitle); ?> - Sociaera</title>
+    <meta name="description" content="Uptag'ı destekleyen sponsorlarımız">
+    <title><?php echo escape($pageTitle); ?> - Uptag</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -64,7 +64,7 @@ require_once '../includes/ads_logic.php';
             <section class="page-header">
                 <div class="page-header-content">
                     <h1 class="page-title">Sponsorlarımız</h1>
-                    <p class="page-subtitle">Sociaera'ı destekleyen değerli iş ortaklarımız</p>
+                    <p class="page-subtitle">Uptag'ı destekleyen değerli iş ortaklarımız</p>
                 </div>
             </section>
 
@@ -75,7 +75,7 @@ require_once '../includes/ads_logic.php';
                 <div class="sponsors-showcase-card">
                     <div class="showcase-header">
                         <h2>🤝 Destekçilerimiz</h2>
-                        <p>Sociaera'ı güçlü kılan değerli iş ortaklarımız</p>
+                        <p>Uptag'ı güçlü kılan değerli iş ortaklarımız</p>
                     </div>
                     
                     <div class="sponsors-showcase-grid">
@@ -96,8 +96,8 @@ require_once '../includes/ads_logic.php';
                 <!-- Become a Sponsor CTA -->
                 <div class="sponsor-cta">
                     <h3>Sponsor Olmak İster Misiniz?</h3>
-                    <p>Sociaera ile iş birliği yaparak markanızı binlerce kullanıcıya ulaştırın.</p>
-                    <a href="mailto:sponsor@Sociaera.com" class="btn btn-primary">İletişime Geçin</a>
+                    <p>Uptag ile iş birliği yaparak markanızı binlerce kullanıcıya ulaştırın.</p>
+                    <a href="mailto:sponsor@uptag.com" class="btn btn-primary">İletişime Geçin</a>
                 </div>
 
             </section>
@@ -137,8 +137,8 @@ require_once '../includes/ads_logic.php';
         </div>
         <div class="footer-content">
             <div class="footer-about">
-                <h3>Sociaera</h3>
-                <p>Sociaera, sosyal keşif ve check-in platformudur. Favori mekanlarınızda anlarınızı paylaşın.</p>
+                <h3>Uptag</h3>
+                <p>Uptag, sosyal keşif ve check-in platformudur. Favori mekanlarınızda anlarınızı paylaşın.</p>
             </div>
             <div class="footer-links">
                 <h4>Keşfet</h4>
@@ -157,10 +157,9 @@ require_once '../includes/ads_logic.php';
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; <?php echo date('Y'); ?> Sociaera. Tüm hakları saklıdır.</p>
+            <p>&copy; <?php echo date('Y'); ?> Uptag. Tüm hakları saklıdır.</p>
         </div>
     </footer>
 
 </body>
 </html>
-

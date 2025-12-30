@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once '../config/config.php';
 require_once '../config/database.php';
 
@@ -23,4 +23,3 @@ try {
         'error' => $e->getMessage()
     ]);
 }
-

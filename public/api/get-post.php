@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Get Post API - Returns post data for modal display
  */
@@ -76,4 +76,3 @@ try {
 } catch (PDOException $e) {
     echo json_encode(['success' => false, 'error' => 'DB Error: ' . $e->getMessage()]);
 }
-

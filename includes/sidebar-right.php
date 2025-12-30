@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // includes/sidebar-right.php
 // Bu dosya ads_logic.php'nin daha önce dahil edilmiş olmasını gerektirir
 ?>
@@ -15,4 +15,3 @@
         </div>
     <?php endif; ?>
 </aside>
-

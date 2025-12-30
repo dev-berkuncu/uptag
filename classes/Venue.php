@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Mekan Sınıfı
  */
@@ -152,5 +152,4 @@ class Venue {
         return $stmt->fetchAll();
     }
 }
-
 

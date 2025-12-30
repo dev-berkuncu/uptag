@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once '../config/config.php';
 require_once '../config/database.php';
 
@@ -49,8 +49,8 @@ require_once '../includes/ads_logic.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="<?php echo escape($venueData['name']); ?> - Sociaera'da check-in yap ve puan kazan!">
-    <title><?php echo escape($pageTitle); ?> - Sociaera</title>
+    <meta name="description" content="<?php echo escape($venueData['name']); ?> - Uptag'da check-in yap ve puan kazan!">
+    <title><?php echo escape($pageTitle); ?> - Uptag</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -279,15 +279,14 @@ require_once '../includes/ads_logic.php';
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-about">
-                <h3>Sociaera</h3>
-                <p>Sociaera, sosyal keşif ve check-in platformudur. Favori mekanlarınızde anlarınızı paylaşın.</p>
+                <h3>Uptag</h3>
+                <p>Uptag, sosyal keşif ve check-in platformudur. Favori mekanlarınızde anlarınızı paylaşın.</p>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; <?php echo date('Y'); ?> Sociaera. Tüm hakları saklıdır.</p>
+            <p>&copy; <?php echo date('Y'); ?> Uptag. Tüm hakları saklıdır.</p>
         </div>
     </footer>
 
 </body>
 </html>
-

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once '../config/config.php';
 require_once '../config/database.php';
 
@@ -171,7 +171,7 @@ $bannerUrl = $user['banner'] ? BASE_URL . '/uploads/banners/' . $user['banner'] 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Profil ayarlarını düzenle">
-    <title><?php echo escape($pageTitle); ?> - Sociaera</title>
+    <title><?php echo escape($pageTitle); ?> - Uptag</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -366,10 +366,9 @@ $bannerUrl = $user['banner'] ? BASE_URL . '/uploads/banners/' . $user['banner'] 
             <?php endif; ?>
         </div>
         <div class="footer-bottom">
-            <p>&copy; <?php echo date('Y'); ?> Sociaera. Tüm hakları saklıdır.</p>
+            <p>&copy; <?php echo date('Y'); ?> Uptag. Tüm hakları saklıdır.</p>
         </div>
     </footer>
 
 </body>
 </html>
-

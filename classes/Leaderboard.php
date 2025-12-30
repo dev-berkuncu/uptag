@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Leaderboard Sınıfı
  */
@@ -89,5 +89,4 @@ class Leaderboard {
         ];
     }
 }
-
 

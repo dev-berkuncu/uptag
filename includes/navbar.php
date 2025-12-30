@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Shared Navbar Component
  * Requires: config.php, database.php (already included in main pages)
@@ -46,10 +46,10 @@ if (!isset($activeNav)) $activeNav = '';
         <div class="nav-brand">
             <?php if (file_exists(ROOT_PATH . '/assets/common/site-mark.png')): ?>
                 <a href="<?php echo BASE_URL; ?>/<?php echo $isUserLoggedIn ? 'dashboard.php' : 'index.php'; ?>">
-                    <img src="<?php echo BASE_URL; ?>/assets/common/site-mark.png" alt="Sociaera">
+                    <img src="<?php echo BASE_URL; ?>/assets/common/site-mark.png" alt="Uptag">
                 </a>
             <?php else: ?>
-                <a href="<?php echo BASE_URL; ?>/dashboard" class="nav-brand-fallback">Sociaera</a>
+                <a href="<?php echo BASE_URL; ?>/dashboard" class="nav-brand-fallback">Uptag</a>
             <?php endif; ?>
         </div>
         
@@ -68,4 +68,3 @@ if (!isset($activeNav)) $activeNav = '';
         </div>
     </div>
 </nav>
-

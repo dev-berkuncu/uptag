@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Admin Kimlik Doğrulama Yardımcısı
  */
@@ -32,4 +32,3 @@ function adminLogout() {
     unset($_SESSION['admin_username']);
     unset($_SESSION['admin_auth']);
 }
-

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Veritabanı Bağlantı Sınıfı
  */
@@ -44,5 +44,4 @@ class Database {
         throw new Exception("Cannot unserialize singleton");
     }
 }
-
 

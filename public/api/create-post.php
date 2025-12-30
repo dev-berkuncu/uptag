@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Create Post API - Twitter-style posting with venue tags and image upload
  */
@@ -148,5 +148,4 @@ try {
     http_response_code(500);
     echo json_encode(['success' => false, 'error' => 'Bir hata oluştu']);
 }
-
 
