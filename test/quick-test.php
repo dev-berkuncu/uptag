@@ -1,9 +1,9 @@
-<?php
+﻿<?php
 /**
  * Hızlı Test Scripti
  * 
  * Bu script, uygulamanın temel fonksiyonlarını test eder.
- * Kullanım: http://localhost/uptag/test/quick-test.php
+ * Kullanım: http://localhost/Sociaera/test/quick-test.php
  */
 
 require_once dirname(__DIR__) . '/config/config.php';
@@ -15,7 +15,7 @@ header('Content-Type: text/html; charset=utf-8');
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>Uptag - Hızlı Test</title>
+    <title>Sociaera - Hızlı Test</title>
     <style>
         body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
         .test-container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
@@ -32,7 +32,7 @@ header('Content-Type: text/html; charset=utf-8');
 </head>
 <body>
     <div class="test-container">
-        <h1>🔍 Uptag - Hızlı Test</h1>
+        <h1>🔍 Sociaera - Hızlı Test</h1>
         
         <?php
         $tests = [];
@@ -189,4 +189,5 @@ header('Content-Type: text/html; charset=utf-8');
     </div>
 </body>
 </html>
+
 

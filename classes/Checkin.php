@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Check-in Sınıfı
  */
@@ -185,4 +185,5 @@ class Checkin {
         return ['success' => false, 'message' => 'İşlem başarısız.'];
     }
 }
+
 

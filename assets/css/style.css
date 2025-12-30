@@ -1,4 +1,4 @@
-/* Uptag - Temel Stil Dosyası */
+﻿/* Sociaera - Temel Stil Dosyası */
 
 * {
     margin: 0;
@@ -994,4 +994,5 @@ body:has(.landing-navbar) {
         font-size: 1.25rem;
     }
 }
+
 

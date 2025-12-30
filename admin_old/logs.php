@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../config/config.php';
 require_once '../config/database.php';
 
@@ -151,4 +151,5 @@ include '../includes/header.php';
 <?php endif; ?>
 
 <?php include '../includes/footer.php'; ?>
+
 

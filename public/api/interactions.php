@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Post Etkileşimleri API
  * Beğeni, Repost ve Yorum işlemleri
@@ -472,3 +472,4 @@ if ($action === 'check_follow' && $_SERVER['REQUEST_METHOD'] === 'GET') {
 }
 
 echo json_encode(['success' => false, 'error' => 'Geçersiz istek.']);
+

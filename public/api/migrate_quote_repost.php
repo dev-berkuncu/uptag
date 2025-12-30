@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Quote Repost Migration Script
  * Veritabanını quote repost için günceller
@@ -41,3 +41,4 @@ try {
     echo "❌ Hata: " . $e->getMessage() . "\n";
 }
 ?>
+

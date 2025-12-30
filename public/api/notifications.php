@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Notifications API
  * Bildirim işlemleri
@@ -111,3 +111,4 @@ if ($action === 'list' || $action === '') {
 }
 
 echo json_encode(['success' => false, 'error' => 'Geçersiz işlem.']);
+

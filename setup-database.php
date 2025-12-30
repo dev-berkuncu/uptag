@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Veritabanı Kurulum Scripti
  * Bu script veritabanını ve tabloları otomatik olarak oluşturur
@@ -12,9 +12,9 @@ ini_set('display_errors', 1);
 $db_host = 'localhost';
 $db_user = 'root';
 $db_pass = '';
-$db_name = 'uptag';
+$db_name = 'Sociaera';
 
-echo "<h1>Uptag Veritabanı Kurulumu</h1>";
+echo "<h1>Sociaera Veritabanı Kurulumu</h1>";
 echo "<pre>";
 
 try {
@@ -93,4 +93,5 @@ try {
 
 echo "</pre>";
 ?>
+
 

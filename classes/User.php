@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Kullanıcı Sınıfı
  */
@@ -139,4 +139,5 @@ class User {
         return $result['count'] ?? 0;
     }
 }
+
 

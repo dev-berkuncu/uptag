@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../config/config.php';
 require_once '../config/database.php';
 
@@ -83,8 +83,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Uptag'a mekan ekle - İşletmenizi sisteme kaydedin">
-    <title><?php echo escape($pageTitle); ?> - Uptag</title>
+    <meta name="description" content="Sociaera'a mekan ekle - İşletmenizi sisteme kaydedin">
+    <title><?php echo escape($pageTitle); ?> - Sociaera</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <!-- Header -->
             <div class="add-venue-header">
                 <h1>🏢 Mekan Ekle</h1>
-                <p>İşletmenizi Uptag'a ekleyin ve müşterilerinizin check-in yapmasını sağlayın</p>
+                <p>İşletmenizi Sociaera'a ekleyin ve müşterilerinizin check-in yapmasını sağlayın</p>
             </div>
 
             <!-- Info Box -->
@@ -110,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="info-icon">ℹ️</div>
                 <div class="info-text">
                     <strong>Nasıl çalışır?</strong>
-                    <p>Mekanınızı ekledikten sonra, ekibimiz bilgileri doğrulayacak ve onaylayacaktır. Onay sürecinden sonra mekanınız Uptag'da yayınlanacak ve kullanıcılar check-in yapabilecektir.</p>
+                    <p>Mekanınızı ekledikten sonra, ekibimiz bilgileri doğrulayacak ve onaylayacaktır. Onay sürecinden sonra mekanınız Sociaera'da yayınlanacak ve kullanıcılar check-in yapabilecektir.</p>
                 </div>
             </div>
 
@@ -182,9 +182,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- FOOTER -->
     <footer class="footer">
         <div class="footer-bottom">
-            <p>&copy; <?php echo date('Y'); ?> Uptag. Tüm hakları saklıdır.</p>
+            <p>&copy; <?php echo date('Y'); ?> Sociaera. Tüm hakları saklıdır.</p>
         </div>
     </footer>
 
 </body>
 </html>
+

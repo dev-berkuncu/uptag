@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
@@ -36,4 +36,5 @@
                 <?php unset($_SESSION['message'], $_SESSION['message_type']); ?>
             </div>
         <?php endif; ?>
+
 

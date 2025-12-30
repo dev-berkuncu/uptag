@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../config/config.php';
 require_once '../config/database.php';
 
@@ -38,7 +38,7 @@ require_once '../includes/ads_logic.php';
             <!-- HERO SECTION (Inside Grid) -->
             <section class="hero hero-compact">
                 <div class="hero-bg">
-                    <img src="<?php echo BASE_URL; ?>/assets/index/hero.png" alt="Uptag Hero">
+                    <img src="<?php echo BASE_URL; ?>/assets/index/hero.png" alt="Sociaera Hero">
                 </div>
                 <div class="hero-overlay"></div>
                 <div class="hero-content">
@@ -119,9 +119,9 @@ require_once '../includes/ads_logic.php';
         <!-- Footer Content -->
         <div class="footer-content">
             <div class="footer-about">
-                <h3>Uptag</h3>
+                <h3>Sociaera</h3>
                 <p>
-                    Uptag, sosyal keşif ve check-in platformudur. Favori mekanlarınızda 
+                    Sociaera, sosyal keşif ve check-in platformudur. Favori mekanlarınızda 
                     anlarınızı paylaşın, arkadaşlarınızla yarışın ve şehri birlikte keşfedin.
                 </p>
             </div>
@@ -146,10 +146,11 @@ require_once '../includes/ads_logic.php';
         </div>
 
         <div class="footer-bottom">
-            <p>&copy; <?php echo date('Y'); ?> Uptag. Tüm hakları saklıdır.</p>
+            <p>&copy; <?php echo date('Y'); ?> Sociaera. Tüm hakları saklıdır.</p>
         </div>
 
     </footer>
 
 </body>
 </html>
+

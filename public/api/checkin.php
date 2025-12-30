@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../config/config.php';
 require_once '../config/database.php';
 
@@ -94,3 +94,4 @@ if ($action === 'post' && $_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 echo json_encode(['success' => false, 'message' => 'Geçersiz istek.']);
+

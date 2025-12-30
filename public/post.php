@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Post Detail Page - Shows a single post with its unique URL
  */
@@ -78,7 +78,7 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="<?php echo escape($post['username']); ?> - <?php echo escape(substr($post['note'] ?? $post['venue_name'], 0, 100)); ?>">
-    <title><?php echo escape($pageTitle); ?> - Uptag</title>
+    <title><?php echo escape($pageTitle); ?> - Sociaera</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -232,7 +232,7 @@ try {
     <!-- FOOTER -->
     <footer class="footer footer-minimal">
         <div class="footer-bottom">
-            <p>&copy; <?php echo date('Y'); ?> Uptag. Tüm hakları saklıdır.</p>
+            <p>&copy; <?php echo date('Y'); ?> Sociaera. Tüm hakları saklıdır.</p>
         </div>
     </footer>
 
@@ -301,3 +301,4 @@ try {
 
 </body>
 </html>
+

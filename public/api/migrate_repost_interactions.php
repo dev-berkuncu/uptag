@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Repost'lara beğeni ve yorum desteği eklemek için migration
  */
@@ -44,3 +44,4 @@ try {
 } catch (Exception $e) {
     echo "❌ Hata: " . $e->getMessage() . "\n";
 }
+

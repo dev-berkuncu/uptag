@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Yardımcı Fonksiyonlar
  */
@@ -179,4 +179,5 @@ function validateCsrfToken($token) {
 function csrfField() {
     return '<input type="hidden" name="csrf_token" value="' . escape(generateCsrfToken()) . '">';
 }
+
 

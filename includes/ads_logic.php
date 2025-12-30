@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // includes/ads_logic.php
 // Reklamları veritabanından çekmek için ortak mantık
 
@@ -40,3 +40,4 @@ try {
     error_log("Ads fetch error: " . $e->getMessage());
 }
 ?>
+

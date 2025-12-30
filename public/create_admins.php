@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../config/config.php';
 require_once '../config/database.php';
 
@@ -7,12 +7,12 @@ $db = Database::getInstance()->getConnection();
 $accounts = [
     [
         'username' => 'Gabriel Cruz',
-        'email' => 'gabriel@uptag.local',
+        'email' => 'gabriel@Sociaera.local',
         'password' => 'Gabriel!' . rand(1000, 9999)
     ],
     [
         'username' => 'GTAW',
-        'email' => 'gtaw@uptag.local',
+        'email' => 'gtaw@Sociaera.local',
         'password' => 'GTAW!' . rand(1000, 9999)
     ]
 ];
@@ -65,3 +65,4 @@ foreach ($accounts as $acc) {
     </div>
 </body>
 </html>
+

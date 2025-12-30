@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Kullanıcı Arama API
  * @ mention için kullanıcı arama
@@ -68,3 +68,4 @@ try {
 } catch (PDOException $e) {
     echo json_encode(['success' => false, 'error' => 'Arama yapılamadı.']);
 }
+

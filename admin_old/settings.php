@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../config/config.php';
 require_once '../config/database.php';
 
@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'checkin_cooldown_seconds' => (int)($_POST['checkin_cooldown_seconds'] ?? 300),
         'checkin_rate_limit_count' => (int)($_POST['checkin_rate_limit_count'] ?? 10),
         'checkin_rate_limit_window_seconds' => (int)($_POST['checkin_rate_limit_window_seconds'] ?? 3600),
-        'site_name' => trim($_POST['site_name'] ?? 'Uptag'),
+        'site_name' => trim($_POST['site_name'] ?? 'Sociaera'),
         'contact_email' => trim($_POST['contact_email'] ?? ''),
         'timezone' => trim($_POST['timezone'] ?? 'Europe/Istanbul'),
     ];
@@ -36,8 +36,8 @@ $currentSettings = [
     'checkin_cooldown_seconds' => getSetting('checkin_cooldown_seconds', 300),
     'checkin_rate_limit_count' => getSetting('checkin_rate_limit_count', 10),
     'checkin_rate_limit_window_seconds' => getSetting('checkin_rate_limit_window_seconds', 3600),
-    'site_name' => getSetting('site_name', 'Uptag'),
-    'contact_email' => getSetting('contact_email', 'admin@uptag.com'),
+    'site_name' => getSetting('site_name', 'Sociaera'),
+    'contact_email' => getSetting('contact_email', 'admin@Sociaera.com'),
     'timezone' => getSetting('timezone', 'Europe/Istanbul'),
 ];
 
@@ -118,4 +118,5 @@ include '../includes/header.php';
 </div>
 
 <?php include '../includes/footer.php'; ?>
+
 

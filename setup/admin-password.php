@@ -1,11 +1,11 @@
-<?php
+﻿<?php
 /**
  * Admin Şifre Hash Oluşturucu
  * 
  * Bu script, admin kullanıcısı için yeni bir şifre hash'i oluşturur.
  * Kullanım: php setup/admin-password.php
  * 
- * VEYA tarayıcıdan: http://localhost/uptag/setup/admin-password.php?password=YENI_SIFRE
+ * VEYA tarayıcıdan: http://localhost/Sociaera/setup/admin-password.php?password=YENI_SIFRE
  */
 
 require_once dirname(__DIR__) . '/config/config.php';
@@ -55,4 +55,5 @@ if (php_sapi_name() !== 'cli') {
     echo "Veritabanında güncellemek için SQL komutu:\n";
     echo "UPDATE users SET password_hash = '$hash' WHERE username = 'admin';\n";
 }
+
 
