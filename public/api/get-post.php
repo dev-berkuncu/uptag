@@ -17,24 +17,37 @@ if ($postId === 0) {
 try {
     $db = Database::getInstance()->getConnection();
     
-    // Fetch post
+    // First check if the checkin exists at all
+    $checkStmt = $db->prepare("SELECT id, venue_id, user_id FROM checkins WHERE id = ?");
+    $checkStmt->execute([$postId]);
+    $checkResult = $checkStmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$checkResult) {
+        echo json_encode(['success' => false, 'error' => 'Post bulunamadı (ID: ' . $postId . ')']);
+        exit;
+    }
+    
+    // Fetch post with LEFT JOIN to handle missing venue/user
     $stmt = $db->prepare("
         SELECT c.*, 
-               u.username, u.avatar as user_avatar, u.tag as user_tag,
-               v.name as venue_name, v.id as venue_id,
+               COALESCE(u.username, 'Deleted User') as username, 
+               u.avatar as user_avatar, 
+               u.tag as user_tag,
+               COALESCE(v.name, 'Unknown Venue') as venue_name, 
+               COALESCE(v.id, 0) as venue_id,
                (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                (SELECT COUNT(*) FROM post_reposts WHERE checkin_id = c.id) as repost_count,
                (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id) as comment_count
         FROM checkins c
-        JOIN users u ON c.user_id = u.id
-        JOIN venues v ON c.venue_id = v.id
+        LEFT JOIN users u ON c.user_id = u.id
+        LEFT JOIN venues v ON c.venue_id = v.id
         WHERE c.id = ?
     ");
     $stmt->execute([$postId]);
     $post = $stmt->fetch(PDO::FETCH_ASSOC);
     
     if (!$post) {
-        echo json_encode(['success' => false, 'error' => 'Post bulunamadı']);
+        echo json_encode(['success' => false, 'error' => 'Post verisi alınamadı']);
         exit;
     }
     
