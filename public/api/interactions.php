@@ -27,7 +27,6 @@ if (isset($_GET['debug'])) {
 // Beğeni toggle
 if ($action === 'like' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $checkinId = (int)($_POST['checkin_id'] ?? 0);
-    $repostId = !empty($_POST['repost_id']) ? (int)$_POST['repost_id'] : null;
     
     if ($checkinId <= 0) {
         echo json_encode(['success' => false, 'error' => 'Geçersiz post.', 'checkin_id_received' => $_POST['checkin_id'] ?? 'empty']);
@@ -35,30 +34,20 @@ if ($action === 'like' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     
     try {
-        // Mevcut beğeni var mı kontrol et (repost_id dahil)
-        if ($repostId) {
-            $checkStmt = $db->prepare("SELECT id FROM post_likes WHERE user_id = ? AND checkin_id = ? AND repost_id = ?");
-            $checkStmt->execute([$userId, $checkinId, $repostId]);
-        } else {
-            $checkStmt = $db->prepare("SELECT id FROM post_likes WHERE user_id = ? AND checkin_id = ? AND repost_id IS NULL");
-            $checkStmt->execute([$userId, $checkinId]);
-        }
+        // Mevcut beğeni var mı kontrol et
+        $checkStmt = $db->prepare("SELECT id FROM post_likes WHERE user_id = ? AND checkin_id = ?");
+        $checkStmt->execute([$userId, $checkinId]);
         $existing = $checkStmt->fetch();
         
         if ($existing) {
             // Beğeniyi kaldır
-            if ($repostId) {
-                $deleteStmt = $db->prepare("DELETE FROM post_likes WHERE user_id = ? AND checkin_id = ? AND repost_id = ?");
-                $deleteStmt->execute([$userId, $checkinId, $repostId]);
-            } else {
-                $deleteStmt = $db->prepare("DELETE FROM post_likes WHERE user_id = ? AND checkin_id = ? AND repost_id IS NULL");
-                $deleteStmt->execute([$userId, $checkinId]);
-            }
+            $deleteStmt = $db->prepare("DELETE FROM post_likes WHERE user_id = ? AND checkin_id = ?");
+            $deleteStmt->execute([$userId, $checkinId]);
             $liked = false;
         } else {
             // Beğeni ekle
-            $insertStmt = $db->prepare("INSERT INTO post_likes (user_id, checkin_id, repost_id) VALUES (?, ?, ?)");
-            $insertStmt->execute([$userId, $checkinId, $repostId]);
+            $insertStmt = $db->prepare("INSERT INTO post_likes (user_id, checkin_id) VALUES (?, ?)");
+            $insertStmt->execute([$userId, $checkinId]);
             $liked = true;
             
             // Bildirim gönder (kendi postunu beğendiyse göndermez)
@@ -71,14 +60,9 @@ if ($action === 'like' && $_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
         
-        // Yeni sayıyı getir (repost için veya orijinal post için)
-        if ($repostId) {
-            $countStmt = $db->prepare("SELECT COUNT(*) as count FROM post_likes WHERE repost_id = ?");
-            $countStmt->execute([$repostId]);
-        } else {
-            $countStmt = $db->prepare("SELECT COUNT(*) as count FROM post_likes WHERE checkin_id = ? AND repost_id IS NULL");
-            $countStmt->execute([$checkinId]);
-        }
+        // Yeni sayıyı getir
+        $countStmt = $db->prepare("SELECT COUNT(*) as count FROM post_likes WHERE checkin_id = ?");
+        $countStmt->execute([$checkinId]);
         $count = $countStmt->fetch()['count'];
         
         echo json_encode(['success' => true, 'liked' => $liked, 'count' => (int)$count]);
