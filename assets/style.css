@@ -5295,10 +5295,16 @@ img {
 /* ===================================================
    NOTIFICATIONS - MODAL STYLE (Light Theme)
    =================================================== */
-.notifications-container {
+
+/* Override page background for notifications */
+.notifications-page {
+    background: transparent !important;
+}
+
+.notifications-page .notifications-container {
     max-width: 500px;
     margin: 30px auto;
-    background: #ffffff;
+    background: #ffffff !important;
     border-radius: 16px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
     overflow: hidden;
@@ -5333,17 +5339,18 @@ img {
     overflow-y: auto;
 }
 
-.notification-card {
-    display: flex;
+.notifications-page .notification-card {
+    display: flex !important;
     align-items: center;
     gap: 14px;
     padding: 16px 24px;
-    background: #f8f8f8;
+    background: #f8f8f8 !important;
     margin: 0 12px 8px 12px;
     border-radius: 10px;
     text-decoration: none;
     transition: all 0.2s ease;
     position: relative;
+    color: #1a1a1a !important;
 }
 
 .notification-card:first-child {
@@ -5354,13 +5361,13 @@ img {
     margin-bottom: 12px;
 }
 
-.notification-card:hover {
-    background: #efefef;
+.notifications-page .notification-card:hover {
+    background: #efefef !important;
     transform: translateX(2px);
 }
 
-.notification-card.unread {
-    background: #fff;
+.notifications-page .notification-card.unread {
+    background: #fff !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
