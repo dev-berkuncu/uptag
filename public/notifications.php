@@ -176,7 +176,24 @@ try {
                 });
                 const data = await res.json();
                 if (data.success) {
-                    location.reload();
+                    // DOM'dan bildirimleri kaldır
+                    const notificationsList = document.querySelector('.notifications-list');
+                    if (notificationsList) {
+                        notificationsList.style.opacity = '0';
+                        notificationsList.style.transition = 'opacity 0.3s ease';
+                        setTimeout(() => {
+                            notificationsList.innerHTML = `
+                                <div class="notifications-empty">
+                                    <div class="empty-icon">🔕</div>
+                                    <h3>Henüz bildirim yok</h3>
+                                    <p>Birisi sizi etiketlediğinde burada göreceksiniz.</p>
+                                </div>
+                            `;
+                            notificationsList.style.opacity = '1';
+                        }, 300);
+                    }
+                    // Butonu gizle
+                    this.style.display = 'none';
                 } else {
                     alert(data.error || 'Bir hata oluştu.');
                 }
