@@ -78,6 +78,11 @@ try {
                         <h1>Bildirimler</h1>
                         <div class="notifications-filter">Seni etikettiğin</div>
                     </div>
+                    <?php if (!empty($notifications)): ?>
+                    <button class="clear-notifications-btn" id="clearNotificationsBtn">
+                        🗑️ Tümünü Temizle
+                    </button>
+                    <?php endif; ?>
                 </div>
 
                 <?php if (empty($notifications)): ?>
@@ -159,6 +164,28 @@ try {
     </footer>
 
     <script>
+    // Clear Notifications Button
+    const clearBtn = document.getElementById('clearNotificationsBtn');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', async function() {
+            if (!confirm('Tüm bildirimleri silmek istediğinize emin misiniz?')) return;
+            
+            try {
+                const res = await fetch('<?php echo BASE_URL; ?>/api/notifications.php?action=clear', {
+                    method: 'POST'
+                });
+                const data = await res.json();
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert(data.error || 'Bir hata oluştu.');
+                }
+            } catch (e) {
+                alert('Bağlantı hatası: ' + e.message);
+            }
+        });
+    }
+    
     // Post Modal System
     const modal = document.getElementById('post-modal');
     const modalContent = document.getElementById('post-modal-content');

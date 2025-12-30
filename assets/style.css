@@ -5464,6 +5464,30 @@ img {
     display: block;
 }
 
+/* Notifications Header */
+.notifications-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.clear-notifications-btn {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+}
+
+.clear-notifications-btn:hover {
+    background: rgba(239, 68, 68, 0.25);
+}
+
 /* Empty State */
 .notifications-empty {
     text-align: center;

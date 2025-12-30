@@ -62,6 +62,18 @@ if ($action === 'mark_all_read' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
+// Tüm bildirimleri sil
+if ($action === 'clear' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    try {
+        $stmt = $db->prepare("DELETE FROM notifications WHERE user_id = ?");
+        $stmt->execute([$userId]);
+        echo json_encode(['success' => true, 'message' => 'Tüm bildirimler silindi.']);
+    } catch (PDOException $e) {
+        echo json_encode(['success' => false, 'error' => 'Hata oluştu.']);
+    }
+    exit;
+}
+
 // Bildirimleri listele
 if ($action === 'list' || $action === '') {
     $limit = (int)($_GET['limit'] ?? 20);
