@@ -1,5 +1,8 @@
 RewriteEngine On
 
+# Clean URL for posts: /posts/123 -> post.php?id=123
+RewriteRule ^posts/([0-9]+)/?$ post.php?id=$1 [NC,L]
+
 # Remove .php extension
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
