@@ -31,6 +31,11 @@ define('BASE_URL', 'https://siteniz.com');
 // Güvenlik ayarları
 define('SESSION_LIFETIME', 3600 * 24); // 24 saat
 
+// OAuth Ayarları (GTA World)
+define('OAUTH_CLIENT_ID', ''); // GTA World'den alınacak
+define('OAUTH_CLIENT_SECRET', ''); // GTA World'den alınacak
+define('OAUTH_REDIRECT_URI', BASE_URL . '/oauth-callback');
+
 // Dosya yolları
 define('ROOT_PATH', dirname(__DIR__));
 define('INCLUDES_PATH', ROOT_PATH . '/includes');
