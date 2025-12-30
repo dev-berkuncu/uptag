@@ -261,7 +261,15 @@ try {
                 <?php if (isLoggedIn()): ?>
                 <div class="modal-comment-form">
                     <input type="text" id="modal-comment-input" placeholder="Yorum yaz..." />
+                    <label class="modal-image-btn" title="Fotoğraf ekle">
+                        📷
+                        <input type="file" id="modal-comment-image" accept="image/*" style="display:none" />
+                    </label>
                     <button id="modal-comment-submit" data-post-id="${post.id}">Gönder</button>
+                </div>
+                <div id="modal-image-preview" class="modal-image-preview" style="display:none;">
+                    <img id="modal-preview-img" src="" alt="" />
+                    <button id="modal-remove-image" class="modal-remove-image">&times;</button>
                 </div>
                 <?php endif; ?>
             </div>
@@ -292,17 +300,53 @@ try {
         // Attach comment submit handler
         const commentSubmit = document.getElementById('modal-comment-submit');
         const commentInput = document.getElementById('modal-comment-input');
+        const imageInput = document.getElementById('modal-comment-image');
+        const imagePreview = document.getElementById('modal-image-preview');
+        const previewImg = document.getElementById('modal-preview-img');
+        const removeImageBtn = document.getElementById('modal-remove-image');
+        
+        // Image preview handler
+        if (imageInput) {
+            imageInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewImg.src = e.target.result;
+                        imagePreview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+        }
+        
+        // Remove image handler
+        if (removeImageBtn) {
+            removeImageBtn.addEventListener('click', function() {
+                imageInput.value = '';
+                imagePreview.style.display = 'none';
+                previewImg.src = '';
+            });
+        }
+        
         if (commentSubmit && commentInput) {
             commentSubmit.addEventListener('click', async function() {
                 const postId = this.dataset.postId;
                 const comment = commentInput.value.trim();
-                if (!comment) return;
+                const imageFile = imageInput?.files[0];
+                
+                if (!comment && !imageFile) return;
                 
                 try {
+                    const formData = new FormData();
+                    formData.append('checkin_id', postId);
+                    formData.append('content', comment);
+                    if (imageFile) {
+                        formData.append('image', imageFile);
+                    }
+                    
                     const res = await fetch('<?php echo BASE_URL; ?>/api/interactions.php?action=comment', {
                         method: 'POST',
-                        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                        body: 'checkin_id=' + postId + '&content=' + encodeURIComponent(comment)
+                        body: formData
                     });
                     const data = await res.json();
                     if (data.success) {
@@ -311,16 +355,24 @@ try {
                         const noComments = commentsList.querySelector('.no-comments');
                         if (noComments) noComments.remove();
                         
+                        let imageHtml = '';
+                        if (data.comment && data.comment.image) {
+                            imageHtml = `<img src="<?php echo BASE_URL; ?>/${data.comment.image}" class="comment-image" alt="">`;
+                        }
+                        
                         commentsList.innerHTML += `
                             <div class="modal-comment">
                                 <div class="modal-comment-avatar"><?php echo strtoupper(substr($_SESSION['username'] ?? 'U', 0, 1)); ?></div>
                                 <div class="modal-comment-body">
                                     <span class="modal-comment-user"><?php echo escape($_SESSION['username'] ?? 'Sen'); ?></span>
                                     <span class="modal-comment-text">${comment}</span>
+                                    ${imageHtml}
                                 </div>
                             </div>
                         `;
                         commentInput.value = '';
+                        if (imageInput) imageInput.value = '';
+                        if (imagePreview) imagePreview.style.display = 'none';
                     }
                 } catch (e) {
                     console.error('Comment error:', e);
