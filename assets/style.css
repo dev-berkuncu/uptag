@@ -5684,3 +5684,228 @@ img {
     color: var(--text-muted);
     line-height: 1.4;
 }
+
+/* ===================================================
+   POST MODAL OVERLAY
+   =================================================== */
+.post-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.post-modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(4px);
+}
+
+.post-modal-container {
+    position: relative;
+    background: #1a1a1a;
+    border-radius: 16px;
+    max-width: 550px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.post-modal-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 1.3rem;
+    cursor: pointer;
+    z-index: 10;
+    transition: background 0.2s ease;
+}
+
+.post-modal-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.post-modal-content {
+    padding: 20px;
+}
+
+.post-modal-loading,
+.post-modal-error {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-muted);
+}
+
+/* Modal Post Styles */
+.modal-post {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.modal-post-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.modal-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--orange-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    text-decoration: none;
+    overflow: hidden;
+}
+
+.modal-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.modal-user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-username {
+    color: var(--text-white);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.modal-username:hover {
+    color: var(--orange-accent);
+}
+
+.modal-time {
+    color: var(--text-subtle);
+    font-size: 0.85rem;
+}
+
+.modal-post-venue a {
+    color: var(--orange-accent);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.modal-post-venue a:hover {
+    text-decoration: underline;
+}
+
+.modal-post-text {
+    color: var(--text-white);
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.modal-post-image {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.modal-post-image img {
+    width: 100%;
+    display: block;
+}
+
+.modal-post-stats {
+    display: flex;
+    gap: 20px;
+    padding: 12px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.modal-comments {
+    margin-top: 8px;
+}
+
+.modal-comments h4 {
+    color: var(--text-white);
+    font-size: 1rem;
+    margin-bottom: 12px;
+}
+
+.modal-comment {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.modal-comment-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.modal-comment-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.modal-comment-body {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 8px 12px;
+}
+
+.modal-comment-user {
+    font-weight: 600;
+    color: var(--text-white);
+    margin-right: 6px;
+}
+
+.modal-comment-text {
+    color: var(--text-muted);
+}
+
+.modal-view-full {
+    display: block;
+    text-align: center;
+    padding: 12px;
+    color: var(--orange-accent);
+    text-decoration: none;
+    font-weight: 500;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 8px;
+}
+
+.modal-view-full:hover {
+    background: rgba(255, 255, 255, 0.05);
+}

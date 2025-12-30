@@ -140,12 +140,127 @@ try {
 
     </div>
 
+    <!-- Post Modal Overlay -->
+    <div id="post-modal" class="post-modal-overlay" style="display: none;">
+        <div class="post-modal-backdrop"></div>
+        <div class="post-modal-container">
+            <button class="post-modal-close">&times;</button>
+            <div class="post-modal-content" id="post-modal-content">
+                <div class="post-modal-loading">Yükleniyor...</div>
+            </div>
+        </div>
+    </div>
+
     <!-- FOOTER -->
     <footer class="footer footer-minimal">
         <div class="footer-bottom">
             <p>&copy; <?php echo date('Y'); ?> Uptag. Tüm hakları saklıdır.</p>
         </div>
     </footer>
+
+    <script>
+    // Post Modal System
+    const modal = document.getElementById('post-modal');
+    const modalContent = document.getElementById('post-modal-content');
+    const closeBtn = modal.querySelector('.post-modal-close');
+    const backdrop = modal.querySelector('.post-modal-backdrop');
+
+    // Open modal when clicking notification
+    document.querySelectorAll('.notification-card').forEach(card => {
+        card.addEventListener('click', async function(e) {
+            e.preventDefault();
+            const href = this.getAttribute('href');
+            
+            // Extract post ID from /posts/123 format
+            const match = href.match(/\/posts\/(\d+)/);
+            if (!match) {
+                // Not a post link, open normally
+                window.open(href, '_blank');
+                return;
+            }
+            
+            const postId = match[1];
+            openPostModal(postId);
+        });
+    });
+
+    async function openPostModal(postId) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        modalContent.innerHTML = '<div class="post-modal-loading">Yükleniyor...</div>';
+        
+        try {
+            const res = await fetch('<?php echo BASE_URL; ?>/api/get-post.php?id=' + postId);
+            const data = await res.json();
+            
+            if (data.success) {
+                renderPostModal(data.post, data.comments);
+            } else {
+                modalContent.innerHTML = '<div class="post-modal-error">Post bulunamadı.</div>';
+            }
+        } catch (e) {
+            modalContent.innerHTML = '<div class="post-modal-error">Bir hata oluştu.</div>';
+        }
+    }
+
+    function renderPostModal(post, comments) {
+        let commentsHtml = '';
+        if (comments && comments.length > 0) {
+            commentsHtml = comments.map(c => `
+                <div class="modal-comment">
+                    <div class="modal-comment-avatar">
+                        ${c.avatar ? `<img src="<?php echo BASE_URL; ?>/uploads/avatars/${c.avatar}" alt="">` : c.username.charAt(0).toUpperCase()}
+                    </div>
+                    <div class="modal-comment-body">
+                        <span class="modal-comment-user">${c.username}</span>
+                        <span class="modal-comment-text">${c.comment}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        modalContent.innerHTML = `
+            <div class="modal-post">
+                <div class="modal-post-header">
+                    <a href="<?php echo BASE_URL; ?>/profile?id=${post.user_id}" class="modal-avatar">
+                        ${post.user_avatar ? `<img src="<?php echo BASE_URL; ?>/uploads/avatars/${post.user_avatar}" alt="">` : post.username.charAt(0).toUpperCase()}
+                    </a>
+                    <div class="modal-user-info">
+                        <a href="<?php echo BASE_URL; ?>/profile?id=${post.user_id}" class="modal-username">${post.username}</a>
+                        <span class="modal-time">${post.created_at}</span>
+                    </div>
+                </div>
+                <div class="modal-post-venue">
+                    <a href="<?php echo BASE_URL; ?>/venue-detail?id=${post.venue_id}">${post.venue_name}</a>
+                </div>
+                ${post.note ? `<div class="modal-post-text">${post.note}</div>` : ''}
+                ${post.image ? `<div class="modal-post-image"><img src="<?php echo BASE_URL; ?>/uploads/posts/${post.image}" alt=""></div>` : ''}
+                <div class="modal-post-stats">
+                    <span>❤️ ${post.like_count} Beğeni</span>
+                    <span>🔄 ${post.repost_count} Repost</span>
+                    <span>💬 ${post.comment_count} Yorum</span>
+                </div>
+                <div class="modal-comments">
+                    <h4>Yorumlar</h4>
+                    ${commentsHtml || '<p class="no-comments">Henüz yorum yok.</p>'}
+                </div>
+                <a href="<?php echo BASE_URL; ?>/posts/${post.id}" class="modal-view-full" target="_blank">Tam sayfada görüntüle →</a>
+            </div>
+        `;
+    }
+
+    // Close modal
+    closeBtn.addEventListener('click', closeModal);
+    backdrop.addEventListener('click', closeModal);
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+    });
+
+    function closeModal() {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+    </script>
 
 </body>
 </html>
