@@ -1446,7 +1446,9 @@ require_once '../includes/ads_logic.php';
                         method: 'POST',
                         body: formData
                     });
+                    console.log('Like API response status:', response.status);
                     const data = await response.json();
+                    console.log('Like API data:', data);
                     
                     if (data.success) {
                         if (data.liked) {
@@ -1459,6 +1461,8 @@ require_once '../includes/ads_logic.php';
                         countSpan.textContent = data.count;
                         this.classList.add('pulse');
                         setTimeout(() => this.classList.remove('pulse'), 300);
+                    } else {
+                        console.error('Like failed:', data.error);
                     }
                 } catch (error) {
                     console.error('Like error:', error);
