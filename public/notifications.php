@@ -225,7 +225,7 @@ try {
         }
         
         modalContent.innerHTML = `
-            <div class="modal-post">
+            <div class="modal-post" data-post-id="${post.id}">
                 <div class="modal-post-header">
                     <a href="<?php echo BASE_URL; ?>/profile?id=${post.user_id}" class="modal-avatar">
                         ${post.user_avatar ? `<img src="<?php echo BASE_URL; ?>/uploads/avatars/${post.user_avatar}" alt="">` : post.username.charAt(0).toUpperCase()}
@@ -240,18 +240,100 @@ try {
                 </div>
                 ${post.note ? `<div class="modal-post-text">${post.note}</div>` : ''}
                 ${post.image ? `<div class="modal-post-image"><img src="<?php echo BASE_URL; ?>/uploads/posts/${post.image}" alt=""></div>` : ''}
-                <div class="modal-post-stats">
-                    <span>❤️ ${post.like_count} Beğeni</span>
-                    <span>🔄 ${post.repost_count} Repost</span>
-                    <span>💬 ${post.comment_count} Yorum</span>
+                
+                <div class="modal-actions">
+                    <button class="modal-action-btn modal-like-btn" data-post-id="${post.id}">
+                        <span class="like-icon">🤍</span>
+                        <span class="like-count">${post.like_count}</span> Beğeni
+                    </button>
+                    <button class="modal-action-btn modal-repost-btn" data-post-id="${post.id}">
+                        🔄 <span class="repost-count">${post.repost_count}</span> Repost
+                    </button>
                 </div>
+                
                 <div class="modal-comments">
-                    <h4>Yorumlar</h4>
-                    ${commentsHtml || '<p class="no-comments">Henüz yorum yok.</p>'}
+                    <h4>Yorumlar (${post.comment_count})</h4>
+                    <div class="modal-comments-list" id="modal-comments-list">
+                        ${commentsHtml || '<p class="no-comments">Henüz yorum yok.</p>'}
+                    </div>
                 </div>
-                <a href="<?php echo BASE_URL; ?>/posts/${post.id}" class="modal-view-full" target="_blank">Tam sayfada görüntüle →</a>
+                
+                <?php if (isLoggedIn()): ?>
+                <div class="modal-comment-form">
+                    <input type="text" id="modal-comment-input" placeholder="Yorum yaz..." />
+                    <button id="modal-comment-submit" data-post-id="${post.id}">Gönder</button>
+                </div>
+                <?php endif; ?>
             </div>
         `;
+        
+        // Attach like button handler
+        const likeBtn = modalContent.querySelector('.modal-like-btn');
+        if (likeBtn) {
+            likeBtn.addEventListener('click', async function() {
+                const postId = this.dataset.postId;
+                try {
+                    const res = await fetch('<?php echo BASE_URL; ?>/api/interactions.php?action=like', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                        body: 'checkin_id=' + postId
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        this.querySelector('.like-icon').textContent = data.liked ? '❤️' : '🤍';
+                        this.querySelector('.like-count').textContent = data.count;
+                    }
+                } catch (e) {
+                    console.error('Like error:', e);
+                }
+            });
+        }
+        
+        // Attach comment submit handler
+        const commentSubmit = document.getElementById('modal-comment-submit');
+        const commentInput = document.getElementById('modal-comment-input');
+        if (commentSubmit && commentInput) {
+            commentSubmit.addEventListener('click', async function() {
+                const postId = this.dataset.postId;
+                const comment = commentInput.value.trim();
+                if (!comment) return;
+                
+                try {
+                    const res = await fetch('<?php echo BASE_URL; ?>/api/interactions.php?action=comment', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                        body: 'checkin_id=' + postId + '&comment=' + encodeURIComponent(comment)
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        // Add comment to list
+                        const commentsList = document.getElementById('modal-comments-list');
+                        const noComments = commentsList.querySelector('.no-comments');
+                        if (noComments) noComments.remove();
+                        
+                        commentsList.innerHTML += `
+                            <div class="modal-comment">
+                                <div class="modal-comment-avatar"><?php echo strtoupper(substr($_SESSION['username'] ?? 'U', 0, 1)); ?></div>
+                                <div class="modal-comment-body">
+                                    <span class="modal-comment-user"><?php echo escape($_SESSION['username'] ?? 'Sen'); ?></span>
+                                    <span class="modal-comment-text">${comment}</span>
+                                </div>
+                            </div>
+                        `;
+                        commentInput.value = '';
+                    }
+                } catch (e) {
+                    console.error('Comment error:', e);
+                }
+            });
+            
+            // Submit on Enter
+            commentInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    commentSubmit.click();
+                }
+            });
+        }
     }
 
     // Close modal
