@@ -415,6 +415,10 @@ if ($action === 'follow' && $_SERVER['REQUEST_METHOD'] === 'POST') {
             $insertStmt = $db->prepare("INSERT INTO user_follows (follower_id, following_id) VALUES (?, ?)");
             $insertStmt->execute([$userId, $targetUserId]);
             $following = true;
+            
+            // Takip bildirimi gönder
+            $notifStmt = $db->prepare("INSERT INTO notifications (user_id, from_user_id, type) VALUES (?, ?, 'follow')");
+            $notifStmt->execute([$targetUserId, $userId]);
         }
         
         // Takipçi sayısını getir
