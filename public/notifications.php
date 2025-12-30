@@ -89,7 +89,7 @@ try {
                 <?php else: ?>
                     <div class="notifications-list">
                         <?php foreach ($notifications as $notif): ?>
-                            <a href="<?php echo BASE_URL; ?>/<?php echo $notif['checkin_id'] ? 'posts/' . $notif['checkin_id'] : 'profile?id=' . $notif['from_user_id']; ?>" class="notification-card <?php echo $notif['is_read'] ? '' : 'unread'; ?>">
+                            <a href="<?php echo BASE_URL; ?>/<?php echo $notif['checkin_id'] ? 'posts/' . $notif['checkin_id'] : 'profile?id=' . $notif['from_user_id']; ?>" target="_blank" class="notification-card <?php echo $notif['is_read'] ? '' : 'unread'; ?>">
                                 <div class="notification-icon-wrapper">
                                     <div class="notification-avatar">
                                         <?php if (!empty($notif['from_avatar'])): ?>
