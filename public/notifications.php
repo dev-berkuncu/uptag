@@ -76,7 +76,7 @@ try {
                 <div class="notifications-header">
                     <div>
                         <h1>Bildirimler</h1>
-                        <div class="notifications-filter">Seni etikettiğin</div>
+                        <div class="notifications-filter">Seni etiketleyenler, repost edenler,beğenilenler</div>
                     </div>
                     <?php if (!empty($notifications)): ?>
                     <button class="clear-notifications-btn" id="clearNotificationsBtn">

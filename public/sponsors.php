@@ -64,7 +64,7 @@ require_once '../includes/ads_logic.php';
             <section class="page-header">
                 <div class="page-header-content">
                     <h1 class="page-title">Sponsorlarımız</h1>
-                    <p class="page-subtitle">Uptag'ı destekleyen değerli iş ortaklarımız</p>
+                    <p class="page-subtitle">Sociaera'yı destekleyen değerli iş ortaklarımız</p>
                 </div>
             </section>
 
@@ -75,7 +75,7 @@ require_once '../includes/ads_logic.php';
                 <div class="sponsors-showcase-card">
                     <div class="showcase-header">
                         <h2>🤝 Destekçilerimiz</h2>
-                        <p>Uptag'ı güçlü kılan değerli iş ortaklarımız</p>
+                        <p>Sociaera'yı güçlü kılan değerli iş ortaklarımız</p>
                     </div>
                     
                     <div class="sponsors-showcase-grid">
@@ -96,8 +96,8 @@ require_once '../includes/ads_logic.php';
                 <!-- Become a Sponsor CTA -->
                 <div class="sponsor-cta">
                     <h3>Sponsor Olmak İster Misiniz?</h3>
-                    <p>Uptag ile iş birliği yaparak markanızı binlerce kullanıcıya ulaştırın.</p>
-                    <a href="mailto:sponsor@uptag.com" class="btn btn-primary">İletişime Geçin</a>
+                    <p>Sociaera ile iş birliği yaparak markanızı binlerce kullanıcıya ulaştırın.</p>
+                    <a href="https://facebrowser-tr.gta.world/pages/sociaerasantos" class="btn btn-primary">İletişime Geçin</a>
                 </div>
 
             </section>
@@ -157,7 +157,7 @@ require_once '../includes/ads_logic.php';
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; <?php echo date('Y'); ?> Uptag. Tüm hakları saklıdır.</p>
+            <p>&copy; <?php echo date('Y'); ?> Sociaera. Tüm hakları saklıdır.</p>
         </div>
     </footer>
 
