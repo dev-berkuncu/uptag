@@ -302,7 +302,7 @@ try {
                     const res = await fetch('<?php echo BASE_URL; ?>/api/interactions.php?action=comment', {
                         method: 'POST',
                         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                        body: 'checkin_id=' + postId + '&comment=' + encodeURIComponent(comment)
+                        body: 'checkin_id=' + postId + '&content=' + encodeURIComponent(comment)
                     });
                     const data = await res.json();
                     if (data.success) {
