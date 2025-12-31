@@ -10,13 +10,13 @@ $sponsors = [
         'name' => 'Pillbox Casino',
         'logo' => 'pillbox-casino.png',
         'description' => 'Premium eğlence ve oyun deneyimi sunan lider casino.',
-        'website' => 'https://pillboxcasino.com'
+        'website' => 'https://facebrowser-tr.gta.world/pages/PillboxCasino?ref=qs'
     ],
     [
         'name' => 'Paradise Group',
         'logo' => 'paradise-group.png',
-        'description' => 'Turizm ve eğlence sektörünün güvenilir markası.',
-        'website' => 'https://paradisegroup.com'
+        'description' => 'Hızın, tutkunun ve lüksün adresi.',
+        'website' => 'https://facebrowser-tr.gta.world/pages/paradise?ref=qs'
     ]
 ];
 
@@ -27,8 +27,8 @@ require_once '../includes/ads_logic.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Uptag'ı destekleyen sponsorlarımız">
-    <title><?php echo escape($pageTitle); ?> - Uptag</title>
+    <meta name="description" content="Sociaera'ı destekleyen sponsorlarımız">
+    <title><?php echo escape($pageTitle); ?> - Sociaera</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -137,8 +137,8 @@ require_once '../includes/ads_logic.php';
         </div>
         <div class="footer-content">
             <div class="footer-about">
-                <h3>Uptag</h3>
-                <p>Uptag, sosyal keşif ve check-in platformudur. Favori mekanlarınızda anlarınızı paylaşın.</p>
+                <h3>Sociaera</h3>
+                <p>Sociaera, sosyal keşif ve check-in platformudur. Favori mekanlarınızda anlarınızı paylaşın.</p>
             </div>
             <div class="footer-links">
                 <h4>Keşfet</h4>
