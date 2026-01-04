@@ -91,34 +91,61 @@ $favoriteVenue = $favoriteVenueStmt->fetch();
 $checkin = new Checkin();
 $recentCheckins = $checkin->getUserCheckins($profileId, 10);
 
-// Her check-in için etkileşim sayılarını çek
-foreach ($recentCheckins as &$ci) {
-    // Like sayısı
-    $likeStmt = $db->prepare("SELECT COUNT(*) as count FROM post_likes WHERE checkin_id = ?");
-    $likeStmt->execute([$ci['id']]);
-    $ci['like_count'] = $likeStmt->fetch()['count'] ?? 0;
+// Her check-in için etkileşim sayılarını toplu olarak çek (performans için N+1 sorunu çözümü)
+if (!empty($recentCheckins)) {
+    $checkinIds = array_column($recentCheckins, 'id');
+    $placeholders = str_repeat('?,', count($checkinIds) - 1) . '?';
     
-    // Kullanıcı beğenmiş mi?
-    $userLikeStmt = $db->prepare("SELECT id FROM post_likes WHERE checkin_id = ? AND user_id = ?");
-    $userLikeStmt->execute([$ci['id'], $_SESSION['user_id']]);
-    $ci['user_liked'] = $userLikeStmt->fetch() ? true : false;
+    // Like sayıları
+    $likeCounts = [];
+    $likeStmt = $db->prepare("SELECT checkin_id, COUNT(*) as count FROM post_likes WHERE checkin_id IN ($placeholders) GROUP BY checkin_id");
+    $likeStmt->execute($checkinIds);
+    foreach ($likeStmt->fetchAll() as $row) {
+        $likeCounts[$row['checkin_id']] = $row['count'];
+    }
     
-    // Repost sayısı
-    $repostStmt = $db->prepare("SELECT COUNT(*) as count FROM post_reposts WHERE checkin_id = ?");
-    $repostStmt->execute([$ci['id']]);
-    $ci['repost_count'] = $repostStmt->fetch()['count'] ?? 0;
+    // Repost sayıları
+    $repostCounts = [];
+    $repostStmt = $db->prepare("SELECT checkin_id, COUNT(*) as count FROM post_reposts WHERE checkin_id IN ($placeholders) GROUP BY checkin_id");
+    $repostStmt->execute($checkinIds);
+    foreach ($repostStmt->fetchAll() as $row) {
+        $repostCounts[$row['checkin_id']] = $row['count'];
+    }
     
-    // Kullanıcı repost etmiş mi?
-    $userRepostStmt = $db->prepare("SELECT id FROM post_reposts WHERE checkin_id = ? AND user_id = ?");
-    $userRepostStmt->execute([$ci['id'], $_SESSION['user_id']]);
-    $ci['user_reposted'] = $userRepostStmt->fetch() ? true : false;
+    // Yorum sayıları
+    $commentCounts = [];
+    $commentStmt = $db->prepare("SELECT checkin_id, COUNT(*) as count FROM post_comments WHERE checkin_id IN ($placeholders) GROUP BY checkin_id");
+    $commentStmt->execute($checkinIds);
+    foreach ($commentStmt->fetchAll() as $row) {
+        $commentCounts[$row['checkin_id']] = $row['count'];
+    }
     
-    // Yorum sayısı
-    $commentStmt = $db->prepare("SELECT COUNT(*) as count FROM post_comments WHERE checkin_id = ?");
-    $commentStmt->execute([$ci['id']]);
-    $ci['comment_count'] = $commentStmt->fetch()['count'] ?? 0;
+    // Kullanıcının beğendiği check-in'ler
+    $userLikes = [];
+    $userLikeStmt = $db->prepare("SELECT checkin_id FROM post_likes WHERE checkin_id IN ($placeholders) AND user_id = ?");
+    $userLikeStmt->execute(array_merge($checkinIds, [$_SESSION['user_id']]));
+    foreach ($userLikeStmt->fetchAll() as $row) {
+        $userLikes[$row['checkin_id']] = true;
+    }
+    
+    // Kullanıcının repost ettiği check-in'ler
+    $userReposts = [];
+    $userRepostStmt = $db->prepare("SELECT checkin_id FROM post_reposts WHERE checkin_id IN ($placeholders) AND user_id = ?");
+    $userRepostStmt->execute(array_merge($checkinIds, [$_SESSION['user_id']]));
+    foreach ($userRepostStmt->fetchAll() as $row) {
+        $userReposts[$row['checkin_id']] = true;
+    }
+    
+    // Sonuçları check-in'lere ata
+    foreach ($recentCheckins as &$ci) {
+        $ci['like_count'] = $likeCounts[$ci['id']] ?? 0;
+        $ci['repost_count'] = $repostCounts[$ci['id']] ?? 0;
+        $ci['comment_count'] = $commentCounts[$ci['id']] ?? 0;
+        $ci['user_liked'] = isset($userLikes[$ci['id']]);
+        $ci['user_reposted'] = isset($userReposts[$ci['id']]);
+    }
+    unset($ci);
 }
-unset($ci);
 
 // Üyelik tarihi
 $memberSince = date('F Y', strtotime($profileUser['created_at']));

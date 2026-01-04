@@ -65,23 +65,10 @@ if (!in_array($feedFilter, ['following', 'all'])) {
 // Son global check-in'ler ve repostlar (feed için) - etkileşim sayılarıyla birlikte
 $feedPosts = [];
 try {
-    // user_follows tablosu var mı kontrol et
-    $hasFollowsTable = false;
-    try {
-        $checkTable = $db->query("SHOW TABLES LIKE 'user_follows'");
-        $hasFollowsTable = $checkTable->rowCount() > 0;
-    } catch (Exception $e) {
-        $hasFollowsTable = false;
-    }
-    
-    // Quote kolonu var mı kontrol et
-    $hasQuoteColumn = false;
-    try {
-        $checkCol = $db->query("SHOW COLUMNS FROM post_reposts LIKE 'quote'");
-        $hasQuoteColumn = $checkCol->rowCount() > 0;
-    } catch (Exception $e) {
-        $hasQuoteColumn = false;
-    }
+    // Tablolar ve kolonlar artık her zaman mevcut kabul ediliyor (performans için)
+    // SHOW TABLES/COLUMNS sorguları kaldırıldı
+    $hasFollowsTable = true;
+    $hasQuoteColumn = true;
     
     // Minimum beğeni sayısı (popüler post eşiği)
     $minLikes = 3;
@@ -263,10 +250,39 @@ try {
         $feedStmt->execute([$userId, $userId]);
     }
     $feedPosts = $feedStmt->fetchAll();
+    
+    // @mention kullanıcılarını toplu olarak çek (performans için)
+    $mentionedTags = [];
+    foreach ($feedPosts as $post) {
+        if (!empty($post['note'])) {
+            preg_match_all('/@([a-zA-Z0-9_]+)/', $post['note'], $matches);
+            if (!empty($matches[1])) {
+                $mentionedTags = array_merge($mentionedTags, $matches[1]);
+            }
+        }
+    }
+    $mentionedTags = array_unique($mentionedTags);
+    
+    // Mention cache'i oluştur
+    $GLOBALS['mentionCache'] = [];
+    if (!empty($mentionedTags)) {
+        $placeholders = str_repeat('?,', count($mentionedTags) - 1) . '?';
+        $mentionStmt = $db->prepare("SELECT id, tag, LOWER(username) as username_lower FROM users WHERE tag IN ($placeholders) OR LOWER(username) IN ($placeholders)");
+        $params = array_merge($mentionedTags, array_map('strtolower', $mentionedTags));
+        $mentionStmt->execute($params);
+        $mentionUsers = $mentionStmt->fetchAll();
+        foreach ($mentionUsers as $mu) {
+            if ($mu['tag']) {
+                $GLOBALS['mentionCache'][strtolower($mu['tag'])] = $mu['id'];
+            }
+            $GLOBALS['mentionCache'][$mu['username_lower']] = $mu['id'];
+        }
+    }
 } catch (PDOException $e) {
     // Hata durumunda debug için
     error_log("Feed query error: " . $e->getMessage());
     $feedPosts = [];
+    $GLOBALS['mentionCache'] = [];
 }
 
 // Top 10'a kalan check-in hesapla
@@ -650,21 +666,18 @@ require_once '../includes/ads_logic.php';
                                 </a>
                                 <?php if (!empty($post['note'])): ?>
                                     <p class="tweet-note"><?php 
-                                        // Parse @mentions and make them clickable
+                                        // Parse @mentions and make them clickable (cache kullanarak)
                                         $noteText = escape($post['note']);
                                         $noteText = preg_replace_callback(
                                             '/@([a-zA-Z0-9_]+)/',
                                             function($matches) {
-                                                global $db;
                                                 $tag = $matches[1];
-                                                // Kullanıcıyı bul
-                                                $stmt = $db->prepare("SELECT id FROM users WHERE tag = ? OR LOWER(username) = LOWER(?)");
-                                                $stmt->execute([$tag, $tag]);
-                                                $user = $stmt->fetch();
-                                                if ($user) {
-                                                    return '<a href="profile?id=' . $user['id'] . '" class="mention-link">@' . escape($tag) . '</a>';
+                                                $tagLower = strtolower($tag);
+                                                // Cache'den kullanıcıyı bul (DB sorgusu yok!)
+                                                if (isset($GLOBALS['mentionCache'][$tagLower])) {
+                                                    return '<a href="profile?id=' . $GLOBALS['mentionCache'][$tagLower] . '" class="mention-link">@' . htmlspecialchars($tag, ENT_QUOTES, 'UTF-8') . '</a>';
                                                 }
-                                                return '@' . escape($tag);
+                                                return '@' . htmlspecialchars($tag, ENT_QUOTES, 'UTF-8');
                                             },
                                             $noteText
                                         );
