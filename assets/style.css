@@ -5097,53 +5097,9 @@ img {
 }
 
 /* Hide sponsor sidebars only on very small screens */
-@media (max-width: 768px) {
-    .dashboard-layout {
-        gap: 12px;
-        grid-template-columns: 250px 1fr 250px;
-        /* Slightly narrower ads */
-    }
 
-    .dashboard-layout .twitter-layout {
-        grid-template-columns: 80px 1fr 0;
-        /* Hide right widgets, mini nav */
-    }
 
-    .dashboard-layout .twitter-sidebar-right {
-        display: none;
-    }
 
-    .dashboard-layout .twitter-sidebar-left {
-        width: auto;
-    }
-
-    .dashboard-layout .profile-mini-card,
-    .dashboard-layout .sidebar-nav-item span:not(.sidebar-nav-icon),
-    .dashboard-layout .btn-checkin-big span {
-        display: none;
-    }
-
-    .dashboard-layout .sidebar-nav-item {
-        justify-content: center;
-    }
-}
-
-@media (max-width: 1024px) {
-    .dashboard-layout {
-        grid-template-columns: 1fr;
-        max-width: 800px;
-        margin: 0 auto;
-    }
-
-    .dashboard-layout .sponsor-sidebar {
-        display: none;
-    }
-
-    .dashboard-layout .twitter-layout {
-        grid-template-columns: 240px 1fr 300px;
-        /* Restore internal layout */
-    }
-}
 
 @keyframes pulse {
     0% {
@@ -6073,17 +6029,7 @@ img {
 
 
 /* Tablet & Smaller Laptops (max-width: 1200px) */
-@media (max-width: 1200px) {
-    .main-layout {
-        grid-template-columns: 240px 1fr 240px;
-        gap: 16px;
-    }
 
-    .sponsor-placeholder,
-    .sponsor-sidebar a {
-        width: 240px;
-    }
-}
 
 /* Tablets (max-width: 992px) */
 @media (max-width: 992px) {
@@ -6217,29 +6163,89 @@ img {
     }
 }
 
-/* ===================================================
-   FINAL SIDEBAR FIX (OVERRIDE)
-   =================================================== */
-/* Desktop/Laptop (769px+): Sidebar her zaman açık kalmalı */
-@media (min-width: 769px) {
-    .dashboard-layout .twitter-sidebar-left {
-        width: auto !important;
-        display: block !important;
-    }
+/* =================================================================
+   FORCE DESKTOP MODE (NO-RESPONSIVE)
+   ================================================================= */
 
-    .dashboard-layout .sidebar-nav-item span:not(.sidebar-nav-icon),
-    .dashboard-layout .profile-mini-card,
-    .dashboard-layout .btn-checkin-big span {
-        display: inline-block !important;
-    }
+/* 1. Tüm Media Query'leri Etkisiz Kıl */
+html,
+body {
+    min-width: 1200px !important;
+    overflow-x: auto !important;
+    width: 100% !important;
+    position: static !important;
+}
 
-    .profile-mini-card {
-        display: block !important;
-    }
+/* 2. Container ve Layout Sabitleme */
+.dashboard-layout,
+.main-layout,
+.navbar-inner,
+.landing-navbar .nav-container {
+    width: 1200px !important;
+    min-width: 1200px !important;
+    max-width: none !important;
+    margin: 0 auto !important;
+}
 
-    .dashboard-layout .sidebar-nav-item {
-        justify-content: flex-start !important;
-    }
+/* 3. Grid Sistemi (3 Kolonlu Yapıyı Koru) */
+.dashboard-layout {
+    display: grid !important;
+    grid-template-columns: 260px 1fr 320px !important;
+    gap: 24px !important;
+}
+
+/* Dashboard Center içindeki layout için */
+.dashboard-layout .twitter-layout {
+    display: grid !important;
+    grid-template-columns: 260px 1fr 320px !important;
+    gap: 24px !important;
+}
+
+/* 4. Gizlenen Elemanları Geri Getir (Show Everything) */
+.twitter-sidebar-left,
+.twitter-sidebar-right,
+.sponsor-sidebar,
+.dashboard-layout .twitter-sidebar-left,
+.dashboard-layout .twitter-sidebar-right,
+.dashboard-layout .sponsor-sidebar,
+.sidebar-nav-item span,
+.btn-checkin-big span,
+.profile-mini-card,
+.desktop-only {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: auto !important;
+    height: auto !important;
+    transform: none !important;
+    min-width: 0;
+}
+
+/* Navbar Flex Fix */
+.desktop-only {
+    display: flex !important;
+}
+
+.sidebar-nav-item {
+    display: flex !important;
+    justify-content: flex-start !important;
+}
+
+.sidebar-nav-item span {
+    display: inline-block !important;
+}
+
+/* 5. Mobil Elemanları Yok Et */
+.nav-toggle,
+.mobile-menu-overlay {
+    display: none !important;
+}
+
+/* 6. Flex Taşma Fixleri */
+.dashboard-center,
+.twitter-main-feed {
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
 }
 
 /* Flex taşmalarını önlemek için */
