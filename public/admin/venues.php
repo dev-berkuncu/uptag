@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../../config/config.php';
 require_once '../../config/database.php';
 require_once 'admin_auth.php';
@@ -93,6 +93,7 @@ $pendingCount = $db->query("SELECT COUNT(*) FROM venues WHERE is_active = 0")->f
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <?php require_once '../includes/head-bootstrap.php'; ?>
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/style.css">
     <style>
         .admin-layout {
@@ -507,3 +508,4 @@ $pendingCount = $db->query("SELECT COUNT(*) FROM venues WHERE is_active = 0")->f
 
 </body>
 </html>
+

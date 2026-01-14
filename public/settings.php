@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../config/config.php';
 require_once '../config/database.php';
 
@@ -175,6 +175,7 @@ $bannerUrl = $user['banner'] ? BASE_URL . '/uploads/banners/' . $user['banner'] 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <?php require_once '../includes/head-bootstrap.php'; ?>
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/style.css">
 </head>
 <body>
@@ -372,3 +373,4 @@ $bannerUrl = $user['banner'] ? BASE_URL . '/uploads/banners/' . $user['banner'] 
 
 </body>
 </html>
+

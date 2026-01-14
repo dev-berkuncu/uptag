@@ -193,16 +193,10 @@ img {
 }
 
 /* ===================================================
-   MAIN LAYOUT (3 Columns)
+   MAIN LAYOUT
+   Bootstrap Grid kullanılıyor - eski CSS grid kaldırıldı
    =================================================== */
-.main-layout {
-    display: grid;
-    grid-template-columns: 300px 1fr 300px;
-    gap: 24px;
-    max-width: 1920px;
-    margin: 0 auto;
-    padding: 0 24px;
-}
+/* main-layout artık Bootstrap container-fluid/row ile yönetiliyor */
 
 /* Sponsor Sidebars */
 .sponsor-sidebar {
@@ -226,7 +220,7 @@ img {
 }
 
 .sponsor-placeholder::before {
-    content: '300 Ã— 600';
+    content: '300 × 600';
 }
 
 /* Sidebar reklam resmi */
@@ -6164,93 +6158,58 @@ img {
 }
 
 /* =================================================================
-   FORCE DESKTOP MODE (NO-RESPONSIVE)
+   BOOTSTRAP UYUMLULUK
+   Bootstrap tek layout sistemi - sadece tema stilleri burada
    ================================================================= */
 
-/* 1. Tüm Media Query'leri Etkisiz Kıl & Scroll */
+/* Body temel ayarları */
 html,
 body {
-    min-width: 1280px !important;
-    /* Biraz daha geniş */
-    overflow-x: auto !important;
-    width: 100% !important;
-    position: static !important;
+    min-width: 1280px;
+    overflow-x: auto;
 }
 
-/* 2. Container ve Layout Sabitleme */
-.dashboard-layout,
-.main-layout,
-.navbar-inner,
-.landing-navbar .nav-container {
-    /* 100% olsun ama en az 1280px (Dar ekranda taşsın, geniş ekranda yayılsın) */
-    width: 100% !important;
-    min-width: 1280px !important;
-    max-width: none !important;
-    margin: 0 auto !important;
-    padding-left: 20px !important;
-    padding-right: 20px !important;
-    box-sizing: border-box !important;
+/* App- prefix'li class'lar için tema stilleri */
+
+/* Sol/Sağ Sponsor Sidebar - sabit genişlik */
+.app-sponsor-sidebar {
+    width: 300px;
+    padding-top: 24px;
 }
 
-/* 3. Grid Sistemi (3 Kolonlu Yapıyı Koru) */
-.dashboard-layout {
-    display: grid !important;
-    /* Orta kolonu 1fr yerine minmax ile koru */
-    grid-template-columns: 280px minmax(500px, 1fr) 340px !important;
-    gap: 30px !important;
+.app-sponsor-sidebar .sponsor-placeholder {
+    width: 300px;
+    height: 600px;
+    background: var(--bg-card);
+    border: 1px dashed rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-subtle);
+    font-size: 0.85rem;
+    position: sticky;
+    top: 96px;
 }
 
-/* Dashboard Center içindeki layout için */
-.dashboard-layout .twitter-layout {
-    display: grid !important;
-    grid-template-columns: 280px minmax(500px, 1fr) 340px !important;
-    gap: 30px !important;
+/* Sol Sidebar - sabit genişlik */
+.app-sidebar-left {
+    width: 280px;
 }
 
-/* 4. Elemanları Görünür Yap */
-.twitter-sidebar-left,
-.twitter-sidebar-right,
-.sponsor-sidebar,
-.dashboard-layout .twitter-sidebar-left,
-.dashboard-layout .twitter-sidebar-right,
-.dashboard-layout .sponsor-sidebar,
-.sidebar-nav-item span,
-.btn-checkin-big span,
-.profile-mini-card,
-.desktop-only {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    width: auto !important;
-    height: auto !important;
-    transform: none !important;
+/* Sağ Sidebar - sabit genişlik */
+.app-sidebar-right {
+    width: 340px;
+}
+
+/* Feed - esnek genişlik */
+.app-feed {
     min-width: 0;
 }
 
-/* Navbar Flex Fix */
-.desktop-only {
-    display: flex !important;
-}
-
-.sidebar-nav-item {
-    display: flex !important;
-    justify-content: flex-start !important;
-}
-
-.sidebar-nav-item span {
-    display: inline-block !important;
-}
-
-/* 5. Mobil Elemanları Yok Et */
-.nav-toggle,
-.mobile-menu-overlay {
-    display: none !important;
-}
-
-/* 6. Flex Taşma Fixleri */
-.dashboard-center,
-.twitter-main-feed {
-    min-width: 0 !important;
-    flex: 1 1 auto !important;
-    width: auto !important;
+/* Navbar logo boyutu */
+.nav-brand img {
+    height: 40px;
+    max-height: 40px;
+    width: auto;
 }
