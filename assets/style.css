@@ -6070,57 +6070,7 @@ img {
    RESPONSIVE (MOBILE) STYLES
    =================================================== */
 
-/* Large Laptops (max-width: 1600px) */
-@media (max-width: 1600px) {
-    .main-layout {
-        grid-template-columns: 280px 1fr 280px;
-        gap: 20px;
-    }
 
-    .sponsor-placeholder,
-    .sponsor-sidebar a {
-        width: 280px;
-    }
-}
-
-/* Medium Laptops (max-width: 1440px) */
-@media (max-width: 1440px) {
-    .main-layout {
-        grid-template-columns: 260px 1fr 260px;
-        gap: 20px;
-    }
-
-    .sponsor-placeholder,
-    .sponsor-sidebar a {
-        width: 260px;
-    }
-}
-
-/* Small Laptops (max-width: 1366px) */
-@media (max-width: 1366px) {
-    .main-layout {
-        grid-template-columns: 240px 1fr 240px;
-        gap: 16px;
-    }
-
-    .sponsor-placeholder,
-    .sponsor-sidebar a {
-        width: 240px;
-    }
-
-    html {
-        font-size: 15px;
-    }
-
-    /* Slightly reduce base font size */
-    .hero-title {
-        font-size: 2.5rem;
-    }
-
-    .page-title {
-        font-size: 2.2rem;
-    }
-}
 
 /* Tablet & Smaller Laptops (max-width: 1200px) */
 @media (max-width: 1200px) {
