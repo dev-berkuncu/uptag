@@ -31,42 +31,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute([$targetUserId]);
                 $message = 'Admin yetkisi kaldırıldı.';
             } elseif ($action === 'delete') {
-            try {
-                // Kullanıcıyı ve ilgili verileri sil (tablolar yoksa hata vermez)
-                $tables = [
-                    "DELETE FROM post_likes WHERE user_id = ?",
-                    "DELETE FROM post_comments WHERE user_id = ?",
-                    "DELETE FROM post_reposts WHERE user_id = ?",
-                    "DELETE FROM checkins WHERE user_id = ?",
-                    "DELETE FROM posts WHERE user_id = ?"
-                ];
-                
-                foreach ($tables as $sql) {
-                    try {
-                        $db->prepare($sql)->execute([$targetUserId]);
-                    } catch (Exception $e) {
-                        // Tablo yoksa devam et
+                try {
+                    // Kullanıcıyı ve ilgili verileri sil (tablolar yoksa hata vermez)
+                    $tables = [
+                        "DELETE FROM post_likes WHERE user_id = ?",
+                        "DELETE FROM post_comments WHERE user_id = ?",
+                        "DELETE FROM post_reposts WHERE user_id = ?",
+                        "DELETE FROM checkins WHERE user_id = ?",
+                        "DELETE FROM posts WHERE user_id = ?"
+                    ];
+
+                    foreach ($tables as $sql) {
+                        try {
+                            $db->prepare($sql)->execute([$targetUserId]);
+                        } catch (Exception $e) {
+                            // Tablo yoksa devam et
+                        }
                     }
+
+                    // Çift parametre gerektiren sorgular
+                    try {
+                        $db->prepare("DELETE FROM user_follows WHERE follower_id = ? OR following_id = ?")->execute([$targetUserId, $targetUserId]);
+                    } catch (Exception $e) {
+                    }
+
+                    try {
+                        $db->prepare("DELETE FROM notifications WHERE user_id = ? OR actor_id = ?")->execute([$targetUserId, $targetUserId]);
+                    } catch (Exception $e) {
+                    }
+
+                    // Şimdi kullanıcıyı sil
+                    $db->prepare("DELETE FROM users WHERE id = ?")->execute([$targetUserId]);
+                    $message = 'Kullanıcı ve tüm verileri silindi.';
+                } catch (Exception $e) {
+                    $error = 'Silme hatası: ' . $e->getMessage();
                 }
-                
-                // Çift parametre gerektiren sorgular
-                try {
-                    $db->prepare("DELETE FROM user_follows WHERE follower_id = ? OR following_id = ?")->execute([$targetUserId, $targetUserId]);
-                } catch (Exception $e) {}
-                
-                try {
-                    $db->prepare("DELETE FROM notifications WHERE user_id = ? OR actor_id = ?")->execute([$targetUserId, $targetUserId]);
-                } catch (Exception $e) {}
-                
-                // Şimdi kullanıcıyı sil
-                $db->prepare("DELETE FROM users WHERE id = ?")->execute([$targetUserId]);
-                $message = 'Kullanıcı ve tüm verileri silindi.';
-            } catch (Exception $e) {
-                $error = 'Silme hatası: ' . $e->getMessage();
             }
         }
     }
-}
 }
 // Arama
 $search = trim($_GET['search'] ?? '');
@@ -81,7 +83,7 @@ if ($search) {
     $totalUsers = $countStmt->fetchColumn();
 
     $usersStmt = $db->prepare("
-        SELECT u.id, u.username, u.created_at, u.is_admin, 
+        SELECT u.id, u.username, u.gta_character_name, u.created_at, u.is_admin, 
                (SELECT COUNT(*) FROM checkins WHERE user_id = u.id) as checkin_count,
                (SELECT COUNT(*) FROM user_follows WHERE following_id = u.id) as follower_count
         FROM users u 
@@ -94,7 +96,7 @@ if ($search) {
     $totalUsers = $db->query("SELECT COUNT(*) FROM users WHERE username != 'GTAW'")->fetchColumn();
 
     $usersStmt = $db->prepare("
-        SELECT u.id, u.username, u.created_at, u.is_admin, 
+        SELECT u.id, u.username, u.gta_character_name, u.created_at, u.is_admin, 
                (SELECT COUNT(*) FROM checkins WHERE user_id = u.id) as checkin_count,
                (SELECT COUNT(*) FROM user_follows WHERE following_id = u.id) as follower_count
         FROM users u 
