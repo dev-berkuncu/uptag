@@ -31,20 +31,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute([$targetUserId]);
                 $message = 'Admin yetkisi kaldırıldı.';
             } elseif ($action === 'delete') {
-                // Kullanıcıyı ve ilgili verileri sil
-                $db->prepare("DELETE FROM post_likes WHERE user_id = ?")->execute([$targetUserId]);
-                $db->prepare("DELETE FROM post_comments WHERE user_id = ?")->execute([$targetUserId]);
-                $db->prepare("DELETE FROM post_reposts WHERE user_id = ?")->execute([$targetUserId]);
-                $db->prepare("DELETE FROM user_follows WHERE follower_id = ? OR following_id = ?")->execute([$targetUserId, $targetUserId]);
-                $db->prepare("DELETE FROM checkins WHERE user_id = ?")->execute([$targetUserId]);
-
-                // Eksik tablolar - posts ve notifications
-                $db->prepare("DELETE FROM posts WHERE user_id = ?")->execute([$targetUserId]);
-                $db->prepare("DELETE FROM notifications WHERE user_id = ? OR actor_id = ?")->execute([$targetUserId, $targetUserId]);
-
+            try {
+                // Kullanıcıyı ve ilgili verileri sil (tablolar yoksa hata vermez)
+                $tables = [
+                    "DELETE FROM post_likes WHERE user_id = ?",
+                    "DELETE FROM post_comments WHERE user_id = ?",
+                    "DELETE FROM post_reposts WHERE user_id = ?",
+                    "DELETE FROM checkins WHERE user_id = ?",
+                    "DELETE FROM posts WHERE user_id = ?"
+                ];
+                
+                foreach ($tables as $sql) {
+                    try {
+                        $db->prepare($sql)->execute([$targetUserId]);
+                    } catch (Exception $e) {
+                        // Tablo yoksa devam et
+                    }
+                }
+                
+                // Çift parametre gerektiren sorgular
+                try {
+                    $db->prepare("DELETE FROM user_follows WHERE follower_id = ? OR following_id = ?")->execute([$targetUserId, $targetUserId]);
+                } catch (Exception $e) {}
+                
+                try {
+                    $db->prepare("DELETE FROM notifications WHERE user_id = ? OR actor_id = ?")->execute([$targetUserId, $targetUserId]);
+                } catch (Exception $e) {}
+                
                 // Şimdi kullanıcıyı sil
                 $db->prepare("DELETE FROM users WHERE id = ?")->execute([$targetUserId]);
                 $message = 'Kullanıcı ve tüm verileri silindi.';
+            } catch (Exception $e) {
+                $error = 'Silme hatası: ' . $e->getMessage();
             }
         }
     }
