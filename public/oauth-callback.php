@@ -30,9 +30,9 @@ if (isset($_GET['error'])) {
 } else {
     // State'i temizle
     unset($_SESSION['oauth_state']);
-    
+
     $code = $_GET['code'];
-    
+
     try {
         // Access token al
         $tokenUrl = 'https://ucp-tr.gta.world/oauth/token';
@@ -43,7 +43,7 @@ if (isset($_GET['error'])) {
             'redirect_uri' => $redirectUri,
             'code' => $code
         ];
-        
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $tokenUrl);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -51,20 +51,20 @@ if (isset($_GET['error'])) {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
         $tokenResponse = curl_exec($ch);
-        
+
         if (curl_errno($ch)) {
             throw new Exception('Token isteği başarısız: ' . curl_error($ch));
         }
         curl_close($ch);
-        
+
         $tokenResult = json_decode($tokenResponse, true);
-        
+
         if (!isset($tokenResult['access_token'])) {
             throw new Exception('Access token alınamadı: ' . ($tokenResult['error'] ?? 'Bilinmeyen hata'));
         }
-        
+
         $accessToken = $tokenResult['access_token'];
-        
+
         // Kullanıcı bilgilerini al
         $userUrl = 'https://ucp-tr.gta.world/api/user';
         $ch = curl_init();
@@ -73,40 +73,54 @@ if (isset($_GET['error'])) {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
         $userResponse = curl_exec($ch);
-        
+
         if (curl_errno($ch)) {
             throw new Exception('Kullanıcı bilgisi alınamadı: ' . curl_error($ch));
         }
         curl_close($ch);
-        
+
         $userData = json_decode($userResponse, true);
-        
+
         if (!isset($userData['user'])) {
             throw new Exception('Kullanıcı bilgisi alınamadı.');
         }
-        
+
         $gtaUser = $userData['user'];
         $gtaUserId = $gtaUser['id'];
         $gtaUsername = $gtaUser['username'];
-        
+        $characters = $gtaUser['character'] ?? [];
+
+        // Karakter listesi varsa karakter seçim sayfasına yönlendir
+        if (!empty($characters)) {
+            $_SESSION['oauth_user_data'] = [
+                'id' => $gtaUserId,
+                'username' => $gtaUsername
+            ];
+            $_SESSION['oauth_characters'] = $characters;
+
+            header('Location: ' . BASE_URL . '/character-select');
+            exit;
+        }
+
+        // Karakter yoksa direkt kayıt/giriş yap (eski akış)
         $db = Database::getInstance()->getConnection();
-        
+
         // Bu GTA kullanıcısı daha önce kayıtlı mı?
         $stmt = $db->prepare("SELECT * FROM users WHERE gta_user_id = ?");
         $stmt->execute([$gtaUserId]);
         $existingUser = $stmt->fetch();
-        
+
         if ($existingUser) {
             // Mevcut kullanıcı - giriş yap
             $_SESSION['user_id'] = $existingUser['id'];
             $_SESSION['username'] = $existingUser['username'];
             $_SESSION['email'] = $existingUser['email'];
             $_SESSION['is_admin'] = $existingUser['is_admin'];
-            
+
             // Son giriş zamanını güncelle
             $updateStmt = $db->prepare("UPDATE users SET last_login = NOW() WHERE id = ?");
             $updateStmt->execute([$existingUser['id']]);
-            
+
             $_SESSION['message'] = 'GTA World ile giriş başarılı!';
             $_SESSION['message_type'] = 'success';
             header('Location: ' . BASE_URL . '/dashboard');
@@ -123,7 +137,7 @@ if (isset($_GET['error'])) {
                 $checkUsername->execute([$username]);
                 $counter++;
             }
-            
+
             // Kullanıcıyı oluştur (şifresiz - OAuth kullanıcısı)
             $insertStmt = $db->prepare("
                 INSERT INTO users (username, email, gta_user_id, gta_username, password_hash, is_active) 
@@ -135,21 +149,21 @@ if (isset($_GET['error'])) {
                 $gtaUserId,
                 $gtaUsername
             ]);
-            
+
             $newUserId = $db->lastInsertId();
-            
+
             // Oturumu başlat
             $_SESSION['user_id'] = $newUserId;
             $_SESSION['username'] = $username;
             $_SESSION['email'] = $gtaUsername . '@gta.world';
             $_SESSION['is_admin'] = 0;
-            
+
             $_SESSION['message'] = 'GTA World hesabınızla kayıt oldunuz! Hoş geldiniz, ' . $username . '!';
             $_SESSION['message_type'] = 'success';
             header('Location: ' . BASE_URL . '/dashboard');
             exit;
         }
-        
+
     } catch (Exception $e) {
         $error = $e->getMessage();
     }
@@ -159,12 +173,14 @@ if (isset($_GET['error'])) {
 ?>
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OAuth Hatası - Sociaera</title>
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/style.css">
 </head>
+
 <body>
     <div class="form-container" style="margin-top: 100px;">
         <h2>❌ Giriş Başarısız</h2>
@@ -176,4 +192,5 @@ if (isset($_GET['error'])) {
         </a>
     </div>
 </body>
+
 </html>
