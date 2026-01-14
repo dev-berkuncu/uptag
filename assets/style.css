@@ -1,4 +1,4 @@
-/* ===================================================
+﻿/* ===================================================
    UPTAG LANDING PAGE - MODERN CSS STYLES
    =================================================== */
 
@@ -226,7 +226,7 @@ img {
 }
 
 .sponsor-placeholder::before {
-    content: '300 × 600';
+    content: '300 Ã— 600';
 }
 
 /* Sidebar reklam resmi */
@@ -515,7 +515,7 @@ img {
 }
 
 .footer-sponsor-placeholder::before {
-    content: '728 × 90';
+    content: '728 Ã— 90';
 }
 
 .footer-content {
@@ -3572,7 +3572,7 @@ img {
 }
 
 .tweet-time::before {
-    content: '·';
+    content: 'Â·';
     margin-right: 8px;
 }
 
@@ -3595,7 +3595,7 @@ img {
 }
 
 .tweet-venue::before {
-    content: '📍';
+    content: 'ğŸ“';
 }
 
 .tweet-note {
@@ -6167,10 +6167,11 @@ img {
    FORCE DESKTOP MODE (NO-RESPONSIVE)
    ================================================================= */
 
-/* 1. Tüm Media Query'leri Etkisiz Kıl */
+/* 1. Tüm Media Query'leri Etkisiz Kıl & Scroll */
 html,
 body {
-    min-width: 1200px !important;
+    min-width: 1280px !important;
+    /* Biraz daha geniş */
     overflow-x: auto !important;
     width: 100% !important;
     position: static !important;
@@ -6181,27 +6182,32 @@ body {
 .main-layout,
 .navbar-inner,
 .landing-navbar .nav-container {
-    width: 1200px !important;
-    min-width: 1200px !important;
+    /* 100% olsun ama en az 1280px (Dar ekranda taşsın, geniş ekranda yayılsın) */
+    width: 100% !important;
+    min-width: 1280px !important;
     max-width: none !important;
     margin: 0 auto !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+    box-sizing: border-box !important;
 }
 
 /* 3. Grid Sistemi (3 Kolonlu Yapıyı Koru) */
 .dashboard-layout {
     display: grid !important;
-    grid-template-columns: 260px 1fr 320px !important;
-    gap: 24px !important;
+    /* Orta kolonu 1fr yerine minmax ile koru */
+    grid-template-columns: 280px minmax(500px, 1fr) 340px !important;
+    gap: 30px !important;
 }
 
 /* Dashboard Center içindeki layout için */
 .dashboard-layout .twitter-layout {
     display: grid !important;
-    grid-template-columns: 260px 1fr 320px !important;
-    gap: 24px !important;
+    grid-template-columns: 280px minmax(500px, 1fr) 340px !important;
+    gap: 30px !important;
 }
 
-/* 4. Gizlenen Elemanları Geri Getir (Show Everything) */
+/* 4. Elemanları Görünür Yap */
 .twitter-sidebar-left,
 .twitter-sidebar-right,
 .sponsor-sidebar,
@@ -6246,10 +6252,5 @@ body {
 .twitter-main-feed {
     min-width: 0 !important;
     flex: 1 1 auto !important;
-}
-
-/* Flex taşmalarını önlemek için */
-.dashboard-center,
-.twitter-main-feed {
-    min-width: 0;
+    width: auto !important;
 }
