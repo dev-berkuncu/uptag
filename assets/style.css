@@ -6216,3 +6216,34 @@ img {
         justify-content: center;
     }
 }
+
+/* ===================================================
+   FINAL SIDEBAR FIX (OVERRIDE)
+   =================================================== */
+/* Desktop/Laptop (769px+): Sidebar her zaman açık kalmalı */
+@media (min-width: 769px) {
+    .dashboard-layout .twitter-sidebar-left {
+        width: auto !important;
+        display: block !important;
+    }
+
+    .dashboard-layout .sidebar-nav-item span:not(.sidebar-nav-icon),
+    .dashboard-layout .profile-mini-card,
+    .dashboard-layout .btn-checkin-big span {
+        display: inline-block !important;
+    }
+
+    .profile-mini-card {
+        display: block !important;
+    }
+
+    .dashboard-layout .sidebar-nav-item {
+        justify-content: flex-start !important;
+    }
+}
+
+/* Flex taşmalarını önlemek için */
+.dashboard-center,
+.twitter-main-feed {
+    min-width: 0;
+}
