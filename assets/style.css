@@ -4,6 +4,8 @@
 
 /* CSS Variables */
 :root {
+    /* Navbar Height - TEK YERden yönetiliyor */
+    --nav-h: 72px;
     /* Primary = now used for buttons (black) */
     --orange-primary: #1a1a1a;
     --orange-dark: #141414;
@@ -40,6 +42,7 @@
 
 html {
     scroll-behavior: smooth;
+    height: 100%;
 }
 
 body {
@@ -47,8 +50,11 @@ body {
     background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
     color: var(--text-white);
     line-height: 1.6;
-    min-height: 100vh;
-    overflow-x: hidden;
+    height: 100%;
+    /* Navbar altından başla */
+    padding-top: var(--nav-h);
+    /* Body scroll kapalı - sadece orta sütunda scroll */
+    overflow: hidden;
 }
 
 a {
@@ -6158,23 +6164,33 @@ img {
 }
 
 /* =================================================================
-   BOOTSTRAP UYUMLULUK
-   Bootstrap tek layout sistemi - sadece tema stilleri burada
+   BOOTSTRAP UYUMLULUK - FIXED SIDEBAR LAYOUT
+   Bootstrap tek layout sistemi
+   Scroll SADECE orta sütunda, sidebarlar sabit
    ================================================================= */
 
-/* Body temel ayarları */
-html,
-body {
+/* Minimum genişlik - layout asla kırılmaz */
+html {
     min-width: 1280px;
-    overflow-x: auto;
 }
 
-/* App- prefix'li class'lar için tema stilleri */
+/* Ana layout wrapper - viewport yüksekliği */
+.app-layout-wrapper {
+    height: calc(100vh - var(--nav-h));
+    overflow: hidden;
+}
 
-/* Sol/Sağ Sponsor Sidebar - sabit genişlik */
+/* Sol/Sağ Sponsor Kolonları - SABİT, scroll yok */
+.app-sponsor-col {
+    height: 100%;
+    overflow: hidden;
+    padding: 20px 10px;
+}
+
 .app-sponsor-sidebar {
     width: 300px;
-    padding-top: 24px;
+    height: 100%;
+    overflow-y: auto;
 }
 
 .app-sponsor-sidebar .sponsor-placeholder {
@@ -6188,23 +6204,65 @@ body {
     justify-content: center;
     color: var(--text-subtle);
     font-size: 0.85rem;
-    position: sticky;
-    top: 96px;
 }
 
-/* Sol Sidebar - sabit genişlik */
+/* Orta İçerik Kolonu - bu da sabit yükseklik */
+.app-center-col {
+    height: 100%;
+    overflow: hidden;
+    padding: 0 10px;
+}
+
+/* İç row - 3 kolonlu yapı */
+.app-inner-row {
+    height: 100%;
+}
+
+/* Sol Sidebar Kolonu - SABİT, iç scroll */
+.app-sidebar-left-col {
+    height: 100%;
+    overflow: hidden;
+}
+
 .app-sidebar-left {
     width: 280px;
+    height: 100%;
+    overflow-y: auto;
+    padding: 20px 0;
 }
 
-/* Sağ Sidebar - sabit genişlik */
-.app-sidebar-right {
-    width: 340px;
+/* Feed Kolonu - SCROLL BURADA */
+.app-feed-col {
+    height: 100%;
+    overflow-y: auto;
+    padding: 20px 10px;
 }
 
-/* Feed - esnek genişlik */
 .app-feed {
     min-width: 0;
+}
+
+/* Sağ Sidebar Kolonu - SABİT, iç scroll */
+.app-sidebar-right-col {
+    height: 100%;
+    overflow: hidden;
+}
+
+.app-sidebar-right {
+    width: 340px;
+    height: 100%;
+    overflow-y: auto;
+    padding: 20px 0;
+}
+
+/* Navbar - fixed-top, z-index yüksek */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--nav-h);
+    z-index: 1050;
 }
 
 /* Navbar logo boyutu */
@@ -6212,4 +6270,10 @@ body {
     height: 40px;
     max-height: 40px;
     width: auto;
+}
+
+/* Mobil elemanları gizle */
+.nav-toggle,
+.mobile-menu-overlay {
+    display: none !important;
 }

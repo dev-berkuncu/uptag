@@ -466,21 +466,21 @@ require_once '../includes/ads_logic.php';
     <?php $activeNav = 'dashboard';
     require_once '../includes/navbar.php'; ?>
 
-    <!-- MAIN LAYOUT (Bootstrap Grid) -->
-    <div class="container-fluid" style="margin-top: 72px; padding: 20px;">
-        <div class="row flex-nowrap">
+    <!-- MAIN LAYOUT (Bootstrap Grid - Fixed Sidebar) -->
+    <div class="container-fluid app-layout-wrapper">
+        <div class="row flex-nowrap h-100">
 
             <!-- Sol Sponsor: col-auto, sabit 300px -->
-            <div class="col-auto">
+            <div class="col-auto app-sponsor-col">
                 <?php require_once '../includes/sidebar-left.php'; ?>
             </div>
 
             <!-- Orta İçerik: col, esnek -->
-            <div class="col">
-                <div class="row flex-nowrap">
+            <div class="col app-center-col">
+                <div class="row flex-nowrap app-inner-row">
 
                     <!-- Sol Sidebar: col-auto, sabit 280px -->
-                    <div class="col-auto" style="width: 280px;">
+                    <div class="col-auto app-sidebar-left-col">
                         <aside class="twitter-sidebar-left app-sidebar-left">
 
                             <!-- Profile Mini Card -->
@@ -583,8 +583,8 @@ require_once '../includes/ads_logic.php';
                     </div>
                     <!-- End sol sidebar col -->
 
-                    <!-- Ana Feed: col, esnek -->
-                    <div class="col">
+                    <!-- Ana Feed: col, esnek - SCROLL BURADA -->
+                    <div class="col app-feed-col">
                         <main class="twitter-main-feed app-feed">
 
                             <!-- Feed Header -->
@@ -763,7 +763,7 @@ require_once '../includes/ads_logic.php';
                     <!-- End feed col -->
 
                     <!-- Sağ Sidebar: col-auto, sabit 340px -->
-                    <div class="col-auto" style="width: 340px;">
+                    <div class="col-auto app-sidebar-right-col">
                         <aside class="twitter-sidebar-right app-sidebar-right">
 
                             <!-- Trending Venues -->
@@ -777,12 +777,12 @@ require_once '../includes/ads_logic.php';
                                     </div>
                                 <?php else: ?>
                                     <?php foreach (array_slice($topVenues, 0, 3) as $index => $venue): ?>
-                                                        <a href="venue-detail?id=<?php echo $venue['id']; ?>" class="trending-item">
-                                                            <div class="trending-category"><?php echo $index + 1; ?>. sırada</div>
-                                                            <div class="trending-name"><?php echo escape($venue['name']); ?></div>
-                                                            <div class="trending-count"><?php echo $venue['checkin_count']; ?> check-in</div>
-                                                        </a>
-                                            <?php endforeach; ?>
+                                        <a href="venue-detail?id=<?php echo $venue['id']; ?>" class="trending-item">
+                                            <div class="trending-category"><?php echo $index + 1; ?>. sırada</div>
+                                            <div class="trending-name"><?php echo escape($venue['name']); ?></div>
+                                            <div class="trending-count"><?php echo $venue['checkin_count']; ?> check-in</div>
+                                        </a>
+                                    <?php endforeach; ?>
                                 <?php endif; ?>
                                 <div class="trending-footer">
                                     <a href="venues">Tüm Mekanları Gör</a>
@@ -796,24 +796,24 @@ require_once '../includes/ads_logic.php';
                                     <h3>Haftalık Liderlik</h3>
                                 </div>
                                 <?php if (empty($topUsers)): ?>
-                                            <div class="leaderboard-mini-item">
-                                                <p style="color: var(--text-subtle);">Henüz lider yok</p>
-                                            </div>
+                                    <div class="leaderboard-mini-item">
+                                        <p style="color: var(--text-subtle);">Henüz lider yok</p>
+                                    </div>
                                 <?php else: ?>
-                                            <?php foreach ($topUsers as $index => $user): ?>
-                                                        <div class="leaderboard-mini-item <?php echo $user['id'] == $userId ? 'is-me' : ''; ?>">
-                                                            <div class="leaderboard-mini-rank"><?php echo $index + 1; ?></div>
-                                                            <div class="leaderboard-mini-avatar">
-                                                                <?php echo strtoupper(substr($user['username'], 0, 1)); ?>
-                                                            </div>
-                                                            <div class="leaderboard-mini-info">
-                                                                <div class="leaderboard-mini-name"><?php echo escape($user['username']); ?>
-                                                                </div>
-                                                                <div class="leaderboard-mini-checkins"><?php echo $user['checkin_count']; ?>
-                                                                    check-in</div>
-                                                            </div>
-                                                        </div>
-                                            <?php endforeach; ?>
+                                    <?php foreach ($topUsers as $index => $user): ?>
+                                        <div class="leaderboard-mini-item <?php echo $user['id'] == $userId ? 'is-me' : ''; ?>">
+                                            <div class="leaderboard-mini-rank"><?php echo $index + 1; ?></div>
+                                            <div class="leaderboard-mini-avatar">
+                                                <?php echo strtoupper(substr($user['username'], 0, 1)); ?>
+                                            </div>
+                                            <div class="leaderboard-mini-info">
+                                                <div class="leaderboard-mini-name"><?php echo escape($user['username']); ?>
+                                                </div>
+                                                <div class="leaderboard-mini-checkins"><?php echo $user['checkin_count']; ?>
+                                                    check-in</div>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
                                 <?php endif; ?>
                                 <div class="leaderboard-mini-footer">
                                     <a href="leaderboard">Tümünü Gör →</a>
@@ -837,26 +837,26 @@ require_once '../includes/ads_logic.php';
                                     </div>
                                 </div>
                                 <?php if ($userRank == 0 || $userRank > 10): ?>
-                                            <div class="goal-item">
-                                                <div class="goal-label">
-                                                    <span class="goal-name">Top 10'a gir</span>
-                                                    <span class="goal-progress-text"><?php echo $top10Remaining; ?> kaldı</span>
-                                                </div>
-                                                <div class="goal-bar">
-                                                    <div class="goal-fill"
-                                                        style="width: <?php echo max(0, 100 - ($top10Remaining * 10)); ?>%"></div>
-                                                </div>
-                                            </div>
+                                    <div class="goal-item">
+                                        <div class="goal-label">
+                                            <span class="goal-name">Top 10'a gir</span>
+                                            <span class="goal-progress-text"><?php echo $top10Remaining; ?> kaldı</span>
+                                        </div>
+                                        <div class="goal-bar">
+                                            <div class="goal-fill"
+                                                style="width: <?php echo max(0, 100 - ($top10Remaining * 10)); ?>%"></div>
+                                        </div>
+                                    </div>
                                 <?php else: ?>
-                                            <div class="goal-item">
-                                                <div class="goal-label">
-                                                    <span class="goal-name">Top 10'dasın! 🎉</span>
-                                                    <span class="goal-progress-text">#<?php echo $userRank; ?></span>
-                                                </div>
-                                                <div class="goal-bar">
-                                                    <div class="goal-fill" style="width: 100%"></div>
-                                                </div>
-                                            </div>
+                                    <div class="goal-item">
+                                        <div class="goal-label">
+                                            <span class="goal-name">Top 10'dasın! 🎉</span>
+                                            <span class="goal-progress-text">#<?php echo $userRank; ?></span>
+                                        </div>
+                                        <div class="goal-bar">
+                                            <div class="goal-fill" style="width: 100%"></div>
+                                        </div>
+                                    </div>
                                 <?php endif; ?>
                             </div>
 
@@ -869,38 +869,38 @@ require_once '../includes/ads_logic.php';
                                 <div class="partner-carousel">
                                     <div class="partner-slides">
                                         <?php if (!empty($carouselAds)): ?>
-                                                    <?php foreach ($carouselAds as $index => $ad): ?>
-                                                                <a href="<?php echo escape($ad['link_url'] ?: '#'); ?>" target="_blank"
-                                                                    class="partner-slide <?php echo $index === 0 ? 'active' : ''; ?>"
-                                                                    data-detail="<?php echo escape($ad['link_url'] ?: '#'); ?>">
-                                                                    <img src="<?php echo BASE_URL . '/' . escape($ad['image_url']); ?>"
-                                                                        alt="<?php echo escape($ad['title']); ?>">
-                                                                </a>
-                                                    <?php endforeach; ?>
+                                            <?php foreach ($carouselAds as $index => $ad): ?>
+                                                <a href="<?php echo escape($ad['link_url'] ?: '#'); ?>" target="_blank"
+                                                    class="partner-slide <?php echo $index === 0 ? 'active' : ''; ?>"
+                                                    data-detail="<?php echo escape($ad['link_url'] ?: '#'); ?>">
+                                                    <img src="<?php echo BASE_URL . '/' . escape($ad['image_url']); ?>"
+                                                        alt="<?php echo escape($ad['title']); ?>">
+                                                </a>
+                                            <?php endforeach; ?>
                                         <?php else: ?>
-                                                    <a href="#" class="partner-slide active">
-                                                        <div
-                                                            style="background: linear-gradient(135deg, var(--orange-primary), var(--orange-deeper)); padding: 40px 20px; text-align: center; color: white;">
-                                                            <div style="font-size: 2rem; margin-bottom: 8px;">📢</div>
+                                            <a href="#" class="partner-slide active">
+                                                <div
+                                                    style="background: linear-gradient(135deg, var(--orange-primary), var(--orange-deeper)); padding: 40px 20px; text-align: center; color: white;">
+                                                    <div style="font-size: 2rem; margin-bottom: 8px;">📢</div>
 
-                                                        </div>
-                                                    </a>
+                                                </div>
+                                            </a>
                                         <?php endif; ?>
                                     </div>
                                     <?php if (count($carouselAds) > 1): ?>
-                                                <div class="partner-dots">
-                                                    <?php foreach ($carouselAds as $index => $ad): ?>
-                                                                <button class="partner-dot <?php echo $index === 0 ? 'active' : ''; ?>"
-                                                                    data-index="<?php echo $index; ?>"></button>
-                                                    <?php endforeach; ?>
-                                                </div>
+                                        <div class="partner-dots">
+                                            <?php foreach ($carouselAds as $index => $ad): ?>
+                                                <button class="partner-dot <?php echo $index === 0 ? 'active' : ''; ?>"
+                                                    data-index="<?php echo $index; ?>"></button>
+                                            <?php endforeach; ?>
+                                        </div>
                                     <?php endif; ?>
                                 </div>
                                 <?php if (!empty($carouselAds) && $carouselAds[0]['link_url']): ?>
-                                            <div class="partners-footer">
-                                                <a href="<?php echo escape($carouselAds[0]['link_url']); ?>" id="ad-detail-link"
-                                                    target="_blank">Detaylar →</a>
-                                            </div>
+                                    <div class="partners-footer">
+                                        <a href="<?php echo escape($carouselAds[0]['link_url']); ?>" id="ad-detail-link"
+                                            target="_blank">Detaylar →</a>
+                                    </div>
                                 <?php endif; ?>
                             </div>
 
@@ -914,7 +914,7 @@ require_once '../includes/ads_logic.php';
             <!-- End orta içerik col -->
 
             <!-- Sağ Sponsor: col-auto, sabit 300px -->
-            <div class="col-auto">
+            <div class="col-auto app-sponsor-col">
                 <?php require_once '../includes/sidebar-right.php'; ?>
             </div>
 
@@ -923,280 +923,280 @@ require_once '../includes/ads_logic.php';
     </div>
     <!-- End container-fluid -->
 
-            <!-- FOOTER -->
-            <footer class="footer">
-                <div class="footer-sponsor">
-                    <?php if (!empty($footerAds)): ?>
-                                <?php $fAd = $footerAds[0]; ?>
-                                <a href="<?php echo escape($fAd['link_url'] ?: '#'); ?>" target="_blank"
-                                    style="display: block; text-align: center;">
-                                    <img src="<?php echo BASE_URL . '/' . escape($fAd['image_url']); ?>"
-                                        alt="<?php echo escape($fAd['title']); ?>"
-                                        style="max-width: 100%; max-height: 120px; border-radius: 8px;">
-                                </a>
-                    <?php else: ?>
-                                <div class="footer-sponsor-placeholder"
-                                    style="background: rgba(0,0,0,0.2); border-radius: 8px; padding: 20px; text-align: center;">
-                                    <span style="font-size: 1.5rem;">📢</span>
-                                </div>
-                    <?php endif; ?>
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-sponsor">
+            <?php if (!empty($footerAds)): ?>
+                <?php $fAd = $footerAds[0]; ?>
+                <a href="<?php echo escape($fAd['link_url'] ?: '#'); ?>" target="_blank"
+                    style="display: block; text-align: center;">
+                    <img src="<?php echo BASE_URL . '/' . escape($fAd['image_url']); ?>"
+                        alt="<?php echo escape($fAd['title']); ?>"
+                        style="max-width: 100%; max-height: 120px; border-radius: 8px;">
+                </a>
+            <?php else: ?>
+                <div class="footer-sponsor-placeholder"
+                    style="background: rgba(0,0,0,0.2); border-radius: 8px; padding: 20px; text-align: center;">
+                    <span style="font-size: 1.5rem;">📢</span>
                 </div>
-                <div class="footer-content">
-                    <div class="footer-about">
-                        <h3>Sociaera</h3>
-                        <p>Sociaera, sosyal keşif ve check-in platformudur. Favori mekanlarınızda anlarınızı paylaşın.
-                        </p>
-                    </div>
-                    <div class="footer-links">
-                        <h4>Keşfet</h4>
-                        <ul>
-                            <li><a href="venues">Mekanlar</a></li>
-                            <li><a href="leaderboard">Liderlik</a></li>
-                        </ul>
-                    </div>
-                    <div class="footer-links">
-                        <h4>Hesap</h4>
-                        <ul>
-                            <li><a href="profile">Profilim</a></li>
-                            <li><a href="settings">Ayarlar</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="footer-bottom">
-                    <p>&copy; <?php echo date('Y'); ?> Sociaera. Tüm hakları saklıdır.</p>
-                </div>
-            </footer>
+            <?php endif; ?>
+        </div>
+        <div class="footer-content">
+            <div class="footer-about">
+                <h3>Sociaera</h3>
+                <p>Sociaera, sosyal keşif ve check-in platformudur. Favori mekanlarınızda anlarınızı paylaşın.
+                </p>
+            </div>
+            <div class="footer-links">
+                <h4>Keşfet</h4>
+                <ul>
+                    <li><a href="venues">Mekanlar</a></li>
+                    <li><a href="leaderboard">Liderlik</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Hesap</h4>
+                <ul>
+                    <li><a href="profile">Profilim</a></li>
+                    <li><a href="settings">Ayarlar</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <?php echo date('Y'); ?> Sociaera. Tüm hakları saklıdır.</p>
+        </div>
+    </footer>
 
-            <!-- Comment Modal -->
-            <div id="commentModal" class="modal-overlay" style="display: none;">
-                <div class="modal-content comment-modal">
-                    <div class="modal-header">
-                        <h3>Yorumlar</h3>
-                        <button class="modal-close" id="closeCommentModal">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <div id="commentsList" class="comments-list">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <form id="commentForm" class="comment-form">
-                            <input type="hidden" id="commentCheckinId" value="">
-                            <input type="hidden" id="commentRepostId" value="">
-                            <div id="comment-image-preview" class="compose-image-preview" style="display: none;">
-                                <img id="comment-image-preview-img" src="" alt="Preview">
-                                <button type="button" id="remove-comment-image" class="image-preview-remove">×</button>
-                            </div>
-                            <div class="comment-input-row">
-                                <textarea id="commentInput" class="comment-input" placeholder="Yorum yaz..."
-                                    maxlength="500"></textarea>
-                                <input type="file" id="comment-image-input"
-                                    accept="image/jpeg,image/png,image/gif,image/webp" style="display: none;">
-                                <button type="button" class="compose-tool-btn" id="comment-image-btn"
-                                    title="Fotoğraf Ekle">📷</button>
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-sm" id="submitComment">Gönder</button>
-                        </form>
-                    </div>
+    <!-- Comment Modal -->
+    <div id="commentModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content comment-modal">
+            <div class="modal-header">
+                <h3>Yorumlar</h3>
+                <button class="modal-close" id="closeCommentModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="commentsList" class="comments-list">
                 </div>
             </div>
-
-            <!-- Repost Modal -->
-            <div id="repostModal" class="modal-overlay" style="display: none;">
-                <div class="modal-content repost-modal">
-                    <div class="modal-header">
-                        <h3>🔄 Repost</h3>
-                        <button class="modal-close" id="closeRepostModal">&times;</button>
+            <div class="modal-footer">
+                <form id="commentForm" class="comment-form">
+                    <input type="hidden" id="commentCheckinId" value="">
+                    <input type="hidden" id="commentRepostId" value="">
+                    <div id="comment-image-preview" class="compose-image-preview" style="display: none;">
+                        <img id="comment-image-preview-img" src="" alt="Preview">
+                        <button type="button" id="remove-comment-image" class="image-preview-remove">×</button>
                     </div>
-                    <div class="modal-body">
-                        <div id="repostPreview" class="repost-preview">
-                            <!-- Orijinal post önizlemesi buraya gelecek -->
-                        </div>
-                        <form id="repostForm" class="repost-form">
-                            <input type="hidden" id="repostCheckinId" value="">
-                            <textarea id="repostQuote" class="repost-quote-input"
-                                placeholder="Alıntı ekle (opsiyonel)..." maxlength="500"></textarea>
-                            <div class="repost-form-actions">
-                                <span class="char-count"><span id="quoteCharCount">0</span>/500</span>
-                                <button type="submit" class="btn btn-primary" id="submitRepost">Repostla</button>
-                            </div>
-                        </form>
+                    <div class="comment-input-row">
+                        <textarea id="commentInput" class="comment-input" placeholder="Yorum yaz..."
+                            maxlength="500"></textarea>
+                        <input type="file" id="comment-image-input" accept="image/jpeg,image/png,image/gif,image/webp"
+                            style="display: none;">
+                        <button type="button" class="compose-tool-btn" id="comment-image-btn"
+                            title="Fotoğraf Ekle">📷</button>
                     </div>
-                </div>
+                    <button type="submit" class="btn btn-primary btn-sm" id="submitComment">Gönder</button>
+                </form>
             </div>
+        </div>
+    </div>
 
-            <!-- Sidebar Dropdown Script -->
-            <script>
-                (function () {
-                    const dropdowns = document.querySelectorAll('.sidebar-nav-dropdown');
+    <!-- Repost Modal -->
+    <div id="repostModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content repost-modal">
+            <div class="modal-header">
+                <h3>🔄 Repost</h3>
+                <button class="modal-close" id="closeRepostModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="repostPreview" class="repost-preview">
+                    <!-- Orijinal post önizlemesi buraya gelecek -->
+                </div>
+                <form id="repostForm" class="repost-form">
+                    <input type="hidden" id="repostCheckinId" value="">
+                    <textarea id="repostQuote" class="repost-quote-input" placeholder="Alıntı ekle (opsiyonel)..."
+                        maxlength="500"></textarea>
+                    <div class="repost-form-actions">
+                        <span class="char-count"><span id="quoteCharCount">0</span>/500</span>
+                        <button type="submit" class="btn btn-primary" id="submitRepost">Repostla</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
-                    dropdowns.forEach(dropdown => {
-                        const toggle = dropdown.querySelector('.has-dropdown');
-                        const menu = dropdown.querySelector('.sidebar-dropdown-menu');
+    <!-- Sidebar Dropdown Script -->
+    <script>
+        (function () {
+            const dropdowns = document.querySelectorAll('.sidebar-nav-dropdown');
 
-                        if (toggle && menu) {
-                            // Feed dropdown default open
-                            if (toggle.id === 'feedDropdownToggle') {
-                                menu.classList.add('show');
-                                toggle.classList.add('open');
-                            }
+            dropdowns.forEach(dropdown => {
+                const toggle = dropdown.querySelector('.has-dropdown');
+                const menu = dropdown.querySelector('.sidebar-dropdown-menu');
 
-                            toggle.addEventListener('click', function () {
-                                menu.classList.toggle('show');
-                                toggle.classList.toggle('open');
-                            });
-                        }
+                if (toggle && menu) {
+                    // Feed dropdown default open
+                    if (toggle.id === 'feedDropdownToggle') {
+                        menu.classList.add('show');
+                        toggle.classList.add('open');
+                    }
+
+                    toggle.addEventListener('click', function () {
+                        menu.classList.toggle('show');
+                        toggle.classList.toggle('open');
                     });
-                })();
-            </script>
+                }
+            });
+        })();
+    </script>
 
-            <!-- Ads Carousel Script -->
-            <script>
-                (function () {
-                    const slides = document.querySelectorAll('.partner-slide');
-                    const dots = document.querySelectorAll('.partner-dot');
-                    const detailLink = document.getElementById('ad-detail-link');
-                    let currentIndex = 0;
-                    const totalSlides = slides.length;
+    <!-- Ads Carousel Script -->
+    <script>
+        (function () {
+            const slides = document.querySelectorAll('.partner-slide');
+            const dots = document.querySelectorAll('.partner-dot');
+            const detailLink = document.getElementById('ad-detail-link');
+            let currentIndex = 0;
+            const totalSlides = slides.length;
 
-                    if (totalSlides === 0) return;
+            if (totalSlides === 0) return;
 
-                    function updateDetailLink(index) {
-                        const activeSlide = slides[index];
-                        if (activeSlide && detailLink) {
-                            const detailUrl = activeSlide.dataset.detail || activeSlide.href;
-                            detailLink.href = detailUrl;
-                        }
+            function updateDetailLink(index) {
+                const activeSlide = slides[index];
+                if (activeSlide && detailLink) {
+                    const detailUrl = activeSlide.dataset.detail || activeSlide.href;
+                    detailLink.href = detailUrl;
+                }
+            }
+
+            function showSlide(index) {
+                slides.forEach((slide, i) => {
+                    slide.classList.toggle('active', i === index);
+                });
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === index);
+                });
+                currentIndex = index;
+                updateDetailLink(index);
+            }
+
+            // Initialize detail link
+            updateDetailLink(0);
+
+            function nextSlide() {
+                showSlide((currentIndex + 1) % totalSlides);
+            }
+
+            // Auto-play every 5 seconds
+            let autoPlay = setInterval(nextSlide, 5000);
+
+            // Dot click handlers
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    clearInterval(autoPlay);
+                    showSlide(index);
+                    autoPlay = setInterval(nextSlide, 5000);
+                });
+            });
+
+            // Pause on hover
+            const carousel = document.querySelector('.partner-carousel');
+            if (carousel) {
+                carousel.addEventListener('mouseenter', () => clearInterval(autoPlay));
+                carousel.addEventListener('mouseleave', () => {
+                    autoPlay = setInterval(nextSlide, 5000);
+                });
+            }
+        })();
+
+        // Post Composition with @ Mention
+        (function () {
+            const postContent = document.getElementById('post-content');
+            const venueAutocomplete = document.getElementById('venue-autocomplete');
+            const selectedVenueDiv = document.getElementById('selected-venue');
+            const venueNameSpan = document.getElementById('venue-name');
+            const venueIdInput = document.getElementById('venue-id');
+            const removeVenueBtn = document.getElementById('remove-venue');
+            const submitBtn = document.getElementById('submit-btn');
+            const postForm = document.getElementById('post-form');
+            const postError = document.getElementById('post-error');
+            const postSuccess = document.getElementById('post-success');
+            const venuePickerBtn = document.getElementById('venue-picker-btn');
+
+            let searchTimeout = null;
+            let currentSearchQuery = '';
+
+            // Detect @ in textarea
+            postContent.addEventListener('input', function () {
+                const value = this.value;
+                const cursorPos = this.selectionStart;
+
+                // Find @ before cursor
+                const textBeforeCursor = value.substring(0, cursorPos);
+                const atIndex = textBeforeCursor.lastIndexOf('@');
+
+                if (atIndex !== -1) {
+                    const searchText = textBeforeCursor.substring(atIndex + 1);
+                    // Only search if no space after @
+                    if (!searchText.includes(' ') && searchText.length > 0) {
+                        currentSearchQuery = searchText;
+                        clearTimeout(searchTimeout);
+                        searchTimeout = setTimeout(() => searchVenues(searchText), 300);
+                    } else if (searchText.length === 0) {
+                        // Just typed @, show all venues
+                        clearTimeout(searchTimeout);
+                        searchTimeout = setTimeout(() => searchVenues(''), 300);
+                    } else {
+                        hideAutocomplete();
                     }
+                } else {
+                    hideAutocomplete();
+                }
 
-                    function showSlide(index) {
-                        slides.forEach((slide, i) => {
-                            slide.classList.toggle('active', i === index);
-                        });
-                        dots.forEach((dot, i) => {
-                            dot.classList.toggle('active', i === index);
-                        });
-                        currentIndex = index;
-                        updateDetailLink(index);
+                updateSubmitButton();
+            });
+
+            // Venue picker button click
+            venuePickerBtn.addEventListener('click', function () {
+                postContent.value += '@';
+                postContent.focus();
+                searchVenues('');
+            });
+
+            // Search venues API
+            async function searchVenues(query) {
+                try {
+                    // Paralel olarak hem mekan hem kullanıcı ara
+                    const [venueResponse, userResponse] = await Promise.all([
+                        fetch(`<?php echo BASE_URL; ?>/api/venue-search.php?q=${encodeURIComponent(query)}`),
+                        fetch(`<?php echo BASE_URL; ?>/api/search-users.php?q=${encodeURIComponent(query)}`)
+                    ]);
+
+                    const venueData = await venueResponse.json();
+                    const userData = await userResponse.json();
+
+                    const venues = venueData.venues || [];
+                    const users = userData.users || [];
+
+                    if (venues.length > 0 || users.length > 0) {
+                        showCombinedAutocomplete(venues, users);
+                    } else {
+                        showAutocompleteEmpty();
                     }
+                } catch (error) {
+                    console.error('Search error:', error);
+                    hideAutocomplete();
+                }
+            }
 
-                    // Initialize detail link
-                    updateDetailLink(0);
+            // Show combined autocomplete (venues + users)
+            function showCombinedAutocomplete(venues, users) {
+                let html = '';
 
-                    function nextSlide() {
-                        showSlide((currentIndex + 1) % totalSlides);
-                    }
-
-                    // Auto-play every 5 seconds
-                    let autoPlay = setInterval(nextSlide, 5000);
-
-                    // Dot click handlers
-                    dots.forEach((dot, index) => {
-                        dot.addEventListener('click', () => {
-                            clearInterval(autoPlay);
-                            showSlide(index);
-                            autoPlay = setInterval(nextSlide, 5000);
-                        });
-                    });
-
-                    // Pause on hover
-                    const carousel = document.querySelector('.partner-carousel');
-                    if (carousel) {
-                        carousel.addEventListener('mouseenter', () => clearInterval(autoPlay));
-                        carousel.addEventListener('mouseleave', () => {
-                            autoPlay = setInterval(nextSlide, 5000);
-                        });
-                    }
-                })();
-
-                // Post Composition with @ Mention
-                (function () {
-                    const postContent = document.getElementById('post-content');
-                    const venueAutocomplete = document.getElementById('venue-autocomplete');
-                    const selectedVenueDiv = document.getElementById('selected-venue');
-                    const venueNameSpan = document.getElementById('venue-name');
-                    const venueIdInput = document.getElementById('venue-id');
-                    const removeVenueBtn = document.getElementById('remove-venue');
-                    const submitBtn = document.getElementById('submit-btn');
-                    const postForm = document.getElementById('post-form');
-                    const postError = document.getElementById('post-error');
-                    const postSuccess = document.getElementById('post-success');
-                    const venuePickerBtn = document.getElementById('venue-picker-btn');
-
-                    let searchTimeout = null;
-                    let currentSearchQuery = '';
-
-                    // Detect @ in textarea
-                    postContent.addEventListener('input', function () {
-                        const value = this.value;
-                        const cursorPos = this.selectionStart;
-
-                        // Find @ before cursor
-                        const textBeforeCursor = value.substring(0, cursorPos);
-                        const atIndex = textBeforeCursor.lastIndexOf('@');
-
-                        if (atIndex !== -1) {
-                            const searchText = textBeforeCursor.substring(atIndex + 1);
-                            // Only search if no space after @
-                            if (!searchText.includes(' ') && searchText.length > 0) {
-                                currentSearchQuery = searchText;
-                                clearTimeout(searchTimeout);
-                                searchTimeout = setTimeout(() => searchVenues(searchText), 300);
-                            } else if (searchText.length === 0) {
-                                // Just typed @, show all venues
-                                clearTimeout(searchTimeout);
-                                searchTimeout = setTimeout(() => searchVenues(''), 300);
-                            } else {
-                                hideAutocomplete();
-                            }
-                        } else {
-                            hideAutocomplete();
-                        }
-
-                        updateSubmitButton();
-                    });
-
-                    // Venue picker button click
-                    venuePickerBtn.addEventListener('click', function () {
-                        postContent.value += '@';
-                        postContent.focus();
-                        searchVenues('');
-                    });
-
-                    // Search venues API
-                    async function searchVenues(query) {
-                        try {
-                            // Paralel olarak hem mekan hem kullanıcı ara
-                            const [venueResponse, userResponse] = await Promise.all([
-                                fetch(`<?php echo BASE_URL; ?>/api/venue-search.php?q=${encodeURIComponent(query)}`),
-                                fetch(`<?php echo BASE_URL; ?>/api/search-users.php?q=${encodeURIComponent(query)}`)
-                            ]);
-
-                            const venueData = await venueResponse.json();
-                            const userData = await userResponse.json();
-
-                            const venues = venueData.venues || [];
-                            const users = userData.users || [];
-
-                            if (venues.length > 0 || users.length > 0) {
-                                showCombinedAutocomplete(venues, users);
-                            } else {
-                                showAutocompleteEmpty();
-                            }
-                        } catch (error) {
-                            console.error('Search error:', error);
-                            hideAutocomplete();
-                        }
-                    }
-
-                    // Show combined autocomplete (venues + users)
-                    function showCombinedAutocomplete(venues, users) {
-                        let html = '';
-
-                        // Önce mekanları göster
-                        if (venues.length > 0) {
-                            html += '<div class="autocomplete-section-title">📍 Mekanlar</div>';
-                            venues.slice(0, 4).forEach(venue => {
-                                html += `
+                // Önce mekanları göster
+                if (venues.length > 0) {
+                    html += '<div class="autocomplete-section-title">📍 Mekanlar</div>';
+                    venues.slice(0, 4).forEach(venue => {
+                        html += `
                         <div class="venue-option" data-id="${venue.id}" data-name="${escapeHtml(venue.name)}" data-type="venue">
                             <div class="venue-option-icon">📍</div>
                             <div class="venue-option-info">
@@ -1205,19 +1205,19 @@ require_once '../includes/ads_logic.php';
                             </div>
                         </div>
                     `;
-                            });
-                        }
+                    });
+                }
 
-                        // Sonra kullanıcıları göster
-                        if (users.length > 0) {
-                            html += '<div class="autocomplete-section-title">👤 Kullanıcılar</div>';
-                            users.slice(0, 4).forEach(user => {
-                                html += `
+                // Sonra kullanıcıları göster
+                if (users.length > 0) {
+                    html += '<div class="autocomplete-section-title">👤 Kullanıcılar</div>';
+                    users.slice(0, 4).forEach(user => {
+                        html += `
                         <div class="user-option" data-id="${user.id}" data-tag="${escapeHtml(user.tag)}" data-username="${escapeHtml(user.username)}" data-type="user">
                             <div class="user-option-avatar">
                                 ${user.avatar_url
-                                        ? `<img src="<?php echo BASE_URL; ?>/${user.avatar_url}" alt="">`
-                                        : user.username.charAt(0).toUpperCase()}
+                                ? `<img src="<?php echo BASE_URL; ?>/${user.avatar_url}" alt="">`
+                                : user.username.charAt(0).toUpperCase()}
                             </div>
                             <div class="user-option-info">
                                 <div class="user-option-name">${escapeHtml(user.username)}</div>
@@ -1225,53 +1225,53 @@ require_once '../includes/ads_logic.php';
                             </div>
                         </div>
                     `;
-                            });
-                        }
+                    });
+                }
 
-                        venueAutocomplete.innerHTML = html;
-                        venueAutocomplete.classList.add('active');
+                venueAutocomplete.innerHTML = html;
+                venueAutocomplete.classList.add('active');
 
-                        // Mekan click handlers
-                        venueAutocomplete.querySelectorAll('.venue-option').forEach(option => {
-                            option.addEventListener('click', function () {
-                                selectVenue(this.dataset.id, this.dataset.name);
-                            });
-                        });
+                // Mekan click handlers
+                venueAutocomplete.querySelectorAll('.venue-option').forEach(option => {
+                    option.addEventListener('click', function () {
+                        selectVenue(this.dataset.id, this.dataset.name);
+                    });
+                });
 
-                        // Kullanıcı click handlers
-                        venueAutocomplete.querySelectorAll('.user-option').forEach(option => {
-                            option.addEventListener('click', function () {
-                                selectUser(this.dataset.tag, this.dataset.username);
-                            });
-                        });
-                    }
+                // Kullanıcı click handlers
+                venueAutocomplete.querySelectorAll('.user-option').forEach(option => {
+                    option.addEventListener('click', function () {
+                        selectUser(this.dataset.tag, this.dataset.username);
+                    });
+                });
+            }
 
-                    // Kullanıcı seç - metne @tag ekle
-                    function selectUser(tag, username) {
-                        const value = postContent.value;
-                        const cursorPos = postContent.selectionStart;
-                        const textBeforeCursor = value.substring(0, cursorPos);
-                        const textAfterCursor = value.substring(cursorPos);
-                        const atIndex = textBeforeCursor.lastIndexOf('@');
+            // Kullanıcı seç - metne @tag ekle
+            function selectUser(tag, username) {
+                const value = postContent.value;
+                const cursorPos = postContent.selectionStart;
+                const textBeforeCursor = value.substring(0, cursorPos);
+                const textAfterCursor = value.substring(cursorPos);
+                const atIndex = textBeforeCursor.lastIndexOf('@');
 
-                        if (atIndex !== -1) {
-                            // @ ve sonrasını @tag ile değiştir
-                            const newText = textBeforeCursor.substring(0, atIndex) + '@' + tag + ' ' + textAfterCursor;
-                            postContent.value = newText;
-                            // Cursor'u @tag'den sonraya koy
-                            const newCursorPos = atIndex + tag.length + 2;
-                            postContent.setSelectionRange(newCursorPos, newCursorPos);
-                        }
+                if (atIndex !== -1) {
+                    // @ ve sonrasını @tag ile değiştir
+                    const newText = textBeforeCursor.substring(0, atIndex) + '@' + tag + ' ' + textAfterCursor;
+                    postContent.value = newText;
+                    // Cursor'u @tag'den sonraya koy
+                    const newCursorPos = atIndex + tag.length + 2;
+                    postContent.setSelectionRange(newCursorPos, newCursorPos);
+                }
 
-                        hideAutocomplete();
-                        postContent.focus();
-                    }
+                hideAutocomplete();
+                postContent.focus();
+            }
 
-                    // Show autocomplete dropdown
-                    function showAutocomplete(venues) {
-                        let html = '';
-                        venues.forEach(venue => {
-                            html += `
+            // Show autocomplete dropdown
+            function showAutocomplete(venues) {
+                let html = '';
+                venues.forEach(venue => {
+                    html += `
                     <div class="venue-option" data-id="${venue.id}" data-name="${escapeHtml(venue.name)}">
                         <div class="venue-option-icon">📍</div>
                         <div class="venue-option-info">
@@ -1280,357 +1280,357 @@ require_once '../includes/ads_logic.php';
                         </div>
                     </div>
                 `;
-                        });
-                        venueAutocomplete.innerHTML = html;
-                        venueAutocomplete.classList.add('active');
+                });
+                venueAutocomplete.innerHTML = html;
+                venueAutocomplete.classList.add('active');
 
-                        // Add click handlers
-                        venueAutocomplete.querySelectorAll('.venue-option').forEach(option => {
-                            option.addEventListener('click', function () {
-                                selectVenue(this.dataset.id, this.dataset.name);
-                            });
-                        });
+                // Add click handlers
+                venueAutocomplete.querySelectorAll('.venue-option').forEach(option => {
+                    option.addEventListener('click', function () {
+                        selectVenue(this.dataset.id, this.dataset.name);
+                    });
+                });
+            }
+
+            function showAutocompleteEmpty() {
+                venueAutocomplete.innerHTML = '<div class="venue-autocomplete-empty">Mekan veya kullanıcı bulunamadı</div>';
+                venueAutocomplete.classList.add('active');
+            }
+
+            function hideAutocomplete() {
+                venueAutocomplete.classList.remove('active');
+            }
+
+            // Select venue
+            function selectVenue(id, name) {
+                // Remove @ and search text from content
+                const value = postContent.value;
+                const atIndex = value.lastIndexOf('@');
+                if (atIndex !== -1) {
+                    postContent.value = value.substring(0, atIndex).trim();
+                }
+
+                // Set venue
+                venueIdInput.value = id;
+                venueNameSpan.textContent = name;
+                selectedVenueDiv.style.display = 'inline-flex';
+                hideAutocomplete();
+                updateSubmitButton();
+                postContent.focus();
+            }
+
+            // Remove venue
+            removeVenueBtn.addEventListener('click', function () {
+                venueIdInput.value = '';
+                venueNameSpan.textContent = '';
+                selectedVenueDiv.style.display = 'none';
+                updateSubmitButton();
+            });
+
+            // Update submit button state
+            function updateSubmitButton() {
+                const hasVenue = venueIdInput.value !== '';
+                submitBtn.disabled = !hasVenue;
+            }
+
+            // Form submission
+            postForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                if (!venueIdInput.value) {
+                    showError('Lütfen bir mekan etiketleyin (@mekan)');
+                    return;
+                }
+
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Paylaşılıyor...';
+                hideMessages();
+
+                try {
+                    const formData = new FormData();
+                    formData.append('content', postContent.value);
+                    formData.append('venue_id', venueIdInput.value);
+
+                    // Add image if selected
+                    const imageInput = document.getElementById('image-input');
+                    if (imageInput.files.length > 0) {
+                        formData.append('image', imageInput.files[0]);
                     }
 
-                    function showAutocompleteEmpty() {
-                        venueAutocomplete.innerHTML = '<div class="venue-autocomplete-empty">Mekan veya kullanıcı bulunamadı</div>';
-                        venueAutocomplete.classList.add('active');
-                    }
+                    const response = await fetch('<?php echo BASE_URL; ?>/api/create-post.php', {
+                        method: 'POST',
+                        body: formData
+                    });
 
-                    function hideAutocomplete() {
-                        venueAutocomplete.classList.remove('active');
-                    }
+                    const data = await response.json();
 
-                    // Select venue
-                    function selectVenue(id, name) {
-                        // Remove @ and search text from content
-                        const value = postContent.value;
-                        const atIndex = value.lastIndexOf('@');
-                        if (atIndex !== -1) {
-                            postContent.value = value.substring(0, atIndex).trim();
-                        }
-
-                        // Set venue
-                        venueIdInput.value = id;
-                        venueNameSpan.textContent = name;
-                        selectedVenueDiv.style.display = 'inline-flex';
-                        hideAutocomplete();
-                        updateSubmitButton();
-                        postContent.focus();
-                    }
-
-                    // Remove venue
-                    removeVenueBtn.addEventListener('click', function () {
+                    if (data.success) {
+                        showSuccess(data.message);
+                        // Reset form
+                        postContent.value = '';
                         venueIdInput.value = '';
                         venueNameSpan.textContent = '';
                         selectedVenueDiv.style.display = 'none';
-                        updateSubmitButton();
-                    });
+                        // Reset image
+                        imageInput.value = '';
+                        document.getElementById('image-preview').style.display = 'none';
+                        // Reload page after short delay to show new post
+                        setTimeout(() => location.reload(), 1500);
+                    } else {
+                        showError(data.error || 'Bir hata oluştu');
+                        submitBtn.disabled = false;
+                    }
+                } catch (error) {
+                    showError('Bağlantı hatası');
+                    submitBtn.disabled = false;
+                }
 
-                    // Update submit button state
-                    function updateSubmitButton() {
-                        const hasVenue = venueIdInput.value !== '';
-                        submitBtn.disabled = !hasVenue;
+                submitBtn.textContent = 'Paylaş';
+                updateSubmitButton();
+            });
+
+            function showError(msg) {
+                postError.textContent = msg;
+                postError.style.display = 'block';
+                postSuccess.style.display = 'none';
+            }
+
+            function showSuccess(msg) {
+                postSuccess.textContent = msg;
+                postSuccess.style.display = 'block';
+                postError.style.display = 'none';
+            }
+
+            function hideMessages() {
+                postError.style.display = 'none';
+                postSuccess.style.display = 'none';
+            }
+
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            // Close autocomplete on click outside
+            document.addEventListener('click', function (e) {
+                if (!e.target.closest('.compose-input-wrapper')) {
+                    hideAutocomplete();
+                }
+            });
+
+            // Image picker functionality
+            const imagePickerBtn = document.getElementById('image-picker-btn');
+            const imageInput = document.getElementById('image-input');
+            const imagePreview = document.getElementById('image-preview');
+            const imagePreviewImg = document.getElementById('image-preview-img');
+            const removeImageBtn = document.getElementById('remove-image');
+
+            imagePickerBtn.addEventListener('click', function () {
+                imageInput.click();
+            });
+
+            imageInput.addEventListener('change', function () {
+                if (this.files && this.files[0]) {
+                    const file = this.files[0];
+
+                    // Check file size (5MB)
+                    if (file.size > 5 * 1024 * 1024) {
+                        showError('Dosya boyutu 5MB\'dan küçük olmalıdır');
+                        this.value = '';
+                        return;
                     }
 
-                    // Form submission
-                    postForm.addEventListener('submit', async function (e) {
-                        e.preventDefault();
+                    // Show preview
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        imagePreviewImg.src = e.target.result;
+                        imagePreview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
 
-                        if (!venueIdInput.value) {
-                            showError('Lütfen bir mekan etiketleyin (@mekan)');
-                            return;
+            removeImageBtn.addEventListener('click', function () {
+                imageInput.value = '';
+                imagePreview.style.display = 'none';
+                imagePreviewImg.src = '';
+            });
+        })();
+
+        // Post Etkileşimleri (Like, Repost, Comment, Delete)
+        (function () {
+            console.log('=== Post Interactions Script Started ===');
+            const API_URL = '<?php echo BASE_URL; ?>/api/interactions.php';
+
+            // Delete butonları
+            console.log('Delete buttons found:', document.querySelectorAll('.tweet-delete-btn').length);
+            document.querySelectorAll('.tweet-delete-btn').forEach(btn => {
+                console.log('Attaching delete listener to:', btn.dataset.checkinId);
+                btn.addEventListener('click', async function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Delete button clicked for checkin:', this.dataset.checkinId);
+
+                    if (!confirm('Bu postu silmek istediğinize emin misiniz?')) {
+                        return;
+                    }
+
+                    const checkinId = this.dataset.checkinId;
+                    const card = this.closest('.tweet-card');
+
+                    try {
+                        const formData = new FormData();
+                        formData.append('checkin_id', checkinId);
+
+                        console.log('Sending delete request to:', API_URL + '?action=delete');
+                        const response = await fetch(API_URL + '?action=delete', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const data = await response.json();
+                        console.log('Delete response:', data);
+
+                        if (data.success) {
+                            // Kartı kaldır
+                            card.style.transition = 'all 0.3s ease';
+                            card.style.opacity = '0';
+                            card.style.transform = 'translateX(-20px)';
+                            setTimeout(() => card.remove(), 300);
+                        } else {
+                            alert(data.error || 'Silme işlemi başarısız.');
+                        }
+                    } catch (error) {
+                        console.error('Delete error:', error);
+                        alert('Bağlantı hatası.');
+                    }
+                });
+            });
+
+            // Like butonları
+            const likeButtons = document.querySelectorAll('.action-like');
+            console.log('Like buttons found:', likeButtons.length);
+            likeButtons.forEach(btn => {
+                btn.addEventListener('click', async function () {
+                    console.log('Like button clicked!', this.dataset.checkinId);
+                    const checkinId = this.dataset.checkinId;
+                    const repostId = this.dataset.repostId || '';
+                    const likeIcon = this.querySelector('.like-icon');
+                    const countSpan = this.querySelector('.action-count');
+
+                    try {
+                        const formData = new FormData();
+                        formData.append('checkin_id', checkinId);
+                        if (repostId) {
+                            formData.append('repost_id', repostId);
                         }
 
-                        submitBtn.disabled = true;
-                        submitBtn.textContent = 'Paylaşılıyor...';
-                        hideMessages();
+                        const response = await fetch(API_URL + '?action=like', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        console.log('Like API response status:', response.status);
+                        const data = await response.json();
+                        console.log('Like API data:', data);
 
+                        if (data.success) {
+                            if (data.liked) {
+                                this.classList.add('active');
+                                likeIcon.textContent = '❤️';
+                            } else {
+                                this.classList.remove('active');
+                                likeIcon.textContent = '🤍';
+                            }
+                            countSpan.textContent = data.count;
+                            this.classList.add('pulse');
+                            setTimeout(() => this.classList.remove('pulse'), 300);
+                        } else {
+                            console.error('Like failed:', data.error);
+                        }
+                    } catch (error) {
+                        console.error('Like error:', error);
+                    }
+                });
+            });
+
+            // Utility function for HTML escaping
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            // Repost Modal
+            const repostModal = document.getElementById('repostModal');
+            const repostPreview = document.getElementById('repostPreview');
+            const repostForm = document.getElementById('repostForm');
+            const repostQuote = document.getElementById('repostQuote');
+            const repostCheckinId = document.getElementById('repostCheckinId');
+            const closeRepostBtn = document.getElementById('closeRepostModal');
+            const quoteCharCount = document.getElementById('quoteCharCount');
+            let currentRepostBtn = null;
+
+            // Debug log
+            console.log('Repost Modal Elements:', { repostModal, repostForm, repostQuote, repostCheckinId });
+
+            // Character count for quote (with null check)
+            if (repostQuote) {
+                repostQuote.addEventListener('input', function () {
+                    if (quoteCharCount) quoteCharCount.textContent = this.value.length;
+                });
+            }
+
+            // Repost butonları - modal aç
+            document.querySelectorAll('.action-repost').forEach(btn => {
+                btn.addEventListener('click', async function () {
+                    console.log('Repost button clicked!', this.dataset.checkinId);
+
+                    const checkinId = this.dataset.checkinId;
+                    const card = this.closest('.tweet-card');
+                    const countSpan = this.querySelector('.action-count');
+                    const isActive = this.classList.contains('active');
+                    currentRepostBtn = this;
+
+                    // Eğer zaten repostladıysa, direkt kaldır (toggle)
+                    if (isActive) {
                         try {
                             const formData = new FormData();
-                            formData.append('content', postContent.value);
-                            formData.append('venue_id', venueIdInput.value);
+                            formData.append('checkin_id', checkinId);
 
-                            // Add image if selected
-                            const imageInput = document.getElementById('image-input');
-                            if (imageInput.files.length > 0) {
-                                formData.append('image', imageInput.files[0]);
-                            }
-
-                            const response = await fetch('<?php echo BASE_URL; ?>/api/create-post.php', {
+                            const response = await fetch(API_URL + '?action=repost', {
                                 method: 'POST',
                                 body: formData
                             });
-
                             const data = await response.json();
 
                             if (data.success) {
-                                showSuccess(data.message);
-                                // Reset form
-                                postContent.value = '';
-                                venueIdInput.value = '';
-                                venueNameSpan.textContent = '';
-                                selectedVenueDiv.style.display = 'none';
-                                // Reset image
-                                imageInput.value = '';
-                                document.getElementById('image-preview').style.display = 'none';
-                                // Reload page after short delay to show new post
-                                setTimeout(() => location.reload(), 1500);
+                                this.classList.remove('active');
+                                countSpan.textContent = data.count;
+                                this.classList.add('pulse');
+                                setTimeout(() => this.classList.remove('pulse'), 300);
                             } else {
-                                showError(data.error || 'Bir hata oluştu');
-                                submitBtn.disabled = false;
+                                alert(data.error || 'Bir hata oluştu.');
                             }
                         } catch (error) {
-                            showError('Bağlantı hatası');
-                            submitBtn.disabled = false;
+                            console.error('Repost toggle error:', error);
                         }
-
-                        submitBtn.textContent = 'Paylaş';
-                        updateSubmitButton();
-                    });
-
-                    function showError(msg) {
-                        postError.textContent = msg;
-                        postError.style.display = 'block';
-                        postSuccess.style.display = 'none';
+                        return;
                     }
 
-                    function showSuccess(msg) {
-                        postSuccess.textContent = msg;
-                        postSuccess.style.display = 'block';
-                        postError.style.display = 'none';
+                    // Repostlamadıysa modal aç
+                    if (!repostModal || !repostPreview || !repostCheckinId) {
+                        console.error('Repost modal elements not found!');
+                        alert('Repost modal yüklenemedi. Sayfayı yenileyip tekrar deneyin.');
+                        return;
                     }
 
-                    function hideMessages() {
-                        postError.style.display = 'none';
-                        postSuccess.style.display = 'none';
-                    }
+                    // Orijinal post bilgilerini al
+                    const username = card.querySelector('.tweet-username')?.textContent.trim() || 'Kullanıcı';
+                    const venue = card.querySelector('.tweet-venue')?.textContent.trim() || 'Mekan';
+                    const note = card.querySelector('.tweet-note')?.textContent.trim() || '';
 
-                    function escapeHtml(text) {
-                        const div = document.createElement('div');
-                        div.textContent = text;
-                        return div.innerHTML;
-                    }
-
-                    // Close autocomplete on click outside
-                    document.addEventListener('click', function (e) {
-                        if (!e.target.closest('.compose-input-wrapper')) {
-                            hideAutocomplete();
-                        }
-                    });
-
-                    // Image picker functionality
-                    const imagePickerBtn = document.getElementById('image-picker-btn');
-                    const imageInput = document.getElementById('image-input');
-                    const imagePreview = document.getElementById('image-preview');
-                    const imagePreviewImg = document.getElementById('image-preview-img');
-                    const removeImageBtn = document.getElementById('remove-image');
-
-                    imagePickerBtn.addEventListener('click', function () {
-                        imageInput.click();
-                    });
-
-                    imageInput.addEventListener('change', function () {
-                        if (this.files && this.files[0]) {
-                            const file = this.files[0];
-
-                            // Check file size (5MB)
-                            if (file.size > 5 * 1024 * 1024) {
-                                showError('Dosya boyutu 5MB\'dan küçük olmalıdır');
-                                this.value = '';
-                                return;
-                            }
-
-                            // Show preview
-                            const reader = new FileReader();
-                            reader.onload = function (e) {
-                                imagePreviewImg.src = e.target.result;
-                                imagePreview.style.display = 'block';
-                            };
-                            reader.readAsDataURL(file);
-                        }
-                    });
-
-                    removeImageBtn.addEventListener('click', function () {
-                        imageInput.value = '';
-                        imagePreview.style.display = 'none';
-                        imagePreviewImg.src = '';
-                    });
-                })();
-
-                // Post Etkileşimleri (Like, Repost, Comment, Delete)
-                (function () {
-                    console.log('=== Post Interactions Script Started ===');
-                    const API_URL = '<?php echo BASE_URL; ?>/api/interactions.php';
-
-                    // Delete butonları
-                    console.log('Delete buttons found:', document.querySelectorAll('.tweet-delete-btn').length);
-                    document.querySelectorAll('.tweet-delete-btn').forEach(btn => {
-                        console.log('Attaching delete listener to:', btn.dataset.checkinId);
-                        btn.addEventListener('click', async function (e) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            console.log('Delete button clicked for checkin:', this.dataset.checkinId);
-
-                            if (!confirm('Bu postu silmek istediğinize emin misiniz?')) {
-                                return;
-                            }
-
-                            const checkinId = this.dataset.checkinId;
-                            const card = this.closest('.tweet-card');
-
-                            try {
-                                const formData = new FormData();
-                                formData.append('checkin_id', checkinId);
-
-                                console.log('Sending delete request to:', API_URL + '?action=delete');
-                                const response = await fetch(API_URL + '?action=delete', {
-                                    method: 'POST',
-                                    body: formData
-                                });
-                                const data = await response.json();
-                                console.log('Delete response:', data);
-
-                                if (data.success) {
-                                    // Kartı kaldır
-                                    card.style.transition = 'all 0.3s ease';
-                                    card.style.opacity = '0';
-                                    card.style.transform = 'translateX(-20px)';
-                                    setTimeout(() => card.remove(), 300);
-                                } else {
-                                    alert(data.error || 'Silme işlemi başarısız.');
-                                }
-                            } catch (error) {
-                                console.error('Delete error:', error);
-                                alert('Bağlantı hatası.');
-                            }
-                        });
-                    });
-
-                    // Like butonları
-                    const likeButtons = document.querySelectorAll('.action-like');
-                    console.log('Like buttons found:', likeButtons.length);
-                    likeButtons.forEach(btn => {
-                        btn.addEventListener('click', async function () {
-                            console.log('Like button clicked!', this.dataset.checkinId);
-                            const checkinId = this.dataset.checkinId;
-                            const repostId = this.dataset.repostId || '';
-                            const likeIcon = this.querySelector('.like-icon');
-                            const countSpan = this.querySelector('.action-count');
-
-                            try {
-                                const formData = new FormData();
-                                formData.append('checkin_id', checkinId);
-                                if (repostId) {
-                                    formData.append('repost_id', repostId);
-                                }
-
-                                const response = await fetch(API_URL + '?action=like', {
-                                    method: 'POST',
-                                    body: formData
-                                });
-                                console.log('Like API response status:', response.status);
-                                const data = await response.json();
-                                console.log('Like API data:', data);
-
-                                if (data.success) {
-                                    if (data.liked) {
-                                        this.classList.add('active');
-                                        likeIcon.textContent = '❤️';
-                                    } else {
-                                        this.classList.remove('active');
-                                        likeIcon.textContent = '🤍';
-                                    }
-                                    countSpan.textContent = data.count;
-                                    this.classList.add('pulse');
-                                    setTimeout(() => this.classList.remove('pulse'), 300);
-                                } else {
-                                    console.error('Like failed:', data.error);
-                                }
-                            } catch (error) {
-                                console.error('Like error:', error);
-                            }
-                        });
-                    });
-
-                    // Utility function for HTML escaping
-                    function escapeHtml(text) {
-                        const div = document.createElement('div');
-                        div.textContent = text;
-                        return div.innerHTML;
-                    }
-
-                    // Repost Modal
-                    const repostModal = document.getElementById('repostModal');
-                    const repostPreview = document.getElementById('repostPreview');
-                    const repostForm = document.getElementById('repostForm');
-                    const repostQuote = document.getElementById('repostQuote');
-                    const repostCheckinId = document.getElementById('repostCheckinId');
-                    const closeRepostBtn = document.getElementById('closeRepostModal');
-                    const quoteCharCount = document.getElementById('quoteCharCount');
-                    let currentRepostBtn = null;
-
-                    // Debug log
-                    console.log('Repost Modal Elements:', { repostModal, repostForm, repostQuote, repostCheckinId });
-
-                    // Character count for quote (with null check)
-                    if (repostQuote) {
-                        repostQuote.addEventListener('input', function () {
-                            if (quoteCharCount) quoteCharCount.textContent = this.value.length;
-                        });
-                    }
-
-                    // Repost butonları - modal aç
-                    document.querySelectorAll('.action-repost').forEach(btn => {
-                        btn.addEventListener('click', async function () {
-                            console.log('Repost button clicked!', this.dataset.checkinId);
-
-                            const checkinId = this.dataset.checkinId;
-                            const card = this.closest('.tweet-card');
-                            const countSpan = this.querySelector('.action-count');
-                            const isActive = this.classList.contains('active');
-                            currentRepostBtn = this;
-
-                            // Eğer zaten repostladıysa, direkt kaldır (toggle)
-                            if (isActive) {
-                                try {
-                                    const formData = new FormData();
-                                    formData.append('checkin_id', checkinId);
-
-                                    const response = await fetch(API_URL + '?action=repost', {
-                                        method: 'POST',
-                                        body: formData
-                                    });
-                                    const data = await response.json();
-
-                                    if (data.success) {
-                                        this.classList.remove('active');
-                                        countSpan.textContent = data.count;
-                                        this.classList.add('pulse');
-                                        setTimeout(() => this.classList.remove('pulse'), 300);
-                                    } else {
-                                        alert(data.error || 'Bir hata oluştu.');
-                                    }
-                                } catch (error) {
-                                    console.error('Repost toggle error:', error);
-                                }
-                                return;
-                            }
-
-                            // Repostlamadıysa modal aç
-                            if (!repostModal || !repostPreview || !repostCheckinId) {
-                                console.error('Repost modal elements not found!');
-                                alert('Repost modal yüklenemedi. Sayfayı yenileyip tekrar deneyin.');
-                                return;
-                            }
-
-                            // Orijinal post bilgilerini al
-                            const username = card.querySelector('.tweet-username')?.textContent.trim() || 'Kullanıcı';
-                            const venue = card.querySelector('.tweet-venue')?.textContent.trim() || 'Mekan';
-                            const note = card.querySelector('.tweet-note')?.textContent.trim() || '';
-
-                            // Önizleme oluştur
-                            repostPreview.innerHTML = `
+                    // Önizleme oluştur
+                    repostPreview.innerHTML = `
                     <div class="preview-card">
                         <div class="preview-header">
                             <span class="preview-username">${escapeHtml(username)}</span>
@@ -1640,110 +1640,110 @@ require_once '../includes/ads_logic.php';
                     </div>
                 `;
 
-                            repostCheckinId.value = checkinId;
-                            if (repostQuote) repostQuote.value = '';
-                            if (quoteCharCount) quoteCharCount.textContent = '0';
-                            repostModal.style.display = 'flex';
-                            console.log('Repost modal opened!');
-                        });
+                    repostCheckinId.value = checkinId;
+                    if (repostQuote) repostQuote.value = '';
+                    if (quoteCharCount) quoteCharCount.textContent = '0';
+                    repostModal.style.display = 'flex';
+                    console.log('Repost modal opened!');
+                });
+            });
+
+            // Modal kapat
+            if (closeRepostBtn) closeRepostBtn.addEventListener('click', () => repostModal.style.display = 'none');
+            if (repostModal) repostModal.addEventListener('click', (e) => { if (e.target === repostModal) repostModal.style.display = 'none'; });
+
+            // Repost form submit
+            if (repostForm) repostForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                console.log('Repost form submitted!');
+                const checkinId = repostCheckinId.value;
+                const quote = repostQuote ? repostQuote.value.trim() : '';
+                const submitBtn = document.getElementById('submitRepost');
+
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Gönderiliyor...';
+
+                try {
+                    const formData = new FormData();
+                    formData.append('checkin_id', checkinId);
+                    formData.append('quote', quote);
+
+                    console.log('Sending repost request to:', API_URL + '?action=repost');
+                    console.log('Checkin ID:', checkinId, 'Quote:', quote);
+
+                    const response = await fetch(API_URL + '?action=repost', {
+                        method: 'POST',
+                        body: formData
                     });
 
-                    // Modal kapat
-                    if (closeRepostBtn) closeRepostBtn.addEventListener('click', () => repostModal.style.display = 'none');
-                    if (repostModal) repostModal.addEventListener('click', (e) => { if (e.target === repostModal) repostModal.style.display = 'none'; });
+                    console.log('Response status:', response.status);
+                    const data = await response.json();
+                    console.log('Repost response data:', data);
 
-                    // Repost form submit
-                    if (repostForm) repostForm.addEventListener('submit', async function (e) {
-                        e.preventDefault();
-                        console.log('Repost form submitted!');
-                        const checkinId = repostCheckinId.value;
-                        const quote = repostQuote ? repostQuote.value.trim() : '';
-                        const submitBtn = document.getElementById('submitRepost');
-
-                        submitBtn.disabled = true;
-                        submitBtn.textContent = 'Gönderiliyor...';
-
-                        try {
-                            const formData = new FormData();
-                            formData.append('checkin_id', checkinId);
-                            formData.append('quote', quote);
-
-                            console.log('Sending repost request to:', API_URL + '?action=repost');
-                            console.log('Checkin ID:', checkinId, 'Quote:', quote);
-
-                            const response = await fetch(API_URL + '?action=repost', {
-                                method: 'POST',
-                                body: formData
-                            });
-
-                            console.log('Response status:', response.status);
-                            const data = await response.json();
-                            console.log('Repost response data:', data);
-
-                            if (data.success) {
-                                // Sayıyı güncelle
-                                if (currentRepostBtn) {
-                                    const countSpan = currentRepostBtn.querySelector('.action-count');
-                                    countSpan.textContent = data.count;
-                                    currentRepostBtn.classList.add('active');
-                                    currentRepostBtn.classList.add('pulse');
-                                    setTimeout(() => currentRepostBtn.classList.remove('pulse'), 300);
-                                }
-
-                                repostModal.style.display = 'none';
-
-                                // Başarı mesajı ve sayfa yenile
-                                alert(data.message || 'Repost başarıyla oluşturuldu!');
-                                setTimeout(() => location.reload(), 500);
-                            } else {
-                                console.error('Repost failed:', data.error);
-                                alert(data.error || 'Bir hata oluştu.');
-                            }
-                        } catch (error) {
-                            console.error('Repost error:', error);
-                            alert('Bağlantı hatası: ' + error.message);
+                    if (data.success) {
+                        // Sayıyı güncelle
+                        if (currentRepostBtn) {
+                            const countSpan = currentRepostBtn.querySelector('.action-count');
+                            countSpan.textContent = data.count;
+                            currentRepostBtn.classList.add('active');
+                            currentRepostBtn.classList.add('pulse');
+                            setTimeout(() => currentRepostBtn.classList.remove('pulse'), 300);
                         }
 
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = 'Repostla';
-                    });
+                        repostModal.style.display = 'none';
 
-                    // Yorum Modal
-                    const modal = document.getElementById('commentModal');
-                    const commentsList = document.getElementById('commentsList');
-                    const commentForm = document.getElementById('commentForm');
-                    const commentInput = document.getElementById('commentInput');
-                    const commentCheckinId = document.getElementById('commentCheckinId');
-                    const commentRepostId = document.getElementById('commentRepostId');
-                    const closeBtn = document.getElementById('closeCommentModal');
+                        // Başarı mesajı ve sayfa yenile
+                        alert(data.message || 'Repost başarıyla oluşturuldu!');
+                        setTimeout(() => location.reload(), 500);
+                    } else {
+                        console.error('Repost failed:', data.error);
+                        alert(data.error || 'Bir hata oluştu.');
+                    }
+                } catch (error) {
+                    console.error('Repost error:', error);
+                    alert('Bağlantı hatası: ' + error.message);
+                }
 
-                    document.querySelectorAll('.action-comment').forEach(btn => {
-                        btn.addEventListener('click', async function () {
-                            const checkinId = this.dataset.checkinId;
-                            const repostId = this.dataset.repostId || '';
-                            commentCheckinId.value = checkinId;
-                            commentRepostId.value = repostId;
-                            await loadComments(checkinId, repostId);
-                            modal.style.display = 'flex';
-                        });
-                    });
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Repostla';
+            });
 
-                    closeBtn.addEventListener('click', () => modal.style.display = 'none');
-                    modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+            // Yorum Modal
+            const modal = document.getElementById('commentModal');
+            const commentsList = document.getElementById('commentsList');
+            const commentForm = document.getElementById('commentForm');
+            const commentInput = document.getElementById('commentInput');
+            const commentCheckinId = document.getElementById('commentCheckinId');
+            const commentRepostId = document.getElementById('commentRepostId');
+            const closeBtn = document.getElementById('closeCommentModal');
 
-                    async function loadComments(checkinId, repostId) {
-                        commentsList.innerHTML = '<div class="loading-comments">Yükleniyor...</div>';
-                        try {
-                            let url = API_URL + '?action=comments&checkin_id=' + checkinId;
-                            if (repostId) {
-                                url += '&repost_id=' + repostId;
-                            }
-                            const response = await fetch(url);
-                            const data = await response.json();
-                            if (data.success && data.comments.length > 0) {
-                                commentsList.innerHTML = data.comments.map(c => {
-                                    let imageHtml = c.image ? `<div class="comment-image"><img src="<?php echo BASE_URL; ?>/uploads/comments/${c.image}" alt="Yorum fotoğrafı"></div>` : '';
-                                    return `
+            document.querySelectorAll('.action-comment').forEach(btn => {
+                btn.addEventListener('click', async function () {
+                    const checkinId = this.dataset.checkinId;
+                    const repostId = this.dataset.repostId || '';
+                    commentCheckinId.value = checkinId;
+                    commentRepostId.value = repostId;
+                    await loadComments(checkinId, repostId);
+                    modal.style.display = 'flex';
+                });
+            });
+
+            closeBtn.addEventListener('click', () => modal.style.display = 'none');
+            modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+
+            async function loadComments(checkinId, repostId) {
+                commentsList.innerHTML = '<div class="loading-comments">Yükleniyor...</div>';
+                try {
+                    let url = API_URL + '?action=comments&checkin_id=' + checkinId;
+                    if (repostId) {
+                        url += '&repost_id=' + repostId;
+                    }
+                    const response = await fetch(url);
+                    const data = await response.json();
+                    if (data.success && data.comments.length > 0) {
+                        commentsList.innerHTML = data.comments.map(c => {
+                            let imageHtml = c.image ? `<div class="comment-image"><img src="<?php echo BASE_URL; ?>/uploads/comments/${c.image}" alt="Yorum fotoğrafı"></div>` : '';
+                            return `
                         <div class="comment-item">
                             <div class="comment-avatar">${c.username.charAt(0).toUpperCase()}</div>
                             <div class="comment-content">
@@ -1756,86 +1756,86 @@ require_once '../includes/ads_logic.php';
                             </div>
                         </div>
                     `}).join('');
-                            } else {
-                                commentsList.innerHTML = '<div class="no-comments">Henüz yorum yok.</div>';
-                            }
-                        } catch (error) {
-                            commentsList.innerHTML = '<div class="error-comments">Yorumlar yüklenemedi.</div>';
-                        }
+                    } else {
+                        commentsList.innerHTML = '<div class="no-comments">Henüz yorum yok.</div>';
+                    }
+                } catch (error) {
+                    commentsList.innerHTML = '<div class="error-comments">Yorumlar yüklenemedi.</div>';
+                }
+            }
+
+            // Comment image picker functionality
+            const commentImageBtn = document.getElementById('comment-image-btn');
+            const commentImageInput = document.getElementById('comment-image-input');
+            const commentImagePreview = document.getElementById('comment-image-preview');
+            const commentImagePreviewImg = document.getElementById('comment-image-preview-img');
+            const removeCommentImageBtn = document.getElementById('remove-comment-image');
+
+            commentImageBtn.addEventListener('click', function () {
+                commentImageInput.click();
+            });
+
+            commentImageInput.addEventListener('change', function () {
+                if (this.files && this.files[0]) {
+                    const file = this.files[0];
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert('Dosya boyutu 5MB\'dan küçük olmalıdır');
+                        this.value = '';
+                        return;
+                    }
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        commentImagePreviewImg.src = e.target.result;
+                        commentImagePreview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            removeCommentImageBtn.addEventListener('click', function () {
+                commentImageInput.value = '';
+                commentImagePreview.style.display = 'none';
+                commentImagePreviewImg.src = '';
+            });
+
+            commentForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const content = commentInput.value.trim();
+                const checkinId = commentCheckinId.value;
+                const repostId = commentRepostId.value;
+                const hasImage = commentImageInput.files.length > 0;
+
+                if (!content && !hasImage) {
+                    alert('Yorum veya fotoğraf gerekli');
+                    return;
+                }
+
+                const submitBtn = document.getElementById('submitComment');
+                submitBtn.disabled = true;
+
+                try {
+                    const formData = new FormData();
+                    formData.append('checkin_id', checkinId);
+                    formData.append('content', content);
+                    if (repostId) {
+                        formData.append('repost_id', repostId);
+                    }
+                    if (hasImage) {
+                        formData.append('image', commentImageInput.files[0]);
                     }
 
-                    // Comment image picker functionality
-                    const commentImageBtn = document.getElementById('comment-image-btn');
-                    const commentImageInput = document.getElementById('comment-image-input');
-                    const commentImagePreview = document.getElementById('comment-image-preview');
-                    const commentImagePreviewImg = document.getElementById('comment-image-preview-img');
-                    const removeCommentImageBtn = document.getElementById('remove-comment-image');
+                    const response = await fetch(API_URL + '?action=comment', { method: 'POST', body: formData });
+                    const data = await response.json();
 
-                    commentImageBtn.addEventListener('click', function () {
-                        commentImageInput.click();
-                    });
-
-                    commentImageInput.addEventListener('change', function () {
-                        if (this.files && this.files[0]) {
-                            const file = this.files[0];
-                            if (file.size > 5 * 1024 * 1024) {
-                                alert('Dosya boyutu 5MB\'dan küçük olmalıdır');
-                                this.value = '';
-                                return;
-                            }
-                            const reader = new FileReader();
-                            reader.onload = function (e) {
-                                commentImagePreviewImg.src = e.target.result;
-                                commentImagePreview.style.display = 'block';
-                            };
-                            reader.readAsDataURL(file);
-                        }
-                    });
-
-                    removeCommentImageBtn.addEventListener('click', function () {
+                    if (data.success) {
+                        commentInput.value = '';
                         commentImageInput.value = '';
                         commentImagePreview.style.display = 'none';
-                        commentImagePreviewImg.src = '';
-                    });
 
-                    commentForm.addEventListener('submit', async function (e) {
-                        e.preventDefault();
-                        const content = commentInput.value.trim();
-                        const checkinId = commentCheckinId.value;
-                        const repostId = commentRepostId.value;
-                        const hasImage = commentImageInput.files.length > 0;
-
-                        if (!content && !hasImage) {
-                            alert('Yorum veya fotoğraf gerekli');
-                            return;
-                        }
-
-                        const submitBtn = document.getElementById('submitComment');
-                        submitBtn.disabled = true;
-
-                        try {
-                            const formData = new FormData();
-                            formData.append('checkin_id', checkinId);
-                            formData.append('content', content);
-                            if (repostId) {
-                                formData.append('repost_id', repostId);
-                            }
-                            if (hasImage) {
-                                formData.append('image', commentImageInput.files[0]);
-                            }
-
-                            const response = await fetch(API_URL + '?action=comment', { method: 'POST', body: formData });
-                            const data = await response.json();
-
-                            if (data.success) {
-                                commentInput.value = '';
-                                commentImageInput.value = '';
-                                commentImagePreview.style.display = 'none';
-
-                                const newComment = document.createElement('div');
-                                newComment.className = 'comment-item new';
-                                let imageHtml = data.comment.image ? `<div class="comment-image"><img src="<?php echo BASE_URL; ?>/${data.comment.image}" alt="Yorum fotoğrafı"></div>` : '';
-                                newComment.innerHTML = `
+                        const newComment = document.createElement('div');
+                        newComment.className = 'comment-item new';
+                        let imageHtml = data.comment.image ? `<div class="comment-image"><img src="<?php echo BASE_URL; ?>/${data.comment.image}" alt="Yorum fotoğrafı"></div>` : '';
+                        newComment.innerHTML = `
                         <div class="comment-avatar">${data.comment.username.charAt(0).toUpperCase()}</div>
                         <div class="comment-content">
                             <div class="comment-header">
@@ -1846,51 +1846,51 @@ require_once '../includes/ads_logic.php';
                             ${imageHtml}
                         </div>
                     `;
-                                const noComments = commentsList.querySelector('.no-comments');
-                                if (noComments) noComments.remove();
-                                commentsList.appendChild(newComment);
+                        const noComments = commentsList.querySelector('.no-comments');
+                        if (noComments) noComments.remove();
+                        commentsList.appendChild(newComment);
 
-                                const btn = document.querySelector(`.action-comment[data-checkin-id="${checkinId}"]`);
-                                if (btn) btn.querySelector('.action-count').textContent = data.count;
-                            }
-                        } catch (error) {
-                            alert('Bağlantı hatası.');
+                        const btn = document.querySelector(`.action-comment[data-checkin-id="${checkinId}"]`);
+                        if (btn) btn.querySelector('.action-count').textContent = data.count;
+                    }
+                } catch (error) {
+                    alert('Bağlantı hatası.');
+                }
+                submitBtn.disabled = false;
+            });
+
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            function formatTime(dateStr) {
+                const diff = (new Date() - new Date(dateStr)) / 1000;
+                if (diff < 60) return 'Şimdi';
+                if (diff < 3600) return Math.floor(diff / 60) + 'd';
+                if (diff < 86400) return Math.floor(diff / 3600) + 'sa';
+                return Math.floor(diff / 86400) + 'g';
+            }
+
+            // Fetch notification count
+            async function updateNotificationBadge() {
+                try {
+                    const response = await fetch('<?php echo BASE_URL; ?>/api/notifications.php?action=count');
+                    const data = await response.json();
+                    if (data.success && data.count > 0) {
+                        const badge = document.getElementById('notification-badge');
+                        if (badge) {
+                            badge.textContent = data.count > 99 ? '99+' : data.count;
+                            badge.style.display = 'inline-flex';
                         }
-                        submitBtn.disabled = false;
-                    });
-
-                    function escapeHtml(text) {
-                        const div = document.createElement('div');
-                        div.textContent = text;
-                        return div.innerHTML;
                     }
-
-                    function formatTime(dateStr) {
-                        const diff = (new Date() - new Date(dateStr)) / 1000;
-                        if (diff < 60) return 'Şimdi';
-                        if (diff < 3600) return Math.floor(diff / 60) + 'd';
-                        if (diff < 86400) return Math.floor(diff / 3600) + 'sa';
-                        return Math.floor(diff / 86400) + 'g';
-                    }
-
-                    // Fetch notification count
-                    async function updateNotificationBadge() {
-                        try {
-                            const response = await fetch('<?php echo BASE_URL; ?>/api/notifications.php?action=count');
-                            const data = await response.json();
-                            if (data.success && data.count > 0) {
-                                const badge = document.getElementById('notification-badge');
-                                if (badge) {
-                                    badge.textContent = data.count > 99 ? '99+' : data.count;
-                                    badge.style.display = 'inline-flex';
-                                }
-                            }
-                        } catch (e) { }
-                    }
-                    updateNotificationBadge();
-                    setInterval(updateNotificationBadge, 60000); // Her dakika güncelle
-                })();
-            </script>
+                } catch (e) { }
+            }
+            updateNotificationBadge();
+            setInterval(updateNotificationBadge, 60000); // Her dakika güncelle
+        })();
+    </script>
 
 </body>
 
