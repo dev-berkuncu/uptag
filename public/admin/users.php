@@ -67,6 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+}
 // Arama
 $search = trim($_GET['search'] ?? '');
 $page = max(1, (int) ($_GET['page'] ?? 1));
