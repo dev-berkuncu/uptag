@@ -6065,9 +6065,62 @@ img {
     border-radius: 8px;
     margin-top: 8px;
 }
+
 /* ===================================================
    RESPONSIVE (MOBILE) STYLES
    =================================================== */
+
+/* Large Laptops (max-width: 1600px) */
+@media (max-width: 1600px) {
+    .main-layout {
+        grid-template-columns: 280px 1fr 280px;
+        gap: 20px;
+    }
+
+    .sponsor-placeholder,
+    .sponsor-sidebar a {
+        width: 280px;
+    }
+}
+
+/* Medium Laptops (max-width: 1440px) */
+@media (max-width: 1440px) {
+    .main-layout {
+        grid-template-columns: 260px 1fr 260px;
+        gap: 20px;
+    }
+
+    .sponsor-placeholder,
+    .sponsor-sidebar a {
+        width: 260px;
+    }
+}
+
+/* Small Laptops (max-width: 1366px) */
+@media (max-width: 1366px) {
+    .main-layout {
+        grid-template-columns: 240px 1fr 240px;
+        gap: 16px;
+    }
+
+    .sponsor-placeholder,
+    .sponsor-sidebar a {
+        width: 240px;
+    }
+
+    html {
+        font-size: 15px;
+    }
+
+    /* Slightly reduce base font size */
+    .hero-title {
+        font-size: 2.5rem;
+    }
+
+    .page-title {
+        font-size: 2.2rem;
+    }
+}
 
 /* Tablet & Smaller Laptops (max-width: 1200px) */
 @media (max-width: 1200px) {
@@ -6085,18 +6138,21 @@ img {
 /* Tablets (max-width: 992px) */
 @media (max-width: 992px) {
     .main-layout {
-        grid-template-columns: 1fr; /* Sidebars drop below or vanish based on preference, here we stack */
-        display: block; /* Switch to block to stack items naturally */
+        grid-template-columns: 1fr;
+        /* Sidebars drop below or vanish based on preference, here we stack */
+        display: block;
+        /* Switch to block to stack items naturally */
     }
 
     .sponsor-sidebar {
-        display: none; /* Hide side ads on smaller screens to focus on content */
+        display: none;
+        /* Hide side ads on smaller screens to focus on content */
     }
 
     .navbar-inner {
         padding: 0 16px;
     }
-    
+
     .nav-brand-fallback {
         font-size: 1.2rem;
     }
@@ -6108,11 +6164,12 @@ img {
 
 /* Mobile Devices (max-width: 768px) */
 @media (max-width: 768px) {
+
     /* Navbar Tweaks */
     .navbar {
         padding: 0;
     }
-    
+
     .navbar-inner {
         height: auto;
         flex-direction: column;
@@ -6126,7 +6183,7 @@ img {
         flex-wrap: wrap;
         gap: 12px;
     }
-    
+
     .nav-links.left,
     .nav-links.right {
         flex: auto;
@@ -6141,7 +6198,8 @@ img {
 
     /* Layout & Spacing */
     .hero {
-        margin-top: 140px; /* Adjust for taller mobile navbar */
+        margin-top: 140px;
+        /* Adjust for taller mobile navbar */
         min-height: auto;
         padding: 60px 0;
     }
@@ -6176,16 +6234,18 @@ img {
         gap: 32px;
         text-align: center;
     }
-    
+
     .footer-sponsor {
-        display: none; /* Hide large footer banner on mobile */
+        display: none;
+        /* Hide large footer banner on mobile */
     }
 
     /* Forms */
     .search-input-wrapper {
         flex-direction: column;
         padding: 12px;
-        background: var(--bg-card-solid); /* Solid bg for better readability */
+        background: var(--bg-card-solid);
+        /* Solid bg for better readability */
     }
 
     .search-btn {
@@ -6194,14 +6254,14 @@ img {
 
     /* Dashboard Specifics (if any shared classes) */
     .dashboard-grid {
-        grid-template-columns: 1fr !important; 
+        grid-template-columns: 1fr !important;
     }
-    
+
     .profile-header {
         flex-direction: column;
         text-align: center;
     }
-    
+
     .profile-stats {
         justify-content: center;
     }
