@@ -224,10 +224,12 @@ try {
             </div>
 
         </main>
-
-        <!-- Right Sponsor Sidebar -->
-        <?php require_once '../includes/sidebar-right.php'; ?>
-
+            </div>
+            <!-- Sağ Sponsor: col-auto, sabit 300px -->
+            <div class="col-auto app-sponsor-col">
+                <?php require_once '../includes/sidebar-right.php'; ?>
+            </div>
+        </div>
     </div>
 
     <!-- FOOTER -->
@@ -302,4 +304,5 @@ try {
 
 </body>
 </html>
+
 

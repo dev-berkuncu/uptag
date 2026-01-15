@@ -374,3 +374,4 @@ $bannerUrl = $user['banner'] ? BASE_URL . '/uploads/banners/' . $user['banner'] 
 </body>
 </html>
 
+

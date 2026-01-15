@@ -219,14 +219,16 @@ try {
     <!-- NAVBAR -->
     <?php $activeNav = 'wallet'; require_once '../includes/navbar.php'; ?>
 
-    <!-- MAIN LAYOUT -->
-    <div class="main-layout">
-        
-        <!-- Left Sponsor Sidebar -->
-        <?php require_once '../includes/sidebar-left.php'; ?>
-
-        <!-- Main Content -->
-        <main class="main-content">
+    <!-- MAIN LAYOUT (Bootstrap Grid - Fixed Sidebar) -->
+    <div class="container-fluid app-layout-wrapper">
+        <div class="row flex-nowrap h-100">
+            <!-- Sol Sponsor: col-auto, sabit 300px -->
+            <div class="col-auto app-sponsor-col">
+                <?php require_once '../includes/sidebar-left.php'; ?>
+            </div>
+            <!-- Orta İçerik: col, esnek - SCROLL BURADA -->
+            <div class="col app-feed-col">
+                <main class="main-content app-feed">
             
             <div class="wallet-container">
                 
@@ -303,10 +305,12 @@ try {
             </div>
 
         </main>
-
-        <!-- Right Sponsor Sidebar -->
-        <?php require_once '../includes/sidebar-right.php'; ?>
-
+            </div>
+            <!-- Sağ Sponsor: col-auto, sabit 300px -->
+            <div class="col-auto app-sponsor-col">
+                <?php require_once '../includes/sidebar-right.php'; ?>
+            </div>
+        </div>
     </div>
 
     <!-- FOOTER -->
@@ -318,4 +322,5 @@ try {
 
 </body>
 </html>
+
 
