@@ -1,0 +1,8 @@
+# Log dosyalarına web erişimini engelle
+Require all denied
+
+# Apache 2.2 uyumluluğu
+<IfModule !mod_authz_core.c>
+    Order deny,allow
+    Deny from all
+</IfModule>

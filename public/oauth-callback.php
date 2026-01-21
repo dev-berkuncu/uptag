@@ -112,6 +112,7 @@ if (isset($_GET['error'])) {
 
         if ($existingUser) {
             // Mevcut kullanıcı - giriş yap
+            session_regenerate_id(true); // Session fixation koruması
             $_SESSION['user_id'] = $existingUser['id'];
             $_SESSION['username'] = $existingUser['username'];
             $_SESSION['email'] = $existingUser['email'];
@@ -153,6 +154,7 @@ if (isset($_GET['error'])) {
             $newUserId = $db->lastInsertId();
 
             // Oturumu başlat
+            session_regenerate_id(true); // Session fixation koruması
             $_SESSION['user_id'] = $newUserId;
             $_SESSION['username'] = $username;
             $_SESSION['email'] = $gtaUsername . '@gta.world';

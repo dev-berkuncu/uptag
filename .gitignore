@@ -10,6 +10,7 @@ public/uploads/comments/*
 
 # Config (her ortamda farklı DB bilgileri)
 config/config.php
+.env
 
 # IDE
 .idea/

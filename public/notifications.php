@@ -27,7 +27,7 @@ try {
     ");
     $stmt->execute([$userId]);
     $notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
+
     // Tüm bildirimleri okundu işaretle
     $markRead = $db->prepare("UPDATE notifications SET is_read = 1 WHERE user_id = ?");
     $markRead->execute([$userId]);
@@ -44,10 +44,12 @@ try {
     if (!empty($userInfo['avatar'])) {
         $avatarUrl = 'uploads/avatars/' . $userInfo['avatar'];
     }
-} catch (PDOException $e) {}
+} catch (PDOException $e) {
+}
 ?>
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -59,20 +61,22 @@ try {
     <?php require_once '../includes/head-bootstrap.php'; ?>
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/style.css?v=<?php echo time(); ?>">
 </head>
+
 <body>
 
     <!-- NAVBAR -->
-    <?php $activeNav = 'notifications'; require_once '../includes/navbar.php'; ?>
+    <?php $activeNav = 'notifications';
+    require_once '../includes/navbar.php'; ?>
 
     <!-- MAIN LAYOUT -->
     <div class="main-layout">
-        
+
         <!-- Left Sponsor Sidebar -->
         <?php require_once '../includes/sidebar-left.php'; ?>
 
         <!-- Main Content -->
         <main class="main-content notifications-page">
-            
+
             <div class="notifications-container">
                 <div class="notifications-header">
                     <div>
@@ -80,9 +84,9 @@ try {
                         <div class="notifications-filter">Seni etiketleyenler, repost edenler,beğenilenler</div>
                     </div>
                     <?php if (!empty($notifications)): ?>
-                    <button class="clear-notifications-btn" id="clearNotificationsBtn">
-                        🗑️ Tümünü Temizle
-                    </button>
+                        <button class="clear-notifications-btn" id="clearNotificationsBtn">
+                            🗑️ Tümünü Temizle
+                        </button>
                     <?php endif; ?>
                 </div>
 
@@ -95,32 +99,41 @@ try {
                 <?php else: ?>
                     <div class="notifications-list">
                         <?php foreach ($notifications as $notif): ?>
-                            <a href="<?php echo BASE_URL; ?>/<?php echo $notif['checkin_id'] ? 'posts/' . $notif['checkin_id'] : 'profile?id=' . $notif['from_user_id']; ?>" data-post-id="<?php echo $notif['checkin_id'] ?? 'null'; ?>" class="notification-card <?php echo $notif['is_read'] ? '' : 'unread'; ?>">
+                            <a href="<?php echo BASE_URL; ?>/<?php echo $notif['checkin_id'] ? 'posts/' . $notif['checkin_id'] : 'profile?id=' . $notif['from_user_id']; ?>"
+                                data-post-id="<?php echo $notif['checkin_id'] ?? 'null'; ?>"
+                                class="notification-card <?php echo $notif['is_read'] ? '' : 'unread'; ?>">
                                 <div class="notification-icon-wrapper">
                                     <div class="notification-avatar">
                                         <?php if (!empty($notif['from_avatar'])): ?>
-                                            <img src="<?php echo BASE_URL; ?>/uploads/avatars/<?php echo escape($notif['from_avatar']); ?>" alt="">
+                                            <img src="<?php echo BASE_URL; ?>/uploads/avatars/<?php echo escape($notif['from_avatar']); ?>"
+                                                alt="">
                                         <?php else: ?>
                                             <?php echo strtoupper(substr($notif['from_username'] ?? '?', 0, 1)); ?>
                                         <?php endif; ?>
                                     </div>
                                     <div class="notification-type-badge">
-                                        <?php 
+                                        <?php
                                         $icons = ['mention' => '📣', 'like' => '❤️', 'comment' => '💬', 'follow' => '👤', 'repost' => '🔄'];
-                                        echo $icons[$notif['type']] ?? '🔔'; 
+                                        echo $icons[$notif['type']] ?? '🔔';
                                         ?>
                                     </div>
                                 </div>
                                 <div class="notification-body">
                                     <div class="notification-text">
-                                        <span class="notification-username"><?php echo escape($notif['from_username']); ?></span>
-                                        <?php 
+                                        <span
+                                            class="notification-username"><?php echo escape($notif['from_username']); ?></span>
+                                        <?php
                                         $actionText = 'bir işlem yaptı';
-                                        if ($notif['type'] === 'mention') $actionText = 'sizi etiketledi';
-                                        elseif ($notif['type'] === 'like') $actionText = 'gönderinizi beğendi';
-                                        elseif ($notif['type'] === 'comment') $actionText = 'yorum yaptı';
-                                        elseif ($notif['type'] === 'follow') $actionText = 'sizi takip etti';
-                                        elseif ($notif['type'] === 'repost') $actionText = 'repostladı';
+                                        if ($notif['type'] === 'mention')
+                                            $actionText = 'sizi etiketledi';
+                                        elseif ($notif['type'] === 'like')
+                                            $actionText = 'gönderinizi beğendi';
+                                        elseif ($notif['type'] === 'comment')
+                                            $actionText = 'yorum yaptı';
+                                        elseif ($notif['type'] === 'follow')
+                                            $actionText = 'sizi takip etti';
+                                        elseif ($notif['type'] === 'repost')
+                                            $actionText = 'repostladı';
                                         echo $actionText;
                                         ?>
                                     </div>
@@ -140,12 +153,12 @@ try {
             </div>
 
         </main>
-            </div>
-            <!-- Sağ Sponsor: col-auto, sabit 300px -->
-            <div class="col-auto app-sponsor-col">
-                <?php require_once '../includes/sidebar-right.php'; ?>
-            </div>
-        </div>
+    </div>
+    <!-- Sağ Sponsor: col-auto, sabit 300px -->
+    <div class="col-auto app-sponsor-col">
+        <?php require_once '../includes/sidebar-right.php'; ?>
+    </div>
+    </div>
     </div>
 
     <!-- Post Modal Overlay -->
@@ -167,98 +180,99 @@ try {
     </footer>
 
     <script>
-    // Clear Notifications Button
-    const clearBtn = document.getElementById('clearNotificationsBtn');
-    if (clearBtn) {
-        clearBtn.addEventListener('click', async function() {
-            if (!confirm('Tüm bildirimleri silmek istediğinize emin misiniz?')) return;
-            
-            try {
-                const res = await fetch('<?php echo BASE_URL; ?>/api/notifications.php?action=clear', {
-                    method: 'POST'
-                });
-                const data = await res.json();
-                if (data.success) {
-                    // DOM'dan bildirimleri kaldır
-                    const notificationsList = document.querySelector('.notifications-list');
-                    if (notificationsList) {
-                        notificationsList.style.opacity = '0';
-                        notificationsList.style.transition = 'opacity 0.3s ease';
-                        setTimeout(() => {
-                            notificationsList.innerHTML = `
+        // Clear Notifications Button
+        const clearBtn = document.getElementById('clearNotificationsBtn');
+        if (clearBtn) {
+            clearBtn.addEventListener('click', async function () {
+                if (!confirm('Tüm bildirimleri silmek istediğinize emin misiniz?')) return;
+
+                try {
+                    const res = await fetch('<?php echo BASE_URL; ?>/api/notifications.php?action=clear', {
+                        method: 'POST',
+                        headers: { 'X-CSRF-Token': window.CSRF_TOKEN }
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        // DOM'dan bildirimleri kaldır
+                        const notificationsList = document.querySelector('.notifications-list');
+                        if (notificationsList) {
+                            notificationsList.style.opacity = '0';
+                            notificationsList.style.transition = 'opacity 0.3s ease';
+                            setTimeout(() => {
+                                notificationsList.innerHTML = `
                                 <div class="notifications-empty">
                                     <div class="empty-icon">🔕</div>
                                     <h3>Henüz bildirim yok</h3>
                                     <p>Birisi sizi etiketlediğinde burada göreceksiniz.</p>
                                 </div>
                             `;
-                            notificationsList.style.opacity = '1';
-                        }, 300);
+                                notificationsList.style.opacity = '1';
+                            }, 300);
+                        }
+                        // Butonu gizle
+                        this.style.display = 'none';
+                    } else {
+                        alert(data.error || 'Bir hata oluştu.');
                     }
-                    // Butonu gizle
-                    this.style.display = 'none';
+                } catch (e) {
+                    alert('Bağlantı hatası: ' + e.message);
+                }
+            });
+        }
+
+        // Post Modal System
+        const modal = document.getElementById('post-modal');
+        const modalContent = document.getElementById('post-modal-content');
+        const closeBtn = modal.querySelector('.post-modal-close');
+        const backdrop = modal.querySelector('.post-modal-backdrop');
+
+        // Open modal when clicking notification
+        document.querySelectorAll('.notification-card').forEach(card => {
+            card.addEventListener('click', async function (e) {
+                e.preventDefault();
+                const href = this.getAttribute('href');
+
+                // Extract post ID from /posts/123 format
+                const match = href.match(/\/posts\/(\d+)/);
+                if (!match) {
+                    // Not a post link, open normally
+                    window.open(href, '_blank');
+                    return;
+                }
+
+                const postId = match[1];
+                openPostModal(postId);
+            });
+        });
+
+        async function openPostModal(postId) {
+            console.log('Opening modal for post ID:', postId);
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            modalContent.innerHTML = '<div class="post-modal-loading">Yükleniyor...</div>';
+
+            try {
+                const url = '<?php echo BASE_URL; ?>/api/get-post.php?id=' + postId;
+                console.log('Fetching URL:', url);
+                const res = await fetch(url);
+                const data = await res.json();
+                console.log('API Response:', data);
+
+                if (data.success) {
+                    renderPostModal(data.post, data.comments);
                 } else {
-                    alert(data.error || 'Bir hata oluştu.');
+                    modalContent.innerHTML = '<div class="post-modal-error">' + (data.error || 'Post bulunamadı.') + '</div>';
                 }
             } catch (e) {
-                alert('Bağlantı hatası: ' + e.message);
+                console.error('Modal Error:', e);
+                modalContent.innerHTML = '<div class="post-modal-error">Bir hata oluştu: ' + e.message + '</div>';
             }
-        });
-    }
-    
-    // Post Modal System
-    const modal = document.getElementById('post-modal');
-    const modalContent = document.getElementById('post-modal-content');
-    const closeBtn = modal.querySelector('.post-modal-close');
-    const backdrop = modal.querySelector('.post-modal-backdrop');
-
-    // Open modal when clicking notification
-    document.querySelectorAll('.notification-card').forEach(card => {
-        card.addEventListener('click', async function(e) {
-            e.preventDefault();
-            const href = this.getAttribute('href');
-            
-            // Extract post ID from /posts/123 format
-            const match = href.match(/\/posts\/(\d+)/);
-            if (!match) {
-                // Not a post link, open normally
-                window.open(href, '_blank');
-                return;
-            }
-            
-            const postId = match[1];
-            openPostModal(postId);
-        });
-    });
-
-    async function openPostModal(postId) {
-        console.log('Opening modal for post ID:', postId);
-        modal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-        modalContent.innerHTML = '<div class="post-modal-loading">Yükleniyor...</div>';
-        
-        try {
-            const url = '<?php echo BASE_URL; ?>/api/get-post.php?id=' + postId;
-            console.log('Fetching URL:', url);
-            const res = await fetch(url);
-            const data = await res.json();
-            console.log('API Response:', data);
-            
-            if (data.success) {
-                renderPostModal(data.post, data.comments);
-            } else {
-                modalContent.innerHTML = '<div class="post-modal-error">' + (data.error || 'Post bulunamadı.') + '</div>';
-            }
-        } catch (e) {
-            console.error('Modal Error:', e);
-            modalContent.innerHTML = '<div class="post-modal-error">Bir hata oluştu: ' + e.message + '</div>';
         }
-    }
 
-    function renderPostModal(post, comments) {
-        let commentsHtml = '';
-        if (comments && comments.length > 0) {
-            commentsHtml = comments.map(c => `
+        function renderPostModal(post, comments) {
+            let commentsHtml = '';
+            if (comments && comments.length > 0) {
+                commentsHtml = comments.map(c => `
                 <div class="modal-comment">
                     <div class="modal-comment-avatar">
                         ${c.avatar ? `<img src="<?php echo BASE_URL; ?>/uploads/avatars/${c.avatar}" alt="">` : c.username.charAt(0).toUpperCase()}
@@ -269,9 +283,9 @@ try {
                     </div>
                 </div>
             `).join('');
-        }
-        
-        modalContent.innerHTML = `
+            }
+
+            modalContent.innerHTML = `
             <div class="modal-post" data-post-id="${post.id}">
                 <div class="modal-post-header">
                     <a href="<?php echo BASE_URL; ?>/profile?id=${post.user_id}" class="modal-avatar">
@@ -321,93 +335,94 @@ try {
                 <?php endif; ?>
             </div>
         `;
-        
-        // Attach like button handler
-        const likeBtn = modalContent.querySelector('.modal-like-btn');
-        if (likeBtn) {
-            likeBtn.addEventListener('click', async function() {
-                const postId = this.dataset.postId;
-                try {
-                    const res = await fetch('<?php echo BASE_URL; ?>/api/interactions.php?action=like', {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                        body: 'checkin_id=' + postId
-                    });
-                    const data = await res.json();
-                    if (data.success) {
-                        this.querySelector('.like-icon').textContent = data.liked ? '❤️' : '🤍';
-                        this.querySelector('.like-count').textContent = data.count;
-                    }
-                } catch (e) {
-                    console.error('Like error:', e);
-                }
-            });
-        }
-        
-        // Attach comment submit handler
-        const commentSubmit = document.getElementById('modal-comment-submit');
-        const commentInput = document.getElementById('modal-comment-input');
-        const imageInput = document.getElementById('modal-comment-image');
-        const imagePreview = document.getElementById('modal-image-preview');
-        const previewImg = document.getElementById('modal-preview-img');
-        const removeImageBtn = document.getElementById('modal-remove-image');
-        
-        // Image preview handler
-        if (imageInput) {
-            imageInput.addEventListener('change', function() {
-                if (this.files && this.files[0]) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        previewImg.src = e.target.result;
-                        imagePreview.style.display = 'block';
-                    };
-                    reader.readAsDataURL(this.files[0]);
-                }
-            });
-        }
-        
-        // Remove image handler
-        if (removeImageBtn) {
-            removeImageBtn.addEventListener('click', function() {
-                imageInput.value = '';
-                imagePreview.style.display = 'none';
-                previewImg.src = '';
-            });
-        }
-        
-        if (commentSubmit && commentInput) {
-            commentSubmit.addEventListener('click', async function() {
-                const postId = this.dataset.postId;
-                const comment = commentInput.value.trim();
-                const imageFile = imageInput?.files[0];
-                
-                if (!comment && !imageFile) return;
-                
-                try {
-                    const formData = new FormData();
-                    formData.append('checkin_id', postId);
-                    formData.append('content', comment);
-                    if (imageFile) {
-                        formData.append('image', imageFile);
-                    }
-                    
-                    const res = await fetch('<?php echo BASE_URL; ?>/api/interactions.php?action=comment', {
-                        method: 'POST',
-                        body: formData
-                    });
-                    const data = await res.json();
-                    if (data.success) {
-                        // Add comment to list
-                        const commentsList = document.getElementById('modal-comments-list');
-                        const noComments = commentsList.querySelector('.no-comments');
-                        if (noComments) noComments.remove();
-                        
-                        let imageHtml = '';
-                        if (data.comment && data.comment.image) {
-                            imageHtml = `<img src="<?php echo BASE_URL; ?>/${data.comment.image}" class="comment-image" alt="">`;
+
+            // Attach like button handler
+            const likeBtn = modalContent.querySelector('.modal-like-btn');
+            if (likeBtn) {
+                likeBtn.addEventListener('click', async function () {
+                    const postId = this.dataset.postId;
+                    try {
+                        const res = await fetch('<?php echo BASE_URL; ?>/api/interactions.php?action=like', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-Token': window.CSRF_TOKEN },
+                            body: 'checkin_id=' + postId
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                            this.querySelector('.like-icon').textContent = data.liked ? '❤️' : '🤍';
+                            this.querySelector('.like-count').textContent = data.count;
                         }
-                        
-                        commentsList.innerHTML += `
+                    } catch (e) {
+                        console.error('Like error:', e);
+                    }
+                });
+            }
+
+            // Attach comment submit handler
+            const commentSubmit = document.getElementById('modal-comment-submit');
+            const commentInput = document.getElementById('modal-comment-input');
+            const imageInput = document.getElementById('modal-comment-image');
+            const imagePreview = document.getElementById('modal-image-preview');
+            const previewImg = document.getElementById('modal-preview-img');
+            const removeImageBtn = document.getElementById('modal-remove-image');
+
+            // Image preview handler
+            if (imageInput) {
+                imageInput.addEventListener('change', function () {
+                    if (this.files && this.files[0]) {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            previewImg.src = e.target.result;
+                            imagePreview.style.display = 'block';
+                        };
+                        reader.readAsDataURL(this.files[0]);
+                    }
+                });
+            }
+
+            // Remove image handler
+            if (removeImageBtn) {
+                removeImageBtn.addEventListener('click', function () {
+                    imageInput.value = '';
+                    imagePreview.style.display = 'none';
+                    previewImg.src = '';
+                });
+            }
+
+            if (commentSubmit && commentInput) {
+                commentSubmit.addEventListener('click', async function () {
+                    const postId = this.dataset.postId;
+                    const comment = commentInput.value.trim();
+                    const imageFile = imageInput?.files[0];
+
+                    if (!comment && !imageFile) return;
+
+                    try {
+                        const formData = new FormData();
+                        formData.append('checkin_id', postId);
+                        formData.append('content', comment);
+                        if (imageFile) {
+                            formData.append('image', imageFile);
+                        }
+
+                        const res = await fetch('<?php echo BASE_URL; ?>/api/interactions.php?action=comment', {
+                            method: 'POST',
+                            headers: { 'X-CSRF-Token': window.CSRF_TOKEN },
+                            body: formData
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                            // Add comment to list
+                            const commentsList = document.getElementById('modal-comments-list');
+                            const noComments = commentsList.querySelector('.no-comments');
+                            if (noComments) noComments.remove();
+
+                            let imageHtml = '';
+                            if (data.comment && data.comment.image) {
+                                imageHtml = `<img src="<?php echo BASE_URL; ?>/${data.comment.image}" class="comment-image" alt="">`;
+                            }
+
+                            commentsList.innerHTML += `
                             <div class="modal-comment">
                                 <div class="modal-comment-avatar"><?php echo strtoupper(substr($_SESSION['username'] ?? 'U', 0, 1)); ?></div>
                                 <div class="modal-comment-body">
@@ -417,38 +432,37 @@ try {
                                 </div>
                             </div>
                         `;
-                        commentInput.value = '';
-                        if (imageInput) imageInput.value = '';
-                        if (imagePreview) imagePreview.style.display = 'none';
+                            commentInput.value = '';
+                            if (imageInput) imageInput.value = '';
+                            if (imagePreview) imagePreview.style.display = 'none';
+                        }
+                    } catch (e) {
+                        console.error('Comment error:', e);
                     }
-                } catch (e) {
-                    console.error('Comment error:', e);
-                }
-            });
-            
-            // Submit on Enter
-            commentInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    commentSubmit.click();
-                }
-            });
+                });
+
+                // Submit on Enter
+                commentInput.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') {
+                        commentSubmit.click();
+                    }
+                });
+            }
         }
-    }
 
-    // Close modal
-    closeBtn.addEventListener('click', closeModal);
-    backdrop.addEventListener('click', closeModal);
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeModal();
-    });
+        // Close modal
+        closeBtn.addEventListener('click', closeModal);
+        backdrop.addEventListener('click', closeModal);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
 
-    function closeModal() {
-        modal.style.display = 'none';
-        document.body.style.overflow = '';
-    }
+        function closeModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
     </script>
 
 </body>
+
 </html>
-
-

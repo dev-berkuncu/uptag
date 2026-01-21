@@ -21,34 +21,34 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+// CSRF validation
+requireCsrf();
+
+// Güvenli resim yükleme sınıfı
+require_once '../../includes/ImageUploader.php';
+
 $userId = $_SESSION['user_id'];
 $content = trim($_POST['content'] ?? '');
 $venueId = intval($_POST['venue_id'] ?? 0);
 
-// Image upload handling
+// Image upload handling with secure ImageUploader
 $imageName = null;
 if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    $maxSize = 5 * 1024 * 1024; // 5MB
-    
-    if (!in_array($_FILES['image']['type'], $allowedTypes)) {
-        echo json_encode(['success' => false, 'error' => 'Sadece JPG, PNG, GIF veya WebP dosyaları yüklenebilir']);
+    $uploader = new ImageUploader();
+    $result = $uploader->upload($_FILES['image'], 'posts', [
+        'maxSize' => 5 * 1024 * 1024,
+        'outputFormat' => 'webp',
+        'quality' => 85,
+        'maxWidth' => 1200,
+        'maxHeight' => 1200
+    ]);
+
+    if (!$result['success']) {
+        echo json_encode(['success' => false, 'error' => $result['error']]);
         exit;
     }
-    
-    if ($_FILES['image']['size'] > $maxSize) {
-        echo json_encode(['success' => false, 'error' => 'Dosya boyutu 5MB\'dan küçük olmalıdır']);
-        exit;
-    }
-    
-    $ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-    $imageName = $userId . '_' . time() . '_' . uniqid() . '.' . strtolower($ext);
-    $uploadPath = __DIR__ . '/../uploads/posts/' . $imageName;
-    
-    if (!move_uploaded_file($_FILES['image']['tmp_name'], $uploadPath)) {
-        echo json_encode(['success' => false, 'error' => 'Fotoğraf yüklenemedi']);
-        exit;
-    }
+
+    $imageName = $result['filename'];
 }
 
 // Validate
@@ -64,19 +64,19 @@ if ($venueId === 0) {
 
 try {
     $db = Database::getInstance()->getConnection();
-    
+
     // Verify venue exists
     $venueStmt = $db->prepare("SELECT id, name FROM venues WHERE id = ? AND is_active = 1");
     $venueStmt->execute([$venueId]);
     $venue = $venueStmt->fetch();
-    
+
     if (!$venue) {
         echo json_encode(['success' => false, 'error' => 'Mekan bulunamadı']);
         exit;
     }
-    
+
     // Rate limiting check (optional)
-    $cooldownSeconds = (int)getSetting('checkin_cooldown_seconds', 300);
+    $cooldownSeconds = (int) getSetting('checkin_cooldown_seconds', 300);
     $lastCheckinStmt = $db->prepare("
         SELECT created_at FROM checkins 
         WHERE user_id = ? AND venue_id = ? 
@@ -84,19 +84,19 @@ try {
     ");
     $lastCheckinStmt->execute([$userId, $venueId]);
     $lastCheckin = $lastCheckinStmt->fetch();
-    
+
     if ($lastCheckin) {
         $timeSince = time() - strtotime($lastCheckin['created_at']);
         if ($timeSince < $cooldownSeconds) {
             $remaining = $cooldownSeconds - $timeSince;
             echo json_encode([
-                'success' => false, 
+                'success' => false,
                 'error' => "Bu mekana tekrar check-in için {$remaining} saniye bekleyin"
             ]);
             exit;
         }
     }
-    
+
     // Create the check-in (post) with image
     $insertStmt = $db->prepare("
         INSERT INTO checkins (user_id, venue_id, note, image, created_at) 
@@ -104,7 +104,7 @@ try {
     ");
     $insertStmt->execute([$userId, $venueId, $content, $imageName]);
     $postId = $db->lastInsertId();
-    
+
     // Parse @mentions and create notifications
     if (!empty($content)) {
         preg_match_all('/@([a-zA-Z0-9_]+)/', $content, $matches);
@@ -115,7 +115,7 @@ try {
                 $userStmt = $db->prepare("SELECT id FROM users WHERE (tag = ? OR LOWER(username) = LOWER(?)) AND id != ?");
                 $userStmt->execute([$tag, $tag, $userId]);
                 $mentionedUser = $userStmt->fetch();
-                
+
                 if ($mentionedUser) {
                     // Create notification
                     try {
@@ -132,7 +132,7 @@ try {
             }
         }
     }
-    
+
     echo json_encode([
         'success' => true,
         'message' => 'Post paylaşıldı!',
@@ -143,7 +143,7 @@ try {
             'image' => $imageName ? 'uploads/posts/' . $imageName : null
         ]
     ]);
-    
+
 } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(['success' => false, 'error' => 'Bir hata oluştu']);

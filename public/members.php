@@ -51,6 +51,7 @@ require_once '../includes/ads_logic.php';
 ?>
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -289,28 +290,31 @@ require_once '../includes/ads_logic.php';
         }
     </style>
 </head>
+
 <body>
 
     <!-- NAVBAR -->
-    <?php $activeNav = 'members'; require_once '../includes/navbar.php'; ?>
+    <?php $activeNav = 'members';
+    require_once '../includes/navbar.php'; ?>
 
     <!-- MAIN LAYOUT -->
     <div class="main-layout">
-        
+
         <!-- Left Sponsor Sidebar -->
         <!-- Left Sponsor Sidebar -->
         <?php require_once '../includes/sidebar-left.php'; ?>
 
         <!-- Main Content -->
         <main class="main-content members-page">
-            
+
             <div class="members-header">
                 <h1>👥 Üyeler</h1>
                 <p class="members-count"><?php echo count($users); ?> üye bulundu</p>
-                
+
                 <form class="members-search" method="GET" action="">
                     <span class="search-icon">🔍</span>
-                    <input type="text" name="q" placeholder="Kullanıcı ara..." value="<?php echo escape($searchQuery); ?>">
+                    <input type="text" name="q" placeholder="Kullanıcı ara..."
+                        value="<?php echo escape($searchQuery); ?>">
                 </form>
             </div>
 
@@ -322,10 +326,10 @@ require_once '../includes/ads_logic.php';
                 </div>
             <?php else: ?>
                 <div class="members-grid">
-                    <?php foreach ($users as $user): 
+                    <?php foreach ($users as $user):
                         $isFollowing = in_array($user['id'], $followingIds);
                         $avatarUrl = $user['avatar'] ? BASE_URL . '/uploads/avatars/' . $user['avatar'] : null;
-                    ?>
+                        ?>
                         <div class="member-card">
                             <a href="profile.php?id=<?php echo $user['id']; ?>" class="member-avatar">
                                 <?php if ($avatarUrl): ?>
@@ -334,7 +338,7 @@ require_once '../includes/ads_logic.php';
                                     <?php echo strtoupper(substr($user['username'], 0, 1)); ?>
                                 <?php endif; ?>
                             </a>
-                            
+
                             <div class="member-info">
                                 <a href="profile.php?id=<?php echo $user['id']; ?>" class="member-name-link">
                                     <div class="member-name"><?php echo escape($user['username']); ?></div>
@@ -355,15 +359,16 @@ require_once '../includes/ads_logic.php';
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="member-actions">
                                 <?php if ($userId > 0): ?>
-                                    <button class="follow-btn <?php echo $isFollowing ? 'following' : 'follow'; ?>" 
-                                            data-user-id="<?php echo $user['id']; ?>">
+                                    <button class="follow-btn <?php echo $isFollowing ? 'following' : 'follow'; ?>"
+                                        data-user-id="<?php echo $user['id']; ?>">
                                         <?php echo $isFollowing ? 'Takip Ediliyor' : 'Takip Et'; ?>
                                     </button>
                                 <?php else: ?>
-                                    <a href="login.php" class="follow-btn follow" style="display:block; text-align:center; text-decoration:none;">Takip Et</a>
+                                    <a href="login.php" class="follow-btn follow"
+                                        style="display:block; text-align:center; text-decoration:none;">Takip Et</a>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -384,11 +389,15 @@ require_once '../includes/ads_logic.php';
         <div class="footer-sponsor">
             <?php if (!empty($footerAds)): ?>
                 <?php $fAd = $footerAds[0]; ?>
-                <a href="<?php echo escape($fAd['link_url'] ?: '#'); ?>" target="_blank" style="display: block; text-align: center;">
-                    <img src="<?php echo BASE_URL . '/' . escape($fAd['image_url']); ?>" alt="<?php echo escape($fAd['title']); ?>" style="max-width: 100%; max-height: 120px; border-radius: 8px;">
+                <a href="<?php echo escape($fAd['link_url'] ?: '#'); ?>" target="_blank"
+                    style="display: block; text-align: center;">
+                    <img src="<?php echo BASE_URL . '/' . escape($fAd['image_url']); ?>"
+                        alt="<?php echo escape($fAd['title']); ?>"
+                        style="max-width: 100%; max-height: 120px; border-radius: 8px;">
                 </a>
             <?php else: ?>
-                <div class="footer-sponsor-placeholder" style="background: rgba(0,0,0,0.2); border-radius: 8px; padding: 20px; text-align: center;">
+                <div class="footer-sponsor-placeholder"
+                    style="background: rgba(0,0,0,0.2); border-radius: 8px; padding: 20px; text-align: center;">
                     <span style="font-size: 1.5rem;">📢</span>
                 </div>
             <?php endif; ?>
@@ -420,55 +429,55 @@ require_once '../includes/ads_logic.php';
     </footer>
 
     <script>
-    // Follow button functionality
-    document.querySelectorAll('.follow-btn').forEach(btn => {
-        btn.addEventListener('click', async function() {
-            const userId = this.dataset.userId;
-            const button = this;
-            
-            button.disabled = true;
-            
-            try {
-                const formData = new FormData();
-                formData.append('user_id', userId);
-                
-                const response = await fetch('api/interactions.php?action=follow', {
-                    method: 'POST',
-                    body: formData
-                });
-                const data = await response.json();
-                
-                if (data.success) {
-                    if (data.following) {
-                        button.textContent = 'Takip Ediliyor';
-                        button.classList.remove('follow');
-                        button.classList.add('following');
+        // Follow button functionality
+        document.querySelectorAll('.follow-btn').forEach(btn => {
+            btn.addEventListener('click', async function () {
+                const userId = this.dataset.userId;
+                const button = this;
+
+                button.disabled = true;
+
+                try {
+                    const formData = new FormData();
+                    formData.append('user_id', userId);
+
+                    const response = await fetch('api/interactions.php?action=follow', {
+                        method: 'POST',
+                        headers: { 'X-CSRF-Token': window.CSRF_TOKEN },
+                        body: formData
+                    });
+                    const data = await response.json();
+
+                    if (data.success) {
+                        if (data.following) {
+                            button.textContent = 'Takip Ediliyor';
+                            button.classList.remove('follow');
+                            button.classList.add('following');
+                        } else {
+                            button.textContent = 'Takip Et';
+                            button.classList.remove('following');
+                            button.classList.add('follow');
+                        }
+
+                        // Update follower count in the card
+                        const card = button.closest('.member-card');
+                        const followerStat = card.querySelector('.member-stat:first-child .member-stat-value');
+                        if (followerStat) {
+                            followerStat.textContent = data.follower_count;
+                        }
                     } else {
-                        button.textContent = 'Takip Et';
-                        button.classList.remove('following');
-                        button.classList.add('follow');
+                        alert(data.error || 'İşlem başarısız.');
                     }
-                    
-                    // Update follower count in the card
-                    const card = button.closest('.member-card');
-                    const followerStat = card.querySelector('.member-stat:first-child .member-stat-value');
-                    if (followerStat) {
-                        followerStat.textContent = data.follower_count;
-                    }
-                } else {
-                    alert(data.error || 'İşlem başarısız.');
+                } catch (error) {
+                    console.error('Follow error:', error);
+                    alert('Bağlantı hatası.');
                 }
-            } catch (error) {
-                console.error('Follow error:', error);
-                alert('Bağlantı hatası.');
-            }
-            
-            button.disabled = false;
+
+                button.disabled = false;
+            });
         });
-    });
     </script>
 
 </body>
+
 </html>
-
-

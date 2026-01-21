@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['character_id'])) {
 
             if ($existingUser) {
                 // Mevcut kullanıcı - karakter bilgilerini güncelle ve giriş yap
-                
+
                 // Kullanıcı adı benzersiz olmalı (kendi kullanıcı adı değilse kontrol et)
                 $username = $characterName;
                 if ($existingUser['username'] !== $username) {
@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['character_id'])) {
                         $counter++;
                     }
                 }
-                
+
                 $updateStmt = $db->prepare("
                     UPDATE users SET 
                         gta_character_id = ?,
@@ -81,17 +81,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['character_id'])) {
                     $username,      // Benzersiz site kullanıcı adı (username)
                     $existingUser['id']
                 ]);
-                
+
+                session_regenerate_id(true); // Session fixation koruması
                 $_SESSION['user_id'] = $existingUser['id'];
                 $_SESSION['username'] = $username;
                 $_SESSION['email'] = $existingUser['email'];
                 $_SESSION['is_admin'] = $existingUser['is_admin'];
-                
+
                 $_SESSION['message'] = 'Hoş geldin, ' . $username . '!';
                 $_SESSION['message_type'] = 'success';
             } else {
                 // Yeni kullanıcı - kayıt oluştur
-                
+
                 // Kullanıcı adı benzersiz olmalı check et
                 $username = $characterName;
                 $checkUsername = $db->prepare("SELECT id FROM users WHERE username = ?");
@@ -116,14 +117,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['character_id'])) {
                     $selectedChar['id'],
                     $characterName
                 ]);
-                
+
                 $newUserId = $db->lastInsertId();
-                
+
+                session_regenerate_id(true); // Session fixation koruması
                 $_SESSION['user_id'] = $newUserId;
                 $_SESSION['username'] = $username;
                 $_SESSION['email'] = $gtaUsername . '@gta.world';
                 $_SESSION['is_admin'] = 0;
-                
+
                 $_SESSION['message'] = 'Hoş geldin, ' . $username . '! Hesabın oluşturuldu.';
                 $_SESSION['message_type'] = 'success';
             }

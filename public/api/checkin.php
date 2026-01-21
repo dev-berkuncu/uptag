@@ -14,12 +14,12 @@ $action = $_GET['action'] ?? '';
 if ($action === 'search') {
     // @ mention için mekan arama
     $query = trim($_GET['q'] ?? '');
-    
+
     if (strlen($query) < 1) {
         echo json_encode([]);
         exit;
     }
-    
+
     $db = Database::getInstance()->getConnection();
     $stmt = $db->prepare("
         SELECT id, name, address 
@@ -30,39 +30,42 @@ if ($action === 'search') {
     ");
     $stmt->execute(['%' . $query . '%']);
     $venues = $stmt->fetchAll();
-    
+
     echo json_encode($venues);
     exit;
 }
 
 if ($action === 'post' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    // CSRF validation
+    requireCsrf();
+
     // Yeni ment oluştur
     $content = trim($_POST['content'] ?? '');
-    $venueId = (int)($_POST['venue_id'] ?? 0);
-    
+    $venueId = (int) ($_POST['venue_id'] ?? 0);
+
     if (empty($content)) {
         echo json_encode(['success' => false, 'message' => 'Ment içeriği boş olamaz.']);
         exit;
     }
-    
+
     if ($venueId <= 0) {
         echo json_encode(['success' => false, 'message' => 'Bir mekan etiketlemelisiniz (@mekanadi).']);
         exit;
     }
-    
+
     // Mekan kontrolü
     $venue = new Venue();
     $venueData = $venue->getVenueById($venueId);
-    
+
     if (!$venueData || !$venueData['is_active']) {
         echo json_encode(['success' => false, 'message' => 'Mekan bulunamadı.']);
         exit;
     }
-    
+
     // Cooldown kontrolü
     $db = Database::getInstance()->getConnection();
-    $cooldownSeconds = (int)getSetting('checkin_cooldown_seconds', 300);
-    
+    $cooldownSeconds = (int) getSetting('checkin_cooldown_seconds', 300);
+
     $cooldownStmt = $db->prepare("
         SELECT created_at FROM checkins 
         WHERE user_id = ? AND venue_id = ?
@@ -70,21 +73,21 @@ if ($action === 'post' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     ");
     $cooldownStmt->execute([$_SESSION['user_id'], $venueId]);
     $lastCheckin = $cooldownStmt->fetch();
-    
+
     if ($lastCheckin) {
         $lastCheckinTime = strtotime($lastCheckin['created_at']);
         $timeSince = time() - $lastCheckinTime;
-        
+
         if ($timeSince < $cooldownSeconds) {
             $remaining = ceil(($cooldownSeconds - $timeSince) / 60);
             echo json_encode(['success' => false, 'message' => "Bu mekana tekrar ment atmak için $remaining dakika beklemelisiniz."]);
             exit;
         }
     }
-    
+
     // Check-in (ment) oluştur
     $stmt = $db->prepare("INSERT INTO checkins (user_id, venue_id, note) VALUES (?, ?, ?)");
-    
+
     if ($stmt->execute([$_SESSION['user_id'], $venueId, $content])) {
         echo json_encode(['success' => true, 'message' => 'Ment başarıyla paylaşıldı!']);
     } else {

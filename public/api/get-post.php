@@ -4,6 +4,7 @@
  */
 require_once '../../config/config.php';
 require_once '../../config/database.php';
+require_once '../../includes/api_response.php';
 
 header('Content-Type: application/json');
 
@@ -16,17 +17,17 @@ if ($postId === 0) {
 
 try {
     $db = Database::getInstance()->getConnection();
-    
+
     // First check if the checkin exists at all
     $checkStmt = $db->prepare("SELECT id, venue_id, user_id FROM checkins WHERE id = ?");
     $checkStmt->execute([$postId]);
     $checkResult = $checkStmt->fetch(PDO::FETCH_ASSOC);
-    
+
     if (!$checkResult) {
         echo json_encode(['success' => false, 'error' => 'Post bulunamadı (ID: ' . $postId . ')']);
         exit;
     }
-    
+
     // Fetch post with LEFT JOIN to handle missing venue/user
     $stmt = $db->prepare("
         SELECT c.*, 
@@ -45,15 +46,15 @@ try {
     ");
     $stmt->execute([$postId]);
     $post = $stmt->fetch(PDO::FETCH_ASSOC);
-    
+
     if (!$post) {
         echo json_encode(['success' => false, 'error' => 'Post verisi alınamadı']);
         exit;
     }
-    
+
     // Format date
     $post['created_at'] = formatDate($post['created_at'], true);
-    
+
     // Fetch comments
     $commentsStmt = $db->prepare("
         SELECT pc.id, pc.content as comment, pc.created_at, pc.user_id,
@@ -66,13 +67,13 @@ try {
     ");
     $commentsStmt->execute([$postId]);
     $comments = $commentsStmt->fetchAll(PDO::FETCH_ASSOC);
-    
+
     echo json_encode([
         'success' => true,
         'post' => $post,
         'comments' => $comments
     ]);
-    
-} catch (PDOException $e) {
-    echo json_encode(['success' => false, 'error' => 'DB Error: ' . $e->getMessage()]);
+
+} catch (Exception $e) {
+    handleApiException($e, ['action' => 'get_post', 'post_id' => $postId]);
 }

@@ -1,0 +1,41 @@
+# Yürütülebilir dosyaları engelle
+# Bu klasördeki PHP ve diğer script dosyalarının çalışmasını önler
+
+# PHP ve diğer scriptlerin çalışmasını engelle
+<FilesMatch "\.(php|phtml|php3|php4|php5|php7|phps|phar|pl|py|cgi|asp|aspx|jsp|sh|bash)$">
+    Require all denied
+</FilesMatch>
+
+# Apache 2.2 uyumluluğu
+<IfModule !mod_authz_core.c>
+    <FilesMatch "\.(php|phtml|php3|php4|php5|php7|phps|phar|pl|py|cgi|asp|aspx|jsp|sh|bash)$">
+        Order deny,allow
+        Deny from all
+    </FilesMatch>
+</IfModule>
+
+# Handler'ları devre dışı bırak
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+
+RemoveHandler .php .phtml .php3 .php4 .php5 .php7 .phps .phar
+RemoveType .php .phtml .php3 .php4 .php5 .php7 .phps .phar
+
+# Script çalıştırmayı engelle
+Options -Indexes -ExecCGI
+AddHandler cgi-script .php .phtml .php3 .php4 .php5 .php7 .phps .phar .pl .py .cgi
+
+# MIME type sniffing'i engelle
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+</IfModule>
+
+# Sadece görsel MIME tiplerine izin ver (opsiyonel ekstra güvenlik)
+<IfModule mod_mime.c>
+    # Sadece görsel dosyalarını servis et
+    AddType image/jpeg .jpg .jpeg
+    AddType image/png .png
+    AddType image/gif .gif
+    AddType image/webp .webp
+</IfModule>

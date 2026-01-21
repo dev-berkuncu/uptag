@@ -6,21 +6,24 @@
 /**
  * Kullanıcının giriş yapıp yapmadığını kontrol eder
  */
-function isLoggedIn() {
+function isLoggedIn()
+{
     return isset($_SESSION['user_id']) && isset($_SESSION['username']);
 }
 
 /**
  * Kullanıcının admin olup olmadığını kontrol eder
  */
-function isAdmin() {
+function isAdmin()
+{
     return isLoggedIn() && isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == 1;
 }
 
 /**
  * Admin kontrolü yapar, değilse yönlendirir
  */
-function requireAdmin() {
+function requireAdmin()
+{
     if (!isAdmin()) {
         header('Location: ' . BASE_URL . '/index.php');
         exit;
@@ -30,7 +33,8 @@ function requireAdmin() {
 /**
  * Giriş kontrolü yapar, değilse yönlendirir
  */
-function requireLogin() {
+function requireLogin()
+{
     if (!isLoggedIn()) {
         header('Location: ' . BASE_URL . '/login.php');
         exit;
@@ -40,34 +44,36 @@ function requireLogin() {
 /**
  * Güvenli çıktı (XSS koruması)
  */
-function escape($string) {
+function escape($string)
+{
     return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
 }
 
 /**
  * Haftanın başlangıç ve bitiş zamanını döndürür (Europe/Istanbul)
  */
-function getWeekRange($date = null) {
+function getWeekRange($date = null)
+{
     $timezone = new DateTimeZone('Europe/Istanbul');
-    
+
     if ($date === null) {
         $now = new DateTime('now', $timezone);
     } else {
         $now = new DateTime($date, $timezone);
     }
-    
+
     // Pazartesi gününü bul
-    $dayOfWeek = (int)$now->format('N'); // 1=Monday, 7=Sunday
+    $dayOfWeek = (int) $now->format('N'); // 1=Monday, 7=Sunday
     $daysToMonday = ($dayOfWeek == 1) ? 0 : 1 - $dayOfWeek;
-    
+
     $weekStart = clone $now;
     $weekStart->modify($daysToMonday . ' days');
     $weekStart->setTime(0, 0, 0);
-    
+
     $weekEnd = clone $weekStart;
     $weekEnd->modify('+6 days');
     $weekEnd->setTime(23, 59, 59);
-    
+
     return [
         'start' => $weekStart->format('Y-m-d H:i:s'),
         'end' => $weekEnd->format('Y-m-d H:i:s'),
@@ -79,7 +85,8 @@ function getWeekRange($date = null) {
 /**
  * Tarih formatla (Türkçe)
  */
-function formatDate($date, $includeTime = false) {
+function formatDate($date, $includeTime = false)
+{
     $timestamp = strtotime($date);
     $format = $includeTime ? 'd.m.Y H:i' : 'd.m.Y';
     return date($format, $timestamp);
@@ -88,31 +95,38 @@ function formatDate($date, $includeTime = false) {
 /**
  * Zaman farkını insan okunabilir formatta gösterir
  */
-function timeAgo($datetime) {
+function timeAgo($datetime)
+{
     $time = time() - strtotime($datetime);
-    
-    if ($time < 60) return 'az önce';
-    if ($time < 3600) return floor($time/60) . ' dakika önce';
-    if ($time < 86400) return floor($time/3600) . ' saat önce';
-    if ($time < 604800) return floor($time/86400) . ' gün önce';
-    
+
+    if ($time < 60)
+        return 'az önce';
+    if ($time < 3600)
+        return floor($time / 60) . ' dakika önce';
+    if ($time < 86400)
+        return floor($time / 3600) . ' saat önce';
+    if ($time < 604800)
+        return floor($time / 86400) . ' gün önce';
+
     return formatDate($datetime);
 }
 
 /**
  * Admin log kaydı oluşturur
  */
-function logAdminAction($actionType, $targetType, $targetId = null, $details = null) {
-    if (!isAdmin()) return false;
-    
+function logAdminAction($actionType, $targetType, $targetId = null, $details = null)
+{
+    if (!isAdmin())
+        return false;
+
     $db = Database::getInstance()->getConnection();
     $stmt = $db->prepare("
         INSERT INTO admin_logs (admin_id, action_type, target_type, target_id, details, ip_address)
         VALUES (?, ?, ?, ?, ?, ?)
     ");
-    
+
     $ipAddress = null; // Privacy enhancement: Do not log IP address
-    
+
     return $stmt->execute([
         $_SESSION['user_id'],
         $actionType,
@@ -126,33 +140,36 @@ function logAdminAction($actionType, $targetType, $targetId = null, $details = n
 /**
  * Sistem ayarı getirir
  */
-function getSetting($key, $default = null) {
+function getSetting($key, $default = null)
+{
     $db = Database::getInstance()->getConnection();
     $stmt = $db->prepare("SELECT setting_value FROM settings WHERE setting_key = ?");
     $stmt->execute([$key]);
     $result = $stmt->fetch();
-    
+
     return $result ? $result['setting_value'] : $default;
 }
 
 /**
  * Sistem ayarı günceller
  */
-function setSetting($key, $value) {
+function setSetting($key, $value)
+{
     $db = Database::getInstance()->getConnection();
     $stmt = $db->prepare("
         INSERT INTO settings (setting_key, setting_value)
         VALUES (?, ?)
         ON DUPLICATE KEY UPDATE setting_value = ?
     ");
-    
+
     return $stmt->execute([$key, $value, $value]);
 }
 
 /**
  * CSRF Token Oluştur
  */
-function generateCsrfToken() {
+function generateCsrfToken()
+{
     if (empty($_SESSION['csrf_token'])) {
         try {
             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
@@ -166,7 +183,8 @@ function generateCsrfToken() {
 /**
  * CSRF Token Doğrula
  */
-function validateCsrfToken($token) {
+function validateCsrfToken($token)
+{
     if (empty($_SESSION['csrf_token']) || empty($token)) {
         return false;
     }
@@ -176,7 +194,42 @@ function validateCsrfToken($token) {
 /**
  * CSRF Token Input Alanı
  */
-function csrfField() {
+function csrfField()
+{
     return '<input type="hidden" name="csrf_token" value="' . escape(generateCsrfToken()) . '">';
+}
+
+/**
+ * CSRF Token'ı request'ten al (POST body veya header)
+ */
+function getCsrfTokenFromRequest()
+{
+    // Önce POST body'den kontrol et
+    if (!empty($_POST['csrf_token'])) {
+        return $_POST['csrf_token'];
+    }
+
+    // Sonra X-CSRF-Token header'ından kontrol et
+    if (!empty($_SERVER['HTTP_X_CSRF_TOKEN'])) {
+        return $_SERVER['HTTP_X_CSRF_TOKEN'];
+    }
+
+    return null;
+}
+
+/**
+ * API endpoint'leri için CSRF zorunlu kıl
+ * POST request'lerde çağrılmalı
+ */
+function requireCsrf()
+{
+    $token = getCsrfTokenFromRequest();
+
+    if (!validateCsrfToken($token)) {
+        http_response_code(403);
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'error' => 'CSRF token geçersiz veya eksik.']);
+        exit;
+    }
 }
 

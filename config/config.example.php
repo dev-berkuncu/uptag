@@ -1,13 +1,31 @@
 <?php
 /**
- * Uptag - Ana Yapılandırma Dosyası
+ * Uptag - Örnek Yapılandırma Dosyası
  * 
- * Bu dosyayı config.php olarak kopyalayın ve kendi ayarlarınızı girin.
+ * Bu dosya config.php'nin içeriğini gösterir.
+ * Hassas bilgiler .env dosyasından okunur.
+ * 
+ * Kurulum:
+ * 1. .env.example dosyasını .env olarak kopyalayın
+ * 2. .env dosyasındaki değerleri düzenleyin
+ * 3. Bu dosyayı config.php olarak kopyalayın (veya olduğu gibi bırakın)
  */
 
-// Hata raporlama (geliştirme ortamı için)
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// Environment loader'ı yükle
+require_once __DIR__ . '/env.php';
+
+// .env dosyasını yükle
+loadEnv(dirname(__DIR__) . '/.env');
+
+// Environment'a göre hata raporlama
+$isProd = env('APP_ENV', 'production') === 'production';
+if ($isProd) {
+    error_reporting(0);
+    ini_set('display_errors', 0);
+} else {
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+}
 
 // Zaman dilimi ayarı
 date_default_timezone_set('Europe/Istanbul');
@@ -17,23 +35,23 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Veritabanı ayarları - KENDİ BİLGİLERİNİZİ GİRİN
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'veritabani_adi');
-define('DB_USER', 'kullanici_adi');
-define('DB_PASS', 'sifre');
-define('DB_CHARSET', 'utf8mb4');
+// Veritabanı ayarları (zorunlu)
+define('DB_HOST', env_required('DB_HOST'));
+define('DB_NAME', env_required('DB_NAME'));
+define('DB_USER', env_required('DB_USER'));
+define('DB_PASS', env_required('DB_PASS'));
+define('DB_CHARSET', env('DB_CHARSET', 'utf8mb4'));
 
-// Site ayarları - KENDİ DOMAİNİNİZİ GİRİN
-define('SITE_NAME', 'Uptag');
-define('BASE_URL', 'https://siteniz.com');
+// Site ayarları
+define('SITE_NAME', env('SITE_NAME', 'Uptag'));
+define('BASE_URL', env_required('BASE_URL'));
 
 // Güvenlik ayarları
-define('SESSION_LIFETIME', 3600 * 24); // 24 saat
+define('SESSION_LIFETIME', (int) env('SESSION_LIFETIME', 86400)); // 24 saat
 
 // OAuth Ayarları (GTA World)
-define('OAUTH_CLIENT_ID', ''); // GTA World'den alınacak
-define('OAUTH_CLIENT_SECRET', ''); // GTA World'den alınacak
+define('OAUTH_CLIENT_ID', env_required('OAUTH_CLIENT_ID'));
+define('OAUTH_CLIENT_SECRET', env_required('OAUTH_CLIENT_SECRET'));
 define('OAUTH_REDIRECT_URI', BASE_URL . '/oauth-callback');
 
 // Dosya yolları

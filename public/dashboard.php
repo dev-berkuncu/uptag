@@ -1359,6 +1359,7 @@ require_once '../includes/ads_logic.php';
 
                     const response = await fetch('<?php echo BASE_URL; ?>/api/create-post.php', {
                         method: 'POST',
+                        headers: { 'X-CSRF-Token': window.CSRF_TOKEN },
                         body: formData
                     });
 
@@ -1486,6 +1487,7 @@ require_once '../includes/ads_logic.php';
                         console.log('Sending delete request to:', API_URL + '?action=delete');
                         const response = await fetch(API_URL + '?action=delete', {
                             method: 'POST',
+                            headers: { 'X-CSRF-Token': window.CSRF_TOKEN },
                             body: formData
                         });
                         const data = await response.json();
@@ -1527,6 +1529,7 @@ require_once '../includes/ads_logic.php';
 
                         const response = await fetch(API_URL + '?action=like', {
                             method: 'POST',
+                            headers: { 'X-CSRF-Token': window.CSRF_TOKEN },
                             body: formData
                         });
                         console.log('Like API response status:', response.status);
@@ -1599,6 +1602,7 @@ require_once '../includes/ads_logic.php';
 
                             const response = await fetch(API_URL + '?action=repost', {
                                 method: 'POST',
+                                headers: { 'X-CSRF-Token': window.CSRF_TOKEN },
                                 body: formData
                             });
                             const data = await response.json();
@@ -1673,6 +1677,7 @@ require_once '../includes/ads_logic.php';
 
                     const response = await fetch(API_URL + '?action=repost', {
                         method: 'POST',
+                        headers: { 'X-CSRF-Token': window.CSRF_TOKEN },
                         body: formData
                     });
 
@@ -1824,7 +1829,7 @@ require_once '../includes/ads_logic.php';
                         formData.append('image', commentImageInput.files[0]);
                     }
 
-                    const response = await fetch(API_URL + '?action=comment', { method: 'POST', body: formData });
+                    const response = await fetch(API_URL + '?action=comment', { method: 'POST', headers: { 'X-CSRF-Token': window.CSRF_TOKEN }, body: formData });
                     const data = await response.json();
 
                     if (data.success) {

@@ -22,17 +22,20 @@ try {
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ");
-} catch (Exception $e) {}
+} catch (Exception $e) {
+}
 
 try {
     // Mevcut ENUM sütununu VARCHAR'a çevir (eski kurulumlar için)
     $db->exec("ALTER TABLE ads MODIFY COLUMN position VARCHAR(50) DEFAULT 'carousel'");
-} catch (Exception $e) {}
+} catch (Exception $e) {
+}
 
 try {
     // Boş position değerlerini 'carousel' olarak düzelt
     $db->exec("UPDATE ads SET position = 'carousel' WHERE position = '' OR position IS NULL");
-} catch (Exception $e) {}
+} catch (Exception $e) {
+}
 
 $pageTitle = 'Reklam Yönetimi';
 $username = $_SESSION['admin_username'];
@@ -51,78 +54,77 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Güvenlik hatası (CSRF). Lütfen sayfayı yenileyip tekrar deneyin.';
     } else {
         $action = $_POST['action'] ?? '';
-    
-    // Yeni reklam ekle
-    if ($action === 'add') {
-        $title = trim($_POST['title'] ?? '');
-        $linkUrl = trim($_POST['link_url'] ?? '');
-        $position = $_POST['position'] ?? 'carousel';
-        $sortOrder = (int)($_POST['sort_order'] ?? 0);
-        
-        if (empty($title)) {
-            $error = 'Başlık gerekli.';
-        } elseif (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
-            $error = 'Görsel yüklenemedi.';
-        } else {
-            $file = $_FILES['image'];
-            $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-            $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-            
-            if (!in_array($ext, $allowed)) {
-                $error = 'Sadece JPG, PNG, GIF veya WEBP dosyası yükleyebilirsiniz.';
-            } elseif ($file['size'] > 5 * 1024 * 1024) {
-                $error = 'Dosya boyutu 5MB\'dan küçük olmalı.';
+
+        // Yeni reklam ekle
+        if ($action === 'add') {
+            $title = trim($_POST['title'] ?? '');
+            $linkUrl = trim($_POST['link_url'] ?? '');
+            $position = $_POST['position'] ?? 'carousel';
+            $sortOrder = (int) ($_POST['sort_order'] ?? 0);
+
+            if (empty($title)) {
+                $error = 'Başlık gerekli.';
+            } elseif (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
+                $error = 'Görsel yüklenemedi.';
             } else {
-                $filename = 'ad_' . time() . '_' . rand(1000, 9999) . '.' . $ext;
-                $filepath = $uploadDir . $filename;
-                
-                if (move_uploaded_file($file['tmp_name'], $filepath)) {
-                    $imageUrl = 'uploads/ads/' . $filename;
+                // Güvenli resim yükleme sınıfı
+                require_once dirname(__DIR__) . '/../includes/ImageUploader.php';
+
+                $uploader = new ImageUploader();
+                $result = $uploader->upload($_FILES['image'], 'ads', [
+                    'maxSize' => 5 * 1024 * 1024,
+                    'outputFormat' => 'webp',
+                    'quality' => 90,
+                    'maxWidth' => 1200,
+                    'maxHeight' => 800
+                ]);
+
+                if (!$result['success']) {
+                    $error = $result['error'];
+                } else {
+                    $imageUrl = $result['path'];
                     $stmt = $db->prepare("INSERT INTO ads (title, image_url, link_url, position, sort_order) VALUES (?, ?, ?, ?, ?)");
                     $stmt->execute([$title, $imageUrl, $linkUrl, $position, $sortOrder]);
                     // PRG Pattern - Redirect to prevent duplicate on refresh
                     $_SESSION['flash_message'] = 'Reklam başarıyla eklendi.';
                     header('Location: ads');
                     exit;
-                } else {
-                    $error = 'Dosya yüklenemedi.';
                 }
             }
         }
-    }
-    
-    if ($action === 'delete') {
-        $adId = (int)($_POST['ad_id'] ?? 0);
-        if ($adId > 0) {
-            // Dosyayı sil
-            $adStmt = $db->prepare("SELECT image_url FROM ads WHERE id = ?");
-            $adStmt->execute([$adId]);
-            $ad = $adStmt->fetch();
-            $deleteFilePath = dirname(__DIR__) . '/' . $ad['image_url'];
-            if ($ad && file_exists($deleteFilePath)) {
-                unlink($deleteFilePath);
+
+        if ($action === 'delete') {
+            $adId = (int) ($_POST['ad_id'] ?? 0);
+            if ($adId > 0) {
+                // Dosyayı sil
+                $adStmt = $db->prepare("SELECT image_url FROM ads WHERE id = ?");
+                $adStmt->execute([$adId]);
+                $ad = $adStmt->fetch();
+                $deleteFilePath = dirname(__DIR__) . '/' . $ad['image_url'];
+                if ($ad && file_exists($deleteFilePath)) {
+                    unlink($deleteFilePath);
+                }
+
+                $db->prepare("DELETE FROM ads WHERE id = ?")->execute([$adId]);
+                // PRG Pattern - Redirect to prevent duplicate on refresh
+                $_SESSION['flash_message'] = 'Reklam silindi.';
+                header('Location: ads');
+                exit;
             }
-            
-            $db->prepare("DELETE FROM ads WHERE id = ?")->execute([$adId]);
-            // PRG Pattern - Redirect to prevent duplicate on refresh
-            $_SESSION['flash_message'] = 'Reklam silindi.';
-            header('Location: ads');
-            exit;
+        }
+
+        // Aktif/Pasif yap
+        if ($action === 'toggle') {
+            $adId = (int) ($_POST['ad_id'] ?? 0);
+            if ($adId > 0) {
+                $db->prepare("UPDATE ads SET is_active = NOT is_active WHERE id = ?")->execute([$adId]);
+                // PRG Pattern - Redirect to prevent duplicate on refresh
+                $_SESSION['flash_message'] = 'Durum güncellendi.';
+                header('Location: ads');
+                exit;
+            }
         }
     }
-    
-    // Aktif/Pasif yap
-    if ($action === 'toggle') {
-        $adId = (int)($_POST['ad_id'] ?? 0);
-        if ($adId > 0) {
-            $db->prepare("UPDATE ads SET is_active = NOT is_active WHERE id = ?")->execute([$adId]);
-            // PRG Pattern - Redirect to prevent duplicate on refresh
-            $_SESSION['flash_message'] = 'Durum güncellendi.';
-            header('Location: ads');
-            exit;
-        }
-    }
-}
 }
 
 // Flash mesaj kontrolü
@@ -145,6 +147,7 @@ $csrfToken = generateCsrfToken();
 ?>
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -160,7 +163,7 @@ $csrfToken = generateCsrfToken();
             min-height: 100vh;
             padding-top: 70px;
         }
-        
+
         .admin-sidebar {
             width: 260px;
             background: rgba(0, 0, 0, 0.4);
@@ -172,24 +175,24 @@ $csrfToken = generateCsrfToken();
             top: 70px;
             bottom: 0;
         }
-        
+
         .admin-sidebar-header {
             padding: 0 20px 20px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             margin-bottom: 20px;
         }
-        
+
         .admin-sidebar-header h2 {
             font-size: 1.25rem;
             font-weight: 700;
             color: var(--orange-accent);
         }
-        
+
         .admin-nav {
             display: flex;
             flex-direction: column;
         }
-        
+
         .admin-nav-item {
             display: flex;
             align-items: center;
@@ -200,20 +203,22 @@ $csrfToken = generateCsrfToken();
             font-size: 0.95rem;
             border-left: 3px solid transparent;
         }
-        
+
         .admin-nav-item:hover {
             background: rgba(255, 255, 255, 0.05);
             color: var(--text-white);
         }
-        
+
         .admin-nav-item.active {
             background: rgba(192, 57, 1, 0.15);
             color: var(--orange-accent);
             border-left-color: var(--orange-accent);
         }
-        
-        .admin-nav-icon { font-size: 1.25rem; }
-        
+
+        .admin-nav-icon {
+            font-size: 1.25rem;
+        }
+
         .admin-nav-badge {
             margin-left: auto;
             background: var(--orange-primary);
@@ -223,19 +228,22 @@ $csrfToken = generateCsrfToken();
             padding: 2px 8px;
             border-radius: 10px;
         }
-        
+
         .admin-content {
             flex: 1;
             margin-left: 260px;
             padding: 30px;
         }
-        
+
         .admin-header {
             margin-bottom: 24px;
         }
-        
-        .admin-header h1 { font-size: 1.5rem; font-weight: 700; }
-        
+
+        .admin-header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
         .add-form {
             background: rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(10px);
@@ -244,30 +252,30 @@ $csrfToken = generateCsrfToken();
             padding: 24px;
             margin-bottom: 30px;
         }
-        
+
         .add-form h3 {
             margin-bottom: 20px;
             font-size: 1.1rem;
         }
-        
+
         .form-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 16px;
             margin-bottom: 16px;
         }
-        
+
         .form-group {
             margin-bottom: 16px;
         }
-        
+
         .form-group label {
             display: block;
             font-size: 0.9rem;
             color: var(--text-muted);
             margin-bottom: 8px;
         }
-        
+
         .form-group input,
         .form-group select {
             width: 100%;
@@ -278,11 +286,11 @@ $csrfToken = generateCsrfToken();
             color: var(--text-white);
             font-size: 1rem;
         }
-        
+
         .form-group input[type="file"] {
             padding: 10px;
         }
-        
+
         .btn {
             padding: 12px 24px;
             border: none;
@@ -291,67 +299,67 @@ $csrfToken = generateCsrfToken();
             font-weight: 600;
             cursor: pointer;
         }
-        
+
         .btn-primary {
             background: var(--orange-primary);
             color: white;
         }
-        
+
         .ads-section {
             margin-bottom: 30px;
         }
-        
+
         .ads-section h3 {
             font-size: 1.1rem;
             margin-bottom: 16px;
             padding-bottom: 12px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
+
         .ads-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 16px;
         }
-        
+
         .ad-card {
             background: rgba(0, 0, 0, 0.4);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
             overflow: hidden;
         }
-        
+
         .ad-card.inactive {
             opacity: 0.5;
         }
-        
+
         .ad-image {
             width: 100%;
             height: 150px;
             object-fit: cover;
         }
-        
+
         .ad-info {
             padding: 16px;
         }
-        
+
         .ad-title {
             font-weight: 600;
             margin-bottom: 8px;
         }
-        
+
         .ad-link {
             font-size: 0.8rem;
             color: var(--text-subtle);
             word-break: break-all;
             margin-bottom: 12px;
         }
-        
+
         .ad-actions {
             display: flex;
             gap: 8px;
         }
-        
+
         .action-btn {
             padding: 6px 12px;
             border: none;
@@ -360,17 +368,17 @@ $csrfToken = generateCsrfToken();
             font-weight: 600;
             cursor: pointer;
         }
-        
+
         .action-btn.toggle {
             background: rgba(59, 130, 246, 0.2);
             color: #93c5fd;
         }
-        
+
         .action-btn.danger {
             background: rgba(239, 68, 68, 0.2);
             color: #fca5a5;
         }
-        
+
         .status-badge {
             display: inline-block;
             padding: 4px 8px;
@@ -379,36 +387,36 @@ $csrfToken = generateCsrfToken();
             font-weight: 600;
             margin-left: 8px;
         }
-        
+
         .status-badge.active {
             background: rgba(34, 197, 94, 0.2);
             color: #86efac;
         }
-        
+
         .status-badge.inactive {
             background: rgba(239, 68, 68, 0.2);
             color: #fca5a5;
         }
-        
+
         .alert {
             padding: 14px 20px;
             border-radius: 8px;
             margin-bottom: 20px;
             font-size: 0.9rem;
         }
-        
+
         .alert-success {
             background: rgba(34, 197, 94, 0.15);
             border: 1px solid rgba(34, 197, 94, 0.3);
             color: #86efac;
         }
-        
+
         .alert-error {
             background: rgba(239, 68, 68, 0.15);
             border: 1px solid rgba(239, 68, 68, 0.3);
             color: #fca5a5;
         }
-        
+
         .empty-state {
             text-align: center;
             padding: 40px;
@@ -416,6 +424,7 @@ $csrfToken = generateCsrfToken();
         }
     </style>
 </head>
+
 <body>
 
     <nav class="navbar">
@@ -449,7 +458,7 @@ $csrfToken = generateCsrfToken();
                     <span class="admin-nav-icon">📍</span>
                     <span>Mekanlar</span>
                     <?php if ($pendingVenues > 0): ?>
-                    <span class="admin-nav-badge"><?php echo $pendingVenues; ?></span>
+                        <span class="admin-nav-badge"><?php echo $pendingVenues; ?></span>
                     <?php endif; ?>
                 </a>
                 <a href="posts" class="admin-nav-item">
@@ -477,11 +486,11 @@ $csrfToken = generateCsrfToken();
             </div>
 
             <?php if ($message): ?>
-            <div class="alert alert-success"><?php echo escape($message); ?></div>
+                <div class="alert alert-success"><?php echo escape($message); ?></div>
             <?php endif; ?>
 
             <?php if ($error): ?>
-            <div class="alert alert-error"><?php echo escape($error); ?></div>
+                <div class="alert alert-error"><?php echo escape($error); ?></div>
             <?php endif; ?>
 
             <!-- Reklam Ekle Formu -->
@@ -490,7 +499,7 @@ $csrfToken = generateCsrfToken();
                 <form method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
                     <input type="hidden" name="action" value="add">
-                    
+
                     <div class="form-row">
                         <div class="form-group">
                             <label>Başlık *</label>
@@ -501,7 +510,7 @@ $csrfToken = generateCsrfToken();
                             <input type="url" name="link_url" placeholder="https://...">
                         </div>
                     </div>
-                    
+
                     <div class="form-row">
                         <div class="form-group">
                             <label>Konum *</label>
@@ -517,12 +526,12 @@ $csrfToken = generateCsrfToken();
                             <input type="number" name="sort_order" value="0" min="0">
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
                         <label>Görsel * (Max 5MB, JPG/PNG/GIF/WEBP)</label>
                         <input type="file" name="image" required accept="image/*">
                     </div>
-                    
+
                     <button type="submit" class="btn btn-primary">Reklam Ekle</button>
                 </form>
             </div>
@@ -530,176 +539,176 @@ $csrfToken = generateCsrfToken();
             <!-- Carousel Reklamları -->
             <div class="ads-section">
                 <h3>🎠 Carousel Reklamları (<?php echo count($carouselAds); ?>)</h3>
-                
+
                 <?php if (empty($carouselAds)): ?>
-                <div class="empty-state">Henüz carousel reklamı yok.</div>
+                    <div class="empty-state">Henüz carousel reklamı yok.</div>
                 <?php else: ?>
-                <div class="ads-grid">
-                    <?php foreach ($carouselAds as $ad): ?>
-                    <div class="ad-card <?php echo !$ad['is_active'] ? 'inactive' : ''; ?>">
-                        <img src="<?php echo BASE_URL . '/' . escape($ad['image_url']); ?>" alt="" class="ad-image">
-                        <div class="ad-info">
-                            <div class="ad-title">
-                                <?php echo escape($ad['title']); ?>
-                                <span class="status-badge <?php echo $ad['is_active'] ? 'active' : 'inactive'; ?>">
-                                    <?php echo $ad['is_active'] ? 'Aktif' : 'Pasif'; ?>
-                                </span>
+                    <div class="ads-grid">
+                        <?php foreach ($carouselAds as $ad): ?>
+                            <div class="ad-card <?php echo !$ad['is_active'] ? 'inactive' : ''; ?>">
+                                <img src="<?php echo BASE_URL . '/' . escape($ad['image_url']); ?>" alt="" class="ad-image">
+                                <div class="ad-info">
+                                    <div class="ad-title">
+                                        <?php echo escape($ad['title']); ?>
+                                        <span class="status-badge <?php echo $ad['is_active'] ? 'active' : 'inactive'; ?>">
+                                            <?php echo $ad['is_active'] ? 'Aktif' : 'Pasif'; ?>
+                                        </span>
+                                    </div>
+                                    <?php if ($ad['link_url']): ?>
+                                        <div class="ad-link"><?php echo escape($ad['link_url']); ?></div>
+                                    <?php endif; ?>
+                                    <div class="ad-actions">
+                                        <form method="POST" style="display: inline;">
+                                            <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
+                                            <input type="hidden" name="action" value="toggle">
+                                            <input type="hidden" name="ad_id" value="<?php echo $ad['id']; ?>">
+                                            <button type="submit" class="action-btn toggle">
+                                                <?php echo $ad['is_active'] ? 'Pasif Yap' : 'Aktif Yap'; ?>
+                                            </button>
+                                        </form>
+                                        <form method="POST" style="display: inline;">
+                                            <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
+                                            <input type="hidden" name="action" value="delete">
+                                            <input type="hidden" name="ad_id" value="<?php echo $ad['id']; ?>">
+                                            <button type="submit" class="action-btn danger">Sil</button>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
-                            <?php if ($ad['link_url']): ?>
-                            <div class="ad-link"><?php echo escape($ad['link_url']); ?></div>
-                            <?php endif; ?>
-                            <div class="ad-actions">
-                                <form method="POST" style="display: inline;">
-                                    <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
-                                    <input type="hidden" name="action" value="toggle">
-                                    <input type="hidden" name="ad_id" value="<?php echo $ad['id']; ?>">
-                                    <button type="submit" class="action-btn toggle">
-                                        <?php echo $ad['is_active'] ? 'Pasif Yap' : 'Aktif Yap'; ?>
-                                    </button>
-                                </form>
-                                <form method="POST" style="display: inline;">
-                                    <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
-                                    <input type="hidden" name="action" value="delete">
-                                    <input type="hidden" name="ad_id" value="<?php echo $ad['id']; ?>">
-                                    <button type="submit" class="action-btn danger">Sil</button>
-                                </form>
-                            </div>
-                        </div>
+                        <?php endforeach; ?>
                     </div>
-                    <?php endforeach; ?>
-                </div>
                 <?php endif; ?>
             </div>
 
             <!-- Sol Sidebar Reklamları -->
             <div class="ads-section">
                 <h3>⬅️ Sol Sidebar Reklamları (<?php echo count($sidebarLeftAds); ?>)</h3>
-                
+
                 <?php if (empty($sidebarLeftAds)): ?>
-                <div class="empty-state">Henüz sol sidebar reklamı yok.</div>
+                    <div class="empty-state">Henüz sol sidebar reklamı yok.</div>
                 <?php else: ?>
-                <div class="ads-grid">
-                    <?php foreach ($sidebarLeftAds as $ad): ?>
-                    <div class="ad-card <?php echo !$ad['is_active'] ? 'inactive' : ''; ?>">
-                        <img src="<?php echo BASE_URL . '/' . escape($ad['image_url']); ?>" alt="" class="ad-image">
-                        <div class="ad-info">
-                            <div class="ad-title">
-                                <?php echo escape($ad['title']); ?>
-                                <span class="status-badge <?php echo $ad['is_active'] ? 'active' : 'inactive'; ?>">
-                                    <?php echo $ad['is_active'] ? 'Aktif' : 'Pasif'; ?>
-                                </span>
+                    <div class="ads-grid">
+                        <?php foreach ($sidebarLeftAds as $ad): ?>
+                            <div class="ad-card <?php echo !$ad['is_active'] ? 'inactive' : ''; ?>">
+                                <img src="<?php echo BASE_URL . '/' . escape($ad['image_url']); ?>" alt="" class="ad-image">
+                                <div class="ad-info">
+                                    <div class="ad-title">
+                                        <?php echo escape($ad['title']); ?>
+                                        <span class="status-badge <?php echo $ad['is_active'] ? 'active' : 'inactive'; ?>">
+                                            <?php echo $ad['is_active'] ? 'Aktif' : 'Pasif'; ?>
+                                        </span>
+                                    </div>
+                                    <?php if ($ad['link_url']): ?>
+                                        <div class="ad-link"><?php echo escape($ad['link_url']); ?></div>
+                                    <?php endif; ?>
+                                    <div class="ad-actions">
+                                        <form method="POST" style="display: inline;">
+                                            <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
+                                            <input type="hidden" name="action" value="toggle">
+                                            <input type="hidden" name="ad_id" value="<?php echo $ad['id']; ?>">
+                                            <button type="submit" class="action-btn toggle">
+                                                <?php echo $ad['is_active'] ? 'Pasif Yap' : 'Aktif Yap'; ?>
+                                            </button>
+                                        </form>
+                                        <form method="POST" style="display: inline;">
+                                            <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
+                                            <input type="hidden" name="action" value="delete">
+                                            <input type="hidden" name="ad_id" value="<?php echo $ad['id']; ?>">
+                                            <button type="submit" class="action-btn danger">Sil</button>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
-                            <?php if ($ad['link_url']): ?>
-                            <div class="ad-link"><?php echo escape($ad['link_url']); ?></div>
-                            <?php endif; ?>
-                            <div class="ad-actions">
-                                <form method="POST" style="display: inline;">
-                                    <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
-                                    <input type="hidden" name="action" value="toggle">
-                                    <input type="hidden" name="ad_id" value="<?php echo $ad['id']; ?>">
-                                    <button type="submit" class="action-btn toggle">
-                                        <?php echo $ad['is_active'] ? 'Pasif Yap' : 'Aktif Yap'; ?>
-                                    </button>
-                                </form>
-                                <form method="POST" style="display: inline;">
-                                    <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
-                                    <input type="hidden" name="action" value="delete">
-                                    <input type="hidden" name="ad_id" value="<?php echo $ad['id']; ?>">
-                                    <button type="submit" class="action-btn danger">Sil</button>
-                                </form>
-                            </div>
-                        </div>
+                        <?php endforeach; ?>
                     </div>
-                    <?php endforeach; ?>
-                </div>
                 <?php endif; ?>
             </div>
 
             <!-- Sağ Sidebar Reklamları -->
             <div class="ads-section">
                 <h3>➡️ Sağ Sidebar Reklamları (<?php echo count($sidebarRightAds); ?>)</h3>
-                
+
                 <?php if (empty($sidebarRightAds)): ?>
-                <div class="empty-state">Henüz sağ sidebar reklamı yok.</div>
+                    <div class="empty-state">Henüz sağ sidebar reklamı yok.</div>
                 <?php else: ?>
-                <div class="ads-grid">
-                    <?php foreach ($sidebarRightAds as $ad): ?>
-                    <div class="ad-card <?php echo !$ad['is_active'] ? 'inactive' : ''; ?>">
-                        <img src="<?php echo BASE_URL . '/' . escape($ad['image_url']); ?>" alt="" class="ad-image">
-                        <div class="ad-info">
-                            <div class="ad-title">
-                                <?php echo escape($ad['title']); ?>
-                                <span class="status-badge <?php echo $ad['is_active'] ? 'active' : 'inactive'; ?>">
-                                    <?php echo $ad['is_active'] ? 'Aktif' : 'Pasif'; ?>
-                                </span>
+                    <div class="ads-grid">
+                        <?php foreach ($sidebarRightAds as $ad): ?>
+                            <div class="ad-card <?php echo !$ad['is_active'] ? 'inactive' : ''; ?>">
+                                <img src="<?php echo BASE_URL . '/' . escape($ad['image_url']); ?>" alt="" class="ad-image">
+                                <div class="ad-info">
+                                    <div class="ad-title">
+                                        <?php echo escape($ad['title']); ?>
+                                        <span class="status-badge <?php echo $ad['is_active'] ? 'active' : 'inactive'; ?>">
+                                            <?php echo $ad['is_active'] ? 'Aktif' : 'Pasif'; ?>
+                                        </span>
+                                    </div>
+                                    <?php if ($ad['link_url']): ?>
+                                        <div class="ad-link"><?php echo escape($ad['link_url']); ?></div>
+                                    <?php endif; ?>
+                                    <div class="ad-actions">
+                                        <form method="POST" style="display: inline;">
+                                            <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
+                                            <input type="hidden" name="action" value="toggle">
+                                            <input type="hidden" name="ad_id" value="<?php echo $ad['id']; ?>">
+                                            <button type="submit" class="action-btn toggle">
+                                                <?php echo $ad['is_active'] ? 'Pasif Yap' : 'Aktif Yap'; ?>
+                                            </button>
+                                        </form>
+                                        <form method="POST" style="display: inline;">
+                                            <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
+                                            <input type="hidden" name="action" value="delete">
+                                            <input type="hidden" name="ad_id" value="<?php echo $ad['id']; ?>">
+                                            <button type="submit" class="action-btn danger">Sil</button>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
-                            <?php if ($ad['link_url']): ?>
-                            <div class="ad-link"><?php echo escape($ad['link_url']); ?></div>
-                            <?php endif; ?>
-                            <div class="ad-actions">
-                                <form method="POST" style="display: inline;">
-                                    <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
-                                    <input type="hidden" name="action" value="toggle">
-                                    <input type="hidden" name="ad_id" value="<?php echo $ad['id']; ?>">
-                                    <button type="submit" class="action-btn toggle">
-                                        <?php echo $ad['is_active'] ? 'Pasif Yap' : 'Aktif Yap'; ?>
-                                    </button>
-                                </form>
-                                <form method="POST" style="display: inline;">
-                                    <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
-                                    <input type="hidden" name="action" value="delete">
-                                    <input type="hidden" name="ad_id" value="<?php echo $ad['id']; ?>">
-                                    <button type="submit" class="action-btn danger">Sil</button>
-                                </form>
-                            </div>
-                        </div>
+                        <?php endforeach; ?>
                     </div>
-                    <?php endforeach; ?>
-                </div>
                 <?php endif; ?>
             </div>
 
             <!-- Footer Reklamları -->
             <div class="ads-section">
                 <h3>📎 Footer Banner Reklamları (<?php echo count($footerAds); ?>)</h3>
-                
+
                 <?php if (empty($footerAds)): ?>
-                <div class="empty-state">Henüz footer reklamı yok.</div>
+                    <div class="empty-state">Henüz footer reklamı yok.</div>
                 <?php else: ?>
-                <div class="ads-grid">
-                    <?php foreach ($footerAds as $ad): ?>
-                    <div class="ad-card <?php echo !$ad['is_active'] ? 'inactive' : ''; ?>">
-                        <img src="<?php echo BASE_URL . '/' . escape($ad['image_url']); ?>" alt="" class="ad-image">
-                        <div class="ad-info">
-                            <div class="ad-title">
-                                <?php echo escape($ad['title']); ?>
-                                <span class="status-badge <?php echo $ad['is_active'] ? 'active' : 'inactive'; ?>">
-                                    <?php echo $ad['is_active'] ? 'Aktif' : 'Pasif'; ?>
-                                </span>
+                    <div class="ads-grid">
+                        <?php foreach ($footerAds as $ad): ?>
+                            <div class="ad-card <?php echo !$ad['is_active'] ? 'inactive' : ''; ?>">
+                                <img src="<?php echo BASE_URL . '/' . escape($ad['image_url']); ?>" alt="" class="ad-image">
+                                <div class="ad-info">
+                                    <div class="ad-title">
+                                        <?php echo escape($ad['title']); ?>
+                                        <span class="status-badge <?php echo $ad['is_active'] ? 'active' : 'inactive'; ?>">
+                                            <?php echo $ad['is_active'] ? 'Aktif' : 'Pasif'; ?>
+                                        </span>
+                                    </div>
+                                    <?php if ($ad['link_url']): ?>
+                                        <div class="ad-link"><?php echo escape($ad['link_url']); ?></div>
+                                    <?php endif; ?>
+                                    <div class="ad-actions">
+                                        <form method="POST" style="display: inline;">
+                                            <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
+                                            <input type="hidden" name="action" value="toggle">
+                                            <input type="hidden" name="ad_id" value="<?php echo $ad['id']; ?>">
+                                            <button type="submit" class="action-btn toggle">
+                                                <?php echo $ad['is_active'] ? 'Pasif Yap' : 'Aktif Yap'; ?>
+                                            </button>
+                                        </form>
+                                        <form method="POST" style="display: inline;">
+                                            <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
+                                            <input type="hidden" name="action" value="delete">
+                                            <input type="hidden" name="ad_id" value="<?php echo $ad['id']; ?>">
+                                            <button type="submit" class="action-btn danger">Sil</button>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
-                            <?php if ($ad['link_url']): ?>
-                            <div class="ad-link"><?php echo escape($ad['link_url']); ?></div>
-                            <?php endif; ?>
-                            <div class="ad-actions">
-                                <form method="POST" style="display: inline;">
-                                    <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
-                                    <input type="hidden" name="action" value="toggle">
-                                    <input type="hidden" name="ad_id" value="<?php echo $ad['id']; ?>">
-                                    <button type="submit" class="action-btn toggle">
-                                        <?php echo $ad['is_active'] ? 'Pasif Yap' : 'Aktif Yap'; ?>
-                                    </button>
-                                </form>
-                                <form method="POST" style="display: inline;">
-                                    <input type="hidden" name="csrf_token" value="<?php echo $csrfToken; ?>">
-                                    <input type="hidden" name="action" value="delete">
-                                    <input type="hidden" name="ad_id" value="<?php echo $ad['id']; ?>">
-                                    <button type="submit" class="action-btn danger">Sil</button>
-                                </form>
-                            </div>
-                        </div>
+                        <?php endforeach; ?>
                     </div>
-                    <?php endforeach; ?>
-                </div>
                 <?php endif; ?>
             </div>
 
@@ -707,5 +716,5 @@ $csrfToken = generateCsrfToken();
     </div>
 
 </body>
-</html>
 
+</html>
